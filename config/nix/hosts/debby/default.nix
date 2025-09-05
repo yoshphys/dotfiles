@@ -10,7 +10,6 @@ let
     config.allowUnfree = true;
     overlays = [
       inputs.neovim-overlay.overlays.default
-      inputs.vim-overlay.overlays.default
     ];
   };
 
