@@ -25,8 +25,6 @@ nix-darwin.lib.darwinSystem {
       home-manager.users.${username} = {
         imports = [
           ../../home-manager/base.nix
-          ../../home-manager/headed.nix
-          ../../home-manager/darwin.nix
         ];
 
         home.packages = import ./packages.nix { inherit pkgs npmPkgs; };
