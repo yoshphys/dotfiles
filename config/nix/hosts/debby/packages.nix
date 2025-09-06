@@ -6,8 +6,11 @@ with pkgs; [
 
   deno
   peco
+  gh # github cli
   ghq
+  lazygit
   fzf
+  unar # rich unzip
 
   # AI #############################################
   gemini-cli
