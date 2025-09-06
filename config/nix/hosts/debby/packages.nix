@@ -1,4 +1,4 @@
-{ pkgs, npmPkgs, ... }:
+{ pkgs, ... }:
 with pkgs; [
   sheldon # zsh plugin manager
   starship # prompt decoration
@@ -10,14 +10,13 @@ with pkgs; [
   fzf
 
   # AI #############################################
-  npmPkgs."@github/copilot-language-server"
-  npmPkgs."@google/gemini-cli"
+  gemini-cli
 
   # LSP/formatter ##################################
   tinymist
   basedpyright
   lua-language-server
-  # copilot-language-server
+  copilot-language-server
 
   # editor #########################################
   vim-startuptime

@@ -47,7 +47,6 @@
         autohide = true;
         show-recents = false;
         launchanim = false;
-        orientation = "right";
       };
     };
   };
