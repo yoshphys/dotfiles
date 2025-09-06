@@ -4,6 +4,7 @@ with pkgs; [
   starship # prompt decoration
   eza # rich ls
 
+  node
   deno
   peco
   ghq
