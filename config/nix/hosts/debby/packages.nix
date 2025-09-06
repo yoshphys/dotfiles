@@ -3,7 +3,6 @@ with pkgs; [
   sheldon # zsh plugin manager
   starship # prompt decoration
   eza # rich ls
-  direnv
 
   deno
   peco
