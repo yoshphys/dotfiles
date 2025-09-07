@@ -11,6 +11,14 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    brew-nix = {
+      url = "github:BatteredBunny/brew-nix";
+      inputs.brew-api.follows = "brew-api";
+    };
+    brew-api = {
+      url = "github:BatteredBunny/brew-api";
+      flake = false;
+    };
     nix-monitored.url = "github:ners/nix-monitored";
     flake-parts.url = "github:hercules-ci/flake-parts";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";

@@ -44,6 +44,7 @@
         _FXShowPosixPathInTitle = true;
       };
       dock = {
+        orientation = "bottom";
         autohide = true;
         show-recents = false;
         launchanim = false;

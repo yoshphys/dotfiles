@@ -10,6 +10,7 @@ let
     config.allowUnfree = true;
     overlays = [
       inputs.neovim-overlay.overlays.default
+      inputs.brew-nix.overlays.default
     ];
   };
 

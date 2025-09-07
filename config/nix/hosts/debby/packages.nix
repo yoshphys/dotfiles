@@ -24,4 +24,7 @@ with pkgs; [
   # editor #########################################
   vim-startuptime
   neovim
+
+  # brewCasks ######################################
+  brewCasks.inkscape
 ]
