@@ -19,7 +19,7 @@
   };
 
   homebrew = {
-    enable = false;
+    enable = true;
     onActivation = {
       autoUpdate = true;
       upgrade = true;

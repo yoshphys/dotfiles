@@ -9,7 +9,7 @@
   "github"
   "google-chrome"
   "honto"
-  "inkscape"
+  # "inkscape"
   "karabiner-elements"
   "kobo"
   "ltspice"
