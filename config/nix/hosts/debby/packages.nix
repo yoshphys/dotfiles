@@ -26,5 +26,5 @@ with pkgs; [
   neovim
 
   # brewCasks ######################################
-  brewCasks.inkscape
+  # brewCasks.inkscape
 ]
