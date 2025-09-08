@@ -54,4 +54,5 @@ with pkgs; [
 
   # brewCasks ######################################
   brewCasks.inkscape
+  brewCasks.ghostty
 ]

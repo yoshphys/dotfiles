@@ -4,7 +4,7 @@
   "deepl"
   "firefox"
   "font-hack-nerd-font"
-  "ghostty"
+  # "ghostty"
   "gimp"
   "github"
   "google-chrome"
