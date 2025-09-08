@@ -29,7 +29,7 @@
   };
 
   system = {
-    stateVersion = 5;
+    stateVersion = 6;
 
     primaryUser = inputs.username;
 
