@@ -25,6 +25,7 @@ with pkgs; [
   lazygit
 
   # programming ####################################
+  python313 # for ROOT
   deno
   # rust # found no package
   # lua
