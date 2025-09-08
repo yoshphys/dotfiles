@@ -11,6 +11,7 @@ let
     overlays = [
       inputs.neovim-overlay.overlays.default
       inputs.brew-nix.overlays.default
+      inputs.rust-overlay.overlayz.default
     ];
   };
 

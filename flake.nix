@@ -22,6 +22,10 @@
     nix-monitored.url = "github:ners/nix-monitored";
     flake-parts.url = "github:hercules-ci/flake-parts";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

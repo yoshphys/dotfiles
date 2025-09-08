@@ -25,10 +25,9 @@ with pkgs; [
   lazygit
 
   # programming ####################################
-  python313 # for ROOT
+  python313 # for ROOT. Check python version by executing `root-config --python3-version`
   deno
-  # rust # found no package
-  # lua
+  rust-bin.stable.latest.default
 
   # productivity ###################################
   typst
