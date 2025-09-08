@@ -53,6 +53,6 @@ with pkgs; [
   copilot-language-server
 
   # brewCasks ######################################
-  brewCasks.inkscape
-  brewCasks.ghostty
+  # I decided not to use brewCasks of brew-nix. I use brewCasks in nix-darwin instead.
+  # brewCasks.ghostty
 ]
