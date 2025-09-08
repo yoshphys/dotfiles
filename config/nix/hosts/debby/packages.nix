@@ -3,6 +3,7 @@ with pkgs; [
   # terminal utility ###############################
   sheldon # zsh plugin manager
   starship # prompt decoration
+  bat # richer cat
   eza # richer ls
   tree
   fd
@@ -13,6 +14,7 @@ with pkgs; [
   tmux
 
   # system #########################################
+  gdu # disk capacity analyzer
   bottom # richer top
   mosh
   mutagen
@@ -31,6 +33,7 @@ with pkgs; [
   typst
   marp-cli
   pandoc
+  pdf2svg
 
   # science/technology #############################
   root
