@@ -10,11 +10,11 @@ endif
 
 .PHONY:
 darwin-bootstrap:
-	sudo nix --extra-experimental-features 'nix-command flakes' run nix-darwin/master#darwin-rebuild -- switch --flake .#$(HOST) --impure --cores $(CORES)
+	sudo -H nix --extra-experimental-features 'nix-command flakes' run nix-darwin/master#darwin-rebuild -- switch --flake .#$(HOST) --impure --cores $(CORES)
 
 .PHONY:
 darwin-upgrade:
-	sudo nix run nix-darwin -- switch --flake .#$(HOST) --impure --cores $(CORES)
+	sudo -H nix run nix-darwin -- switch --flake .#$(HOST) --impure --cores $(CORES)
 
 .PHONY:
 nixos-bootstrap:
