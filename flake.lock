@@ -404,7 +404,28 @@
         "neovim-overlay": "neovim-overlay",
         "nix-darwin": "nix-darwin_2",
         "nix-monitored": "nix-monitored",
-        "nixpkgs": "nixpkgs_4"
+        "nixpkgs": "nixpkgs_4",
+        "rust-overlay": "rust-overlay"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1757298987,
+        "narHash": "sha256-yuFSw6fpfjPtVMmym51ozHYpJQ7SzVOTkk7tUv2JA0U=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "cfd63776bde44438ff2936f0c9194c79dd407a5f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "treefmt-nix": {
