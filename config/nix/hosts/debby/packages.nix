@@ -26,6 +26,7 @@ with pkgs; [
 
   # programming ####################################
   python313 # for ROOT. Check python version by executing `root-config --python3-version`
+  nodejs_24
   deno
   rust-bin.stable.latest.default
 
