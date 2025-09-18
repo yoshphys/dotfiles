@@ -15,7 +15,8 @@ let
     ];
   };
 
-  brewCasks = import ./brewCasks.nix;
+  brewCasks = builtins.map (x: {name: x; greedy = true;}) import ./brewCasks.nix
+  # brewCasks = import ./brewCasks.nix;
 in
 nix-darwin.lib.darwinSystem {
   modules = [
