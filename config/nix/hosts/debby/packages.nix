@@ -45,6 +45,7 @@ with pkgs; [
 
   # AI #############################################
   gemini-cli
+  copilot-cli
 
   # editor #########################################
   vim-startuptime
