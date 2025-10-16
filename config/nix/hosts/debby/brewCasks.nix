@@ -1,6 +1,7 @@
 [
   "arduino"
   "calibre"
+  "claude"
   "deepl"
   "firefox"
   "font-hack-nerd-font"
