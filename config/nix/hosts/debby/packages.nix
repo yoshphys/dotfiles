@@ -40,7 +40,7 @@ with pkgs; [
   pdf2svg
 
   # science/technology #############################
-  root
+  # root
   gnuplot
 
   # AI #############################################
