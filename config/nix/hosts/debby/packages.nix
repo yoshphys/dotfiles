@@ -46,7 +46,7 @@ with pkgs; [
   # AI #############################################
   gemini-cli
   claude-code
-  # copilot-cli
+  github-copilot-cli
 
   # editor #########################################
   vim-startuptime
