@@ -3,6 +3,7 @@
   "calibre"
   "claude"
   "deepl"
+  "freecad"
   "firefox"
   "font-hack-nerd-font"
   "ghostty"
