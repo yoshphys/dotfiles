@@ -58,6 +58,9 @@ with pkgs; [
   lua-language-server
   copilot-language-server
 
+  # renderer #######################################
+  # povray
+
   # brewCasks ######################################
   # I decided not to use brewCasks of brew-nix. I use brewCasks in nix-darwin instead.
   # brewCasks.ghostty
