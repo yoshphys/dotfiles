@@ -1,5 +1,6 @@
 [
   "arduino"
+  "blender" # rendering engene
   "calibre"
   "claude"
   "deepl"
