@@ -28,6 +28,7 @@ with pkgs; [
   lazygit
 
   # programming ####################################
+  uv # python package manager
   python313 # for ROOT. Check python version by executing `root-config --python3-version`
   nodejs_24
   deno
