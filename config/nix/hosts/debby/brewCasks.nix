@@ -13,7 +13,6 @@
   "google-chrome"
   "honto"
   "inkscape"
-  "jordanbaird-ice" # hidden menu bar
   "karabiner-elements"
   "kobo"
   "ltspice"
