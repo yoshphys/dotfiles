@@ -1,4 +1,5 @@
 [
+  "amical" # AI powered dictation
   "arduino"
   "blender" # rendering engene
   "calibre"
