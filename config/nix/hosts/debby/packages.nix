@@ -49,7 +49,6 @@ with pkgs; [
   claude-code
   claude-code-acp
   github-copilot-cli
-  tts # coqui (Text-To-Speech)
 
   # editor #########################################
   vim-startuptime
