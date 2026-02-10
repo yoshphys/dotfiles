@@ -28,6 +28,7 @@
   "raycast"
   "slack"
   "stats"
+  "thaw" # menubar manager
   "xquartz"
   "zoom"
 ]
