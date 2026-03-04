@@ -4,6 +4,7 @@
   "blender" # rendering engene
   "calibre"
   "claude"
+  "cmux" # integrated terminal app using libghostty
   "deepl"
   "freecad"
   "firefox"
@@ -23,7 +24,7 @@
   "microsoft-powerpoint"
   "microsoft-teams"
   "microsoft-word"
-  "nextcloud"
+  # "nextcloud"
   "obsidian"
   "raycast"
   "slack"
