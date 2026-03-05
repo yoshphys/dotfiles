@@ -44,6 +44,9 @@ with pkgs; [
   root
   gnuplot
 
+  # audio/video ####################################
+  ffmpeg-full
+
   # AI #############################################
   gemini-cli
   claude-code
