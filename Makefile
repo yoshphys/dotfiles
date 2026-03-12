@@ -14,7 +14,7 @@ darwin-bootstrap:
 
 .PHONY:
 darwin-upgrade:
-	sudo -H nix run nix-darwin -- switch --flake .#$(HOST) --impure --cores $(CORES)
+	sudo -H nix run nix-darwin -- switch --flake .#$(HOST) --cores $(CORES)
 
 .PHONY:
 nixos-bootstrap:
@@ -22,4 +22,4 @@ nixos-bootstrap:
 
 .PHONY:
 nixos-upgrade:
-	sudo nixos-rebuild switch --flake .#$(HOST) --impure
+	sudo nixos-rebuild switch --flake .#$(HOST)
