@@ -39,6 +39,7 @@ with pkgs; [
   marp-cli
   pandoc
   pdf2svg
+  yj # enable shell parsing yaml
 
   # science/technology #############################
   root
