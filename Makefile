@@ -1,7 +1,7 @@
 OS := $(shell uname -s)
 
 ifeq ($(OS),Darwin)
-	HOST := $(subst .local,,$(shell hostname))
+	HOST := $(shell hostname -s)
 	CORES = $(shell sysctl -n hw.ncpu)
 else
 	HOST := $(shell uname -n)
