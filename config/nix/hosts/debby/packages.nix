@@ -51,7 +51,6 @@ with pkgs; [
   # AI #############################################
   gemini-cli
   claude-code
-  claude-code-acp
   github-copilot-cli
 
   # editor #########################################
