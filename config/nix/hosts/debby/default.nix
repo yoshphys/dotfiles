@@ -6,6 +6,13 @@ let
   username = "yosh";
 
   brewCasks = builtins.map (x: {name = x; greedy = true;}) (import ./brewCasks.nix);
+  brewTaps = [
+    {
+      name = "pxwg/zk-lsp";
+      clone_target = "https://github.com/pxwg/zk-lsp.typst";
+    }
+  ];
+  brewFormulas = [ "zk-lsp" ];
 in
 nix-darwin.lib.darwinSystem {
   modules = [
@@ -17,7 +24,7 @@ nix-darwin.lib.darwinSystem {
       ];
     }
     home-manager.darwinModules.home-manager
-    (import ../../nix-darwin { inherit system username brewCasks nix-monitored; })
+    (import ../../nix-darwin { inherit system username brewCasks brewTaps brewFormulas nix-monitored; })
     {
       home-manager.useGlobalPkgs = true;
       home-manager.backupFileExtension = "bk.nix";

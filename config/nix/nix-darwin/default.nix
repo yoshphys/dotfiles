@@ -26,6 +26,8 @@
       cleanup = "uninstall";
     };
     casks = inputs.brewCasks;
+    taps = inputs.brewTaps;
+    brews = inputs.brewFormulas;
   };
 
   system = {
