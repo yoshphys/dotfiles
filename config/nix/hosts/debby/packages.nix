@@ -58,6 +58,7 @@ with pkgs; [
   neovim
 
   # LSP/formatter ##################################
+  tree-sitter
   tinymist
   basedpyright
   lua-language-server
