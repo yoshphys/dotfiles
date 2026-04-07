@@ -31,8 +31,15 @@ with pkgs; [
   uv # python package manager
   python313 # for ROOT. Check python version by executing `root-config --python3-version`
   nodejs_24
-  deno
+  (pkgs.symlinkJoin {
+    name = "deno-no-dx";
+    paths = [ pkgs.deno ];
+    postBuild = "rm $out/bin/dx";
+  })
   rust-bin.stable.latest.default
+
+  # web ############################################
+  dioxus-cli
 
   # productivity ###################################
   typst
