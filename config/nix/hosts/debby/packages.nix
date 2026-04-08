@@ -36,7 +36,10 @@ with pkgs; [
     paths = [ pkgs.deno ];
     postBuild = "rm $out/bin/dx";
   })
-  rust-bin.stable.latest.default
+  (pkgs.fenix.combine [
+    pkgs.fenix.stable.defaultToolchain
+    pkgs.fenix.targets.wasm32-unknown-unknown.stable.rust-std
+  ])
 
   # web ############################################
   dioxus-cli

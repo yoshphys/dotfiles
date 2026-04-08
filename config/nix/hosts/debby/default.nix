@@ -20,7 +20,7 @@ nix-darwin.lib.darwinSystem {
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [
         inputs.neovim-overlay.overlays.default
-        inputs.rust-overlay.overlays.default
+        inputs.fenix.overlays.default
       ];
     }
     home-manager.darwinModules.home-manager
