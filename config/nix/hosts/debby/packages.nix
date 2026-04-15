@@ -40,8 +40,9 @@ with pkgs; [
     pkgs.fenix.stable.defaultToolchain
     pkgs.fenix.targets.wasm32-unknown-unknown.stable.rust-std
   ])
+  rlwrap # for CLI tools
 
-  # web ############################################
+  # web app ########################################
   dioxus-cli
 
   # productivity ###################################
