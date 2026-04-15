@@ -40,7 +40,7 @@
       LaunchServices.LSQuarantine = false;
       NSGlobalDomain.AppleShowAllExtensions = true;
       finder = {
-        AppleShowAllFiles = true;
+        AppleShowAllFiles = false;
         AppleShowAllExtensions = true;
         FXPreferredViewStyle = "clmv";
         _FXShowPosixPathInTitle = true;
