@@ -31,7 +31,7 @@ with pkgs; [
   uv # python package manager
   python313 # for ROOT. Check python version by executing `root-config --python3-version`
   nodejs_24
-  (pkgs.symlinkJoin {
+  (pkgs.symlinkJoin { # to unlink `dx` command which conflicts with dioxus-cli
     name = "deno-no-dx";
     paths = [ pkgs.deno ];
     postBuild = "rm $out/bin/dx";
@@ -63,10 +63,11 @@ with pkgs; [
   gemini-cli
   claude-code
   github-copilot-cli
+  # python3Packages.huggingface-hub # provides `huggingface-cli` command
 
   # editor #########################################
   vim-startuptime
-  neovim
+  neovim # from neovim-overlay
 
   # LSP/formatter ##################################
   tree-sitter

@@ -22,10 +22,14 @@
     nix-monitored.url = "github:ners/nix-monitored";
     flake-parts.url = "github:hercules-ci/flake-parts";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    fenix = {
+    fenix = { # for rust
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # hf-nix = {
+    #   url = "github:huggingface/hf-nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs = {

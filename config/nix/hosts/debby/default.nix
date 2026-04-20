@@ -19,8 +19,9 @@ nix-darwin.lib.darwinSystem {
     {
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [
-        inputs.neovim-overlay.overlays.default
+        inputs.neovim-overlay.overlays.default # Comment out this line if neovim-overlay gets problems.
         inputs.fenix.overlays.default
+        # inputs.hf-nix.overlays.default
       ];
     }
     home-manager.darwinModules.home-manager
@@ -33,7 +34,9 @@ nix-darwin.lib.darwinSystem {
           ../../home-manager/base.nix
         ];
 
-        home.packages = import ./packages.nix { inherit pkgs; };
+        home.packages = (import ./packages.nix { inherit pkgs; }) ++ [
+          # inputs.neovim-overlay.packages.${system}.default # Comment out this line if neovim-overlay does NOT get problems.
+        ];
       };
     }
   ];
