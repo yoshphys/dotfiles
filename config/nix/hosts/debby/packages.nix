@@ -13,6 +13,10 @@ with pkgs; [
   peco # richer `command | grep`
   tmux
 
+  # nushell ########################################
+  nushell # modern shell
+  nu_scripts # useful scripts for nushell
+
   # system #########################################
   gdu # disk capacity analyzer
   bottom # richer top
@@ -51,19 +55,19 @@ with pkgs; [
   pandoc
   pdf2svg
   yj # enable shell parsing yaml
+  poppler-utils # for handling PDF
 
   # science/technology #############################
   root
   gnuplot
 
   # audio/video ####################################
-  ffmpeg-full
+  # ffmpeg
 
   # AI #############################################
   gemini-cli
   claude-code
   github-copilot-cli
-  # python3Packages.huggingface-hub # provides `huggingface-cli` command
 
   # editor #########################################
   vim-startuptime
