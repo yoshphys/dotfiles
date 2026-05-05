@@ -2,7 +2,6 @@
 with pkgs; [
   # terminal utility ###############################
   sheldon # zsh plugin manager
-  starship # prompt decoration
   bat # richer cat
   eza # richer ls
   tree
@@ -12,10 +11,6 @@ with pkgs; [
   unar # richer unzip
   peco # richer `command | grep`
   tmux
-
-  # nushell ########################################
-  nushell # modern shell
-  nu_scripts # useful scripts for nushell
 
   # system #########################################
   gdu # disk capacity analyzer
@@ -33,7 +28,9 @@ with pkgs; [
 
   # programming ####################################
   uv # python package manager
-  python313 # for ROOT. Check python version by executing `root-config --python3-version`
+  (pkgs.python3.withPackages (python-pkgs: [
+      python-pkgs.root # for enabling cern ROOT
+  ]))
   nodejs_24
   (pkgs.symlinkJoin { # to unlink `dx` command which conflicts with dioxus-cli
     name = "deno-no-dx";

@@ -32,6 +32,7 @@ nix-darwin.lib.darwinSystem {
       home-manager.users.${username} = { pkgs, ... }: {
         imports = [
           ../../home-manager/base.nix
+          ../../home-manager/programs/nushell.nix
         ];
 
         home.packages = (import ./packages.nix { inherit pkgs; }) ++ [
