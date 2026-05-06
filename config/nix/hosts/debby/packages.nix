@@ -1,7 +1,6 @@
 { pkgs, ... }:
 with pkgs; [
   # terminal utility ###############################
-  sheldon # zsh plugin manager
   bat # richer cat
   eza # richer ls
   tree
@@ -15,6 +14,8 @@ with pkgs; [
   # system #########################################
   gdu # disk capacity analyzer
   bottom # richer top
+
+  # network ########################################
   mosh
   mutagen
 
