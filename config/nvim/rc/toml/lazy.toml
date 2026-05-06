@@ -1,0 +1,809 @@
+##################################################
+# code view ######################################
+##################################################
+
+[[plugins]]
+repo = "nvim-treesitter/nvim-treesitter"
+rev = "main"
+on_event = ["BufReadPre", "CursorHold"]
+hook_post_update = "TSUpdate"
+lua_source = """
+  local targets = {
+    'bash',
+    'c',
+    'cpp',
+    'javascript',
+    'julia',
+    'latex',
+    'lua',
+    'rust',
+    'nix',
+    'python',
+    'toml',
+    'typescript',
+    'typst',
+    'yaml',
+    'zsh',
+  }
+
+  -- Install parsers
+  require('nvim-treesitter').install(targets)
+
+  -- Enable highlight
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = targets,
+    callback = function()
+      vim.treesitter.start()
+    end,
+  })
+
+  vim.treesitter.language.register("julia", "aibo-prompt.aibo-tool-julia")
+  vim.treesitter.language.register("python", "aibo-prompt.aibo-tool-python")
+  vim.treesitter.language.register("markdown", "aibo-prompt.aibo-tool-claude")
+"""
+
+[[plugins]] # visualize the current block
+repo = "shellRaining/hlchunk.nvim"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = """
+  require("hlchunk").setup({
+    chunk = {
+      enable = true,
+    }
+  })
+"""
+
+[[plugins]] # show its beginning at the end of the block
+repo = "andersevenrud/nvim_context_vt"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = """
+  require("nvim_context_vt").setup()
+"""
+
+##################################################
+# function #######################################
+##################################################
+[[plugins]] # to create user modes
+repo = "pogyomo/submode.nvim"
+on_event = "UIEnter"
+lua_source = """
+  local submode = require("submode")
+  submode.create("WinMove", {
+      mode = "n",
+      enter = "[Space]w",
+      leave = { "q", "<ESC>" },
+      default = function(register)
+          register("h", function() vim.cmd("wincmd h") end)
+          register("j", function() vim.cmd("wincmd j") end)
+          register("k", function() vim.cmd("wincmd k") end)
+          register("l", function() vim.cmd("wincmd l") end)
+      end,
+  })
+"""
+
+
+##################################################
+# window #########################################
+##################################################
+
+[[plugins]] # to simplify keymaps to resize windows
+repo = "pogyomo/winresize.nvim"
+depends = "submode.nvim"
+on_event = "UIEnter"
+lua_source = """
+  local submode = require("submode")
+  local resize = require("winresize").resize
+  submode.create("WinResize", {
+      mode = "n",
+      enter = "[Space]r",
+      leave = { "q", "<ESC>" },
+      default = function(register)
+          register("h", function() resize(0, 1, "left") end)
+          register("j", function() resize(0, 1, "down") end)
+          register("k", function() resize(0, 1, "up") end)
+          register("l", function() resize(0, 1, "right") end)
+          register("H", function() resize(0, 10, "left") end)
+          register("J", function() resize(0, 10, "down") end)
+          register("K", function() resize(0, 10, "up") end)
+          register("L", function() resize(0, 10, "right") end)
+      end,
+  })
+"""
+
+[[plugins]]
+repo = "folke/styler.nvim"
+depends = "catppuccin"
+on_event = ["WinEnter"]
+lua_add = """
+INACTIVE_COLORSCHEME = 'catppuccin-mocha'
+
+-- for inactive windows (including ddu floating windows)
+local function inactivate(win)
+  if not vim.api.nvim_win_is_valid(win) then return end
+  -- skip non-ddu floating windows (e.g. completion popups)
+  local cfg = vim.api.nvim_win_get_config(win)
+  if cfg.relative ~= "" then
+    local ft = vim.bo[vim.api.nvim_win_get_buf(win)].filetype
+    if not vim.startswith(ft, "ddu-") then return end
+  end
+  if (vim.w[win].theme or {}).colorscheme ~= INACTIVE_COLORSCHEME then
+    require('styler').set_theme(win, { colorscheme = INACTIVE_COLORSCHEME })
+  end
+end
+
+vim.api.nvim_create_autocmd(
+  { 'WinEnter' },
+  {
+    group = vim.api.nvim_create_augroup('styler-nvim-custom', {}),
+    callback = function()
+      vim.schedule(function()
+        local win_cursor = vim.api.nvim_get_current_win()
+        require('styler').clear(win_cursor)
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          if win ~= win_cursor then
+            inactivate(win)
+          end
+        end
+      end)
+    end
+  }
+)
+"""
+
+##################################################
+# jump ###########################################
+##################################################
+
+[[plugins]] # enable to jump using binary search
+repo = "kamecha/bimove"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_add = """
+  vim.keymap.set('n', "M", "<Plug>(bimove-enter)<Plug>(bimove)", {silent = true})
+  vim.keymap.set('n', "<Plug>(bimove)k", "<Plug>(bimove-high)<Plug>(bimove)", {silent = true})
+  vim.keymap.set('n', "<Plug>(bimove)j", "<Plug>(bimove-low)<Plug>(bimove)", {silent = true})
+  local function set_bimove_hl()
+    vim.api.nvim_set_hl(0, 'BimoveHigh',   { bg = "#a86464" })
+    vim.api.nvim_set_hl(0, 'BimoveCursor', { bg = "#4e7a8c" })
+    vim.api.nvim_set_hl(0, 'BimoveLow',    { bg = "#4e7a8c" })
+  end
+  set_bimove_hl()
+  vim.api.nvim_create_autocmd("ColorScheme", {
+    pattern = "*",
+    callback = set_bimove_hl,
+  })
+"""
+
+[[plugins]] # highlight letters on the line to jump
+repo = "unblevable/quick-scope"
+on_event = ["BufReadPre", "BufNewFile"]
+
+# [[plugins]]
+# repo = "serhez/bento.nvim"
+# depends = "nvim-web-devicons"
+# on_event = "VimEnter"
+# lua_source = """
+#   require("bento").setup({
+#     ui = {
+#       mode = "tabline",
+#     },
+#     actions = {
+#       open = {
+#         key = "<C-o>"
+#       },
+#       delete = {
+#         key = "<C-d>"
+#       },
+#     },
+#   })
+# """
+
+
+##################################################
+# infomation #####################################
+##################################################
+
+[[plugins]]
+repo = "rcarriga/nvim-notify"
+on_event = "VimEnter"
+lua_source = """
+  local notify = require("notify")
+  notify.setup({
+    render = "wrapped-default",
+    max_width = 50,
+  })
+  vim.notify = notify
+"""
+
+# [[plugins]]
+# repo = "matsui54/denops-popup-preview.vim"
+# on_event = "InsertEnter"
+# lua_source = """
+#   vim.fn["popup_preview#enable"]()
+# """
+# lua_add = """
+#   vim.keymap.set('i', '<C-d>', function()
+#     if vim.fn["popup_preview#is_enabled"]() then
+#         vim.fn["popup_preview#scroll"](4)
+#     else
+#       return "<C-d>"
+#     end
+#   end, {silent = true})
+#   vim.keymap.set('i', '<C-u>', function()
+#     if vim.fn["popup_preview#is_enabled"]() then
+#         vim.fn["popup_preview#scroll"](-4)
+#     else
+#       return "<C-u>"
+#     end
+#   end, {silent = true})
+# """
+
+
+##################################################
+# inc/decrement ##################################
+##################################################
+
+[[plugins]]
+repo = "monaqa/dps-dial.vim"
+depends = "denops.vim"
+on_map = "<Plug>(dps-dial"
+lua_source = '''
+  vim.g["dps_dial#augends"] = {
+    "decimal",
+    "hex",
+    "binary",
+    "date-slash",
+    "date-hyphen",
+    "case",
+    {
+      kind = "constant",
+      opts = {
+        elements = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" },
+        cycle = true,
+        word = true,
+      },
+    },
+    {
+      kind = "constant",
+      opts = {
+        elements = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" },
+        cycle = true,
+        word = true,
+      },
+    },
+    {
+      kind = "constant",
+      opts = {
+        elements = { "月", "火", "水", "木", "金", "土", "日" },
+        cycle = true,
+        word = false,
+      },
+    },
+    {
+      kind = "constant",
+      opts = {
+        elements = { "true", "false" },
+        cycle = true,
+        word = true,
+      },
+    },
+    {
+      kind = "constant",
+      opts = {
+        elements = { "True", "False" },
+        cycle = true,
+        word = true,
+      },
+    },
+  }
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "markdown",
+    callback = function()
+      vim.b.dps_dial_augends = vim.fn.extendnew(vim.g["dps_dial#augends"], {
+        {
+          kind = "constant",
+          opts = {
+            elements = { "[ ]", "[x]" },
+            cycle = true,
+            word = false,
+          },
+        }
+      })
+    end,
+  }
+  )
+'''
+lua_add = """
+  vim.keymap.set({'n', 'x'}, "<C-a>", "<Plug>(dps-dial-increment)", {remap = ture})
+  vim.keymap.set({'n', 'x'}, "<C-x>", "<Plug>(dps-dial-decrement)", {remap = true})
+  vim.keymap.set('x', "g<C-a>", "g<Plug>(dps-dial-increment)", {remap = true})
+  vim.keymap.set('x', "g<C-x>", "g<Plug>(dps-dial-decrement)", {remap = true})
+"""
+
+
+##################################################
+# formatting #####################################
+##################################################
+
+[[plugins]]
+repo = "nmac427/guess-indent.nvim"
+on_event = "BufReadPost"
+lua_source = """
+  require("guess-indent").setup({})
+"""
+
+[[plugins]]
+repo = "JoosepAlviste/nvim-ts-context-commentstring"
+depends = "nvim-treesitter"
+on_event = "BufReadPre"
+lua_source = """
+  require("ts_context_commentstring").setup({
+    enable_autocmd = false,
+  })
+"""
+
+[[plugins]]
+repo = "numToStr/Comment.nvim"
+on_event = "BufReadPre"
+lua_source = """
+  require('Comment').setup {
+    pre_hook = require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook(),
+  }
+"""
+
+
+##################################################
+# parentheses ####################################
+##################################################
+
+[[plugins]] # auto close parentheses
+repo = "cohama/lexima.vim"
+on_event = "InsertEnter"
+# lua_add = """
+#   vim.keymap.set('i', "<CR>",
+#     function()
+#       if vim.fn["pum#visible"]() == 1 then
+#         return vim.fn["pum#map#confirm"]()
+#       else
+#         return "<C-r>=lexima#expand('<LT>CR>', 'i')<CR>"
+#       end
+#     end,
+#     {silent = true, expr = true})
+# """
+lua_source = '''
+  vim.g.lexima_ctrlh_as_backspace = 1
+  local filetypes = {
+    "latex",
+    "typst",
+    "markdown",
+  }
+  vim.fn["lexima#add_rule"]({
+    char = '$',
+    input_after = '$',
+    filetype = filetypes,
+  })
+  vim.fn["lexima#add_rule"]({
+    char = '$',
+    at = "\\%#\\$",
+    leave = 1,
+    filetype = filetypes,
+  })
+  vim.fn["lexima#add_rule"]({
+    char = '<BS>',
+    at = "\\$\\%#\\$",
+    delete = 1,
+    filetype = filetypes,
+  })
+  vim.fn["lexima#add_rule"]({
+    char = '<CR>',
+    at = "\\$\\%#\\$",
+    input_after = '<CR>',
+    filetype = filetypes,
+  })
+  vim.fn["lexima#add_rule"]({
+    char = '<CR>',
+    at = "\\$\\%#$",
+    input_after = '<CR>',
+    except = '\\C\\v^(\\s*)\\S.*%#\\n%(%(\\s*|\\1\\s.+)\\n)*\\1\\$',
+    filetype = filetypes,
+  })
+  
+  -- to avoid from inserting double space at checkbox in markdown
+  vim.fn["lexima#add_rule"]({
+    char = '<Space>',
+    at = "\\v^\\s*\\-\\s+\\[%#].*$",
+    filetype = "markdown",
+  })
+'''
+
+[[plugins]] # auto close html tag
+repo = "windwp/nvim-ts-autotag"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = '''
+  require('nvim-ts-autotag').setup({})
+'''
+
+[[plugins]] # edit parentheses
+# repo = "tpope/vim-surround"
+repo = "kylechui/nvim-surround"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_add = """
+  -- To avoid the conflict with ddc-pum-canceling mapping
+  vim.g.nvim_surround_no_insert_mappings = true
+"""
+
+
+##################################################
+# search #########################################
+##################################################
+
+[[plugins]]
+repo = "lambdalisue/vim-kensaku"
+depends = "denops.vim"
+
+[[plugins]] # enable "Kensaku" command for Japanese
+repo = "lambdalisue/vim-kensaku-command"
+depends = "vim-kensaku"
+on_event = "CmdlineEnter"
+
+[[plugins]] # fuzzy search
+repo = "yuki-yano/fuzzy-motion.vim"
+depends = ["denops.vim", "vim-kensaku"]
+on_event = "VimEnter"
+lua_source = """
+  vim.g.fuzzy_motion_matchers = {"kensaku", "fzf"}
+"""
+lua_add = """
+  vim.keymap.set('n', 'S', "<Cmd>FuzzyMotion<Cr>", {silent = true})
+"""
+
+
+##################################################
+# git ############################################
+##################################################
+
+[[plugins]]
+repo = "lambdalisue/vim-gin"
+depends = "denops.vim"
+on_cmd = "Gin*"
+
+[[plugins]]
+repo = "lewis6991/gitsigns.nvim"
+on_event = "BufReadPost"
+lua_source = """
+  require('gitsigns').setup()
+"""
+
+
+##################################################
+# LSP/formatter ##################################
+##################################################
+
+[[plugins]]
+repo = "neovim/nvim-lspconfig"
+depends = "ddc-source-lsp"
+on_event = ["BufNewFile", "BufReadPre" ]
+hooks_file = "$VIM_CONFIG_PATH/rc/hooks/lspconfig.lua"
+
+[[plugins]]
+repo = "matsui54/denops-signature_help"
+depends = "denops.vim"
+on_event = "InsertEnter"
+lua_source = """
+  vim.fn["signature_help#enable"]()
+  vim.g.signature_help_config = {
+    -- contentsStyle = "remainingLabels",
+    -- viewStyle = "virtual",
+    contentsStyle = "labels",
+    viewStyle = "floating",
+  }
+"""
+
+[[plugins]]
+repo = "j-hui/fidget.nvim"
+on_event = "LspAttach"
+lua_source = """
+  require("fidget").setup({
+    notification = {
+      window = {
+        winblend = 0,
+      },
+    },
+  })
+"""
+
+# [[plugins]]
+# repo = "kuuote/lspoints"
+# depends = "denops.vim"
+# on_event = ["BufReadPre", "BufNewFile"]
+# hooks_file = "$VIM_CONFIG_PATH/rc/hooks/lspoints.lua"
+
+# [[plugins]]
+# repo = "Warashi/lspoints-hover"
+# depends = ["denops.vim", "lspoints"]
+# on_event = ["BufReadPre", "BufNewFile"]
+# lua_add = """
+#   vim.fn["lspoints#load_extensions"]({"hover"})
+#   vim.api.nvim_create_autocmd("User", {
+#     pattern = "LspointsAttach:*",
+#     callback = function()
+#       vim.keymap.set('n', 'K',
+#         function()
+#           vim.fn["denops#request"]("lspoints", "executeCommand",
+#             {"hover", "execute",
+#               {title = "lspoints-hover", border = "single", offset_y = 1}
+#             })
+#         end,
+#         {buffer = true}
+#       )
+#     end,
+#   })
+# """
+
+# [[plugins]]
+# repo = "mityu/lspoints-extension-hover"
+# depends = ["denops.vim", "lspoints"]
+# on_event = ["BufReadPre", "BufNewFile"]
+# lua_add = """
+#   vim.fn["lspoints#load_extensions"]({"hover"})
+#   vim.api.nvim_create_autocmd("User", {
+#     pattern = "LspointsAttach:*",
+#     callback = function()
+#       vim.keymap.set('n', 'K',
+#         function()
+#           vim.fn["denops#request"]("lspoints", "executeCommand",
+#             {"hover", "float"})
+#         end,
+#         {buffer = true}
+#       )
+#       vim.keymap.set('n', 'P',
+#         function()
+#           vim.fn["denops#request"]("lspoints", "executeCommand",
+#             {"hover", "preview"})
+#         end,
+#         {buffer = true}
+#       )
+#     end,
+#   })
+# """
+
+# [[plugins]]
+# repo = "mityu/lspoints-extension-signatureHelp"
+# depends = ["denops.vim", "lspoints"]
+# on_event = ["BufReadPre", "BufNewFile"]
+# lua_add = """
+#   vim.fn["lspoints#load_extensions"]({"signature_help"})
+#   vim.api.nvim_create_autocmd("User", {
+#     pattern = "LspointsAttach:*",
+#     callback = function()
+#       vim.fn["denops#request"]("lspoints", "executeCommand", {
+#         "signatureHelp",
+#         "enableAutoFloatSignatureForBuffer"
+#         })
+#     end,
+#   })
+# """
+
+# [[plugins]] # main branch is not released yet
+# repo = "mityu/lspoints-extension-diagnostics"
+# depends = ["denops.vim", "lspoints"]
+# on_event = ["BufReadPre", "BufNewFile"]
+# lua_add = """
+#   vim.fn["lspoints#load_extensions"]({"diagnostics"})
+#   vim.api.nvim_create_autocmd("User", {
+#     pattern = "LspointsAttach:*",
+#     callback = function()
+#       vim.keymap.set('n', 'gd',
+#         function()
+#           vim.fn["denops#request"]("lspoints", "executeCommand",
+#             {"diagnostics", "show"})
+#         end,
+#         {buffer = true}
+#       )
+#     end,
+#   })
+# """
+
+[[plugins]] # enables partial editing
+repo = "thinca/vim-partedit"
+on_cmd = "Partedit"
+
+
+##################################################
+# AI #############################################
+##################################################
+
+# [[plugins]]
+# repo = "Exafunction/codeium.vim"
+# if = false
+# on_event = "BufEnter"
+
+# [[plugins]]
+# repo = "zbirenbaum/copilot.lua"
+# on_event = "InsertEnter"
+# lua_source = """
+#   require("copilot").setup({
+#     panel = {
+#       enabled = false,
+#     },
+#     suggestion = {
+#       enabled = false,
+#       auto_trigger = true,
+#       hide_during_completion = true,
+#     },
+#   })
+# """
+
+[[plugins]]
+repo = "CopilotC-Nvim/CopilotChat.nvim"
+depents = "nvim-lua/plenary.nvim"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = """
+  local default_prompts = require('CopilotChat.config.prompts')
+  local in_japanese = 'なお、説明は日本語にすること。'
+  require('CopilotChat').setup({
+    prompts = vim.tbl_deep_extend('force', default_prompts, {
+      Explain = { prompt = default_prompts.Explain.prompt .. in_japanese },
+      Review = { prompt = default_prompts.Review.prompt .. in_japanese },
+      Fix = { prompt = default_prompts.Fix.prompt .. in_japanese },
+      Optimize = { prompt = default_prompts.Optimize.prompt .. in_japanese },
+      TranslateJE = {
+        prompt = 'Translate the selected text from English to Japanese if it is in English, or from Japanese to English if it is in Japanese. Please do not include unnecessary line breaks, line numbers, comments, etc. in the result.',
+        system_prompt = 'You are an excellent Japanese-English translator. You can translate the original text correctly without losing its meaning. You also have deep knowledge of system engineering and are good at translating technical documents.',
+        description = 'Translate text from Japanese to English or vice versa',
+      },
+    }),
+  })
+"""
+
+[[plugins]]
+repo = "lambdalisue/nvim-aibo"
+on_cmd = "Aibo*"
+lua_source = """
+  require("aibo").setup({
+    console = {
+      on_attach = function(bufnr, info)
+        vim.bo[bufnr].buflisted = true
+      end,
+    }
+  })
+  vim.api.nvim_create_user_command("AiboVsplit", function(opts)
+    vim.cmd("Aibo -opener=vsplit " .. opts.args)
+  end, { nargs = "+" })
+"""
+
+##################################################
+# language specific plugins ######################
+##################################################
+
+[[plugins]] # for typst to preview
+repo = "chomosuke/typst-preview.nvim"
+on_ft = "typst"
+lua_source = """
+  require("typst-preview").setup({})
+"""
+
+[[plugins]] # for marpit in markdown
+repo = "nwiizo/marp.nvim"
+on_ft = ["markdown"]
+lua_source = """
+  require("marp").setup({
+    server_mode = true,
+    debug = true,
+  })
+"""
+
+[[plugins]] # for markdown to render
+repo = "MeanderingProgrammer/render-markdown.nvim"
+depends = ["nvim-treesitter", "nvim-web-devicons"]
+on_ft = ["markdown", "markdown.mdx"]
+lua_source = """
+  require("render-markdown").setup({
+    file_types = {"markdown"},
+    overrides = {
+      buftype = {
+        nofile = { enabled = false },
+      },
+    },
+  })
+"""
+
+[[plugins]] # for markdown to make table easier
+repo = "Kicamon/markdown-table-mode.nvim"
+on_ft = "markdown"
+lua_source = """
+  require("markdown-table-mode").setup({})
+"""
+
+# [[plugins]] # for obsidian utility
+# repo = "epwalsh/obsidian.nvim"
+# depends = "plenary.nvim"
+# on_ft = "markdown"
+# lua_source = """
+#   require("obsidian").setup({
+#     ui = { enable = false },
+#     workspaces = {
+#   {
+#         name = "Documents",
+#         path = "/Users/yosh/Library/Mobile Documents/iCloud~md~obsidian/Documents",
+#       },
+#       {
+#         name = "work_vault",
+#         path = "/Users/yosh/Nextcloud/obsidian/work_vault",
+#       },
+#     },
+#   })
+# """
+
+[[plugins]] # for c-like to extend clangd
+repo = "p00f/clangd_extensions.nvim"
+on_ft = ["c", "cpp"]
+
+##################################################
+# SKK ############################################
+##################################################
+
+[[plugins]]
+repo = "NI57721/skkeleton-henkan-highlight"
+on_event = "InsertEnter"
+lua_add = """
+  -- Highlight words with underline when using a normal terminal,
+  -- and with reverse when using a colour one.
+  vim.api.nvim_set_hl(0, "SkkeletonHenkan", { reverse = true })
+  vim.api.nvim_set_hl(0, "SkkeletonHenkanSelect", { reverse = true })
+"""
+
+[[plugins]]
+repo = "delphinus/skkeleton_indicator.nvim"
+on_event = "InsertEnter"
+lua_source = """
+require("skkeleton_indicator").setup({})
+"""
+
+##################################################
+# multiple hooks #################################
+##################################################
+
+[[multiple_hooks]] # start up an IDE like environment
+plugins = ["nvim-aibo", "ddt-ui-shell"]
+hook_source = """
+lua << EOF
+  -- Layout: [ ddt-shell | current_buffer ]
+  --         [ Aibo      |                ]
+  vim.api.nvim_create_user_command("AiboIDE", function(opts)
+
+    -- Save the current buffer before ddt-shell takes over
+    local orig_buf = vim.api.nvim_get_current_buf()
+
+    -- Build the entire layout after ddt-shell opens,
+    -- because ddt#start (async) may close windows created beforehand
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "ddt-shell",
+      once = true,
+      callback = function()
+        local ddt_win = vim.api.nvim_get_current_win()
+
+        -- Create right column for the original buffer
+        vim.cmd("rightbelow vsplit")
+        if vim.api.nvim_buf_is_valid(orig_buf) then
+          vim.api.nvim_win_set_buf(0, orig_buf)
+        else
+          vim.cmd("enew")
+        end
+
+        -- Back to ddt-shell; split below for Aibo
+        vim.api.nvim_set_current_win(ddt_win)
+        vim.cmd("belowright split")
+        vim.cmd("Aibo " .. opts.args)
+
+        -- Leave focus on ddt-shell
+        vim.api.nvim_set_current_win(ddt_win)
+      end,
+    })
+
+    vim.fn["ddt#start"]({
+      name = "aibo-" .. tostring(vim.fn.win_getid()),
+      ui = "shell",
+    })
+  end, { nargs = "+" })
+EOF
+"""

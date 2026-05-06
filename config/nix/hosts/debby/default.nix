@@ -33,6 +33,7 @@ nix-darwin.lib.darwinSystem {
         imports = [
           ../../home-manager/base.nix
           ../../home-manager/programs/nushell.nix
+          ../../home-manager/programs/nvim.nix
         ];
 
         home.packages = (import ./packages.nix { inherit pkgs; }) ++ [

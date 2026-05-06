@@ -1,0 +1,256 @@
+##################################################
+# color scheme ###################################
+##################################################
+
+[[plugins]]
+repo = "catppuccin/nvim"
+name = "catppuccin"
+lua_add = """
+  vim.cmd("colorscheme catppuccin-macchiato")
+"""
+
+##################################################
+# Denops #########################################
+##################################################
+
+[[plugins]]
+repo = "vim-denops/denops.vim"
+lua_source = """
+  vim.g["denops#server#deno_args"] = {
+    "-q",
+    "--no-check",  -- skip type checking for faster startup
+    "-A",
+    "--unstable-kv", -- for skkeleton
+    "--unstable-ffi", -- for ddt-ui-shell
+  }
+  -- vim.g["denops#debug"] = 1
+"""
+
+##################################################
+# Lua ############################################
+##################################################
+
+[[plugins]]
+repo = "nvim-lua/plenary.nvim"
+
+##################################################
+# others #########################################
+##################################################
+
+[[plugins]] # nerd icons
+repo = "nvim-tree/nvim-web-devicons"
+
+[[plugins]] # statusline on the bottom
+repo = "nvim-lualine/lualine.nvim"
+depends = ["catppuccin", "nvim-web-devicons"]
+lua_source = """
+  local lsp_names = function()
+    local clients = vim
+      .iter(vim.lsp.get_clients { bufnr = 0 })
+      :map(function(client)
+        if client.name == 'null-ls' then
+          return ('null-ls(%s)'):format(table.concat(
+            vim
+              .iter(require('null-ls.sources').get_available(vim.bo.filetype))
+              :map(function(source)
+                return source.name
+              end)
+              :totable(),
+            ', '
+          ))
+        else
+          return client.name
+        end
+      end)
+      :totable()
+    return ' ' .. table.concat(clients, ', ')
+  end
+
+  local skkeleton_status = function()
+    local mode_map = { hira = "あ", kata = "ア", hankata = "ｶﾅ", zenkaku = "Ａ", abbrev = "Aa" }
+    if not vim.fn["skkeleton#is_enabled"]() then
+      return "Aa"
+    end
+    local mode = vim.g["skkeleton#mode"] or ""
+    return mode_map[mode] or mode
+  end
+
+  require("lualine").setup({
+    options = {
+      theme = "auto",
+    },
+    sections = {
+      lualine_x = { lsp_names, skkeleton_status, "encoding", "fileformat", "filetype" },
+    },
+  })
+"""
+
+
+[[plugins]]
+repo = 'yoshphys/skkeleton'
+# on_map = { ict = '<Plug>(skkeleton-' }
+denops_wait = false
+lua_add = """
+  vim.keymap.set({'i', 'c', 't'}, "<C-j>", function()
+    if not vim.fn["skkeleton#is_enabled"]() then
+      vim.fn["skkeleton#handle"]("enable", vim.empty_dict())
+    else
+      -- Reset to hira by disabling and re-enabling
+      vim.fn["skkeleton#handle"]("disable", vim.empty_dict())
+      vim.fn["skkeleton#handle"]("enable", vim.empty_dict())
+    end
+  end)
+  vim.keymap.set({ "i", "c", "t" }, "<C-/>", function()
+    if not vim.fn["skkeleton#is_enabled"]() then
+      vim.fn["skkeleton#handle"]("abbrevFromDirect", vim.empty_dict())
+    end
+  end, { silent = true, desc = "Enable skkeleton in abbrev mode" })
+  vim.keymap.set('n', "i<C-j>", "<Plug>(skkeleton-toggle)")
+  -- Load skkeleton as soon as denops is ready
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "DenopsReady",
+    once = true,
+    callback = function() vim.fn["dpp#source"]("skkeleton") end,
+  })
+
+  local pathMacSKKData = os.getenv("HOME") .. "/Library/Containers/net.mtgto.inputmethod.macSKK/Data/Documents"
+
+  vim.api.nvim_create_autocmd("User", {
+    group = "MyAutoCmd",
+    pattern = "skkeleton-initialize-pre",
+    callback = function()
+      vim.fn["skkeleton#register_kanatable"]("azik", {
+        [" "] =  "henkanFirst",
+        [";"] =  "henkanPoint",
+        ["\\\\"] = "katakana",
+        ["|"] = "hankatakana",
+        ["<s-l>"] = "zenkaku",
+        ["/"] = "abbrev",
+        ["l"] = "disable",
+        [","] = {"、", ""},
+      }, true)
+      vim.fn["skkeleton#register_kanatable_file"]("azik", pathMacSKKData .. "/Settings/kana-rule.conf")
+      vim.fn["skkeleton#config"]({
+        databasePath = os.getenv("HOME") .. "/.cache/skkeleton/dictionaries.db",
+        -- debug = true,
+        eggLikeNewline = true,
+        kanaTable = "azik",
+        globalDictionaries = {
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.L.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.julia-latex.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.geo.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.station.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.jinmei.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.fullname.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.propernoun.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.emoji.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.edict.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.pinyin.json",
+          pathMacSKKData .. "/Dictionaries/SKK-JISYO.china_taiwan.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.edict2.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.M.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.hukugougo.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.itaiji.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.law.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.mazegaki.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.ML.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.okinawa.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.S.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.assoc.json",
+          -- pathMacSKKData .. "/Dictionaries/SKK-JISYO.JIS2.json",
+        },
+        immediatelyCancel = false,
+        keepState = true,
+        keepMode = false,
+        lowercaseMap = { ["+"] = ";", [":"] = ";", }, -- for AZIK-US
+        markerHenkan = '',
+        markerHenkanSelect = '',
+        registerConvertResult = true,
+        sources = {"deno_kv", "skk_dictionary"},
+        userDictionary = pathMacSKKData .. "/Dictionaries/skk-jisyo.utf8",
+        completionRankFile = os.getenv("HOME") .. "/.cache/skkeleton/rank.json",
+      })
+    end,
+  })
+"""
+lua_source = """
+  -- -- Save once at startup before any skkeleton modifications
+  -- local default_hl_cursor = vim.api.nvim_get_hl(0, { name = "Cursor" })
+
+  -- local function skkeleton_changed()
+  --   -- Change the cursor color
+  --   local mode = vim.g["skkeleton#mode"]
+  --   if mode == "hira" then
+  --     vim.api.nvim_set_hl(0, "Cursor", { bg = "#80403f", fg = "fg" })
+  --   elseif mode == "kata" then
+  --     vim.api.nvim_set_hl(0, "Cursor", { bg = "#f04060", fg = "fg" })
+  --   elseif mode == "hankata" then
+  --     vim.api.nvim_set_hl(0, "Cursor", { bg = "#ff8800", fg = "fg" })
+  --   elseif mode == "zenkaku" then
+  --     vim.api.nvim_set_hl(0, "Cursor", { bg = "#60a060", fg = "fg" })
+  --   elseif mode == "abbrev" then
+  --     vim.api.nvim_set_hl(0, "Cursor", { bg = "#60a060", fg = "fg" })
+  --   else
+  --     vim.api.nvim_set_hl(0, "Cursor", default_hl_cursor)
+  --   end
+  -- end
+
+  -- vim.api.nvim_create_autocmd("User", {
+  --   group = "MyAutoCmd",
+  --   pattern = "skkeleton-mode-changed",
+  --   callback = function()
+  --     skkeleton_changed()
+  --   end,
+  -- })
+
+  -- -- vim.api.nvim_create_autocmd("User", {
+  -- --   group = "MyAutoCmd",
+  -- --   pattern = "skkeleton-handled",
+  -- --   callback = function()
+  -- --     local mode = vim.g["skkeleton#mode"]
+  -- --     if mode == '' then
+  -- --       skkeleton_changed()
+  -- --       return
+  -- --     end
+  -- --     local phase = (vim.g["skkeleton#state"] or {}).phase or ""
+  -- --     if phase == "henkan" or phase == "input:okurinasi" or phase == "input:okuriari" then
+  -- --       vim.api.nvim_set_hl(0, "Cursor", { bg = "#a0f0a0", fg = "fg" })
+  -- --     else
+  -- --       skkeleton_changed()
+  -- --     end
+  -- --   end,
+  -- -- })
+
+  -- local default_guicursor = vim.o.guicursor
+
+  -- vim.api.nvim_create_autocmd("User", {
+  --   group = "MyAutoCmd",
+  --   pattern = "skkeleton-enable-pre",
+  --   callback = function()
+  --     -- block cursor is used when skkeleton is active
+  --     vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:block-Cursor,r-cr-o:hor20-Cursor"
+  --   end,
+  -- })
+
+  -- vim.api.nvim_create_autocmd("User", {
+  --   group = "MyAutoCmd",
+  --   pattern = "skkeleton-disable-pre",
+  --   callback = function()
+  --     -- Restore cursor shape and color
+  --     vim.o.guicursor = default_guicursor
+  --     vim.api.nvim_set_hl(0, "Cursor", default_hl_cursor)
+  --   end,
+  -- })
+
+  -- -- Safety net: restore cursor color if skkeleton is not active when leaving insert mode
+  -- vim.api.nvim_create_autocmd("InsertLeave", {
+  --   group = "MyAutoCmd",
+  --   callback = function()
+  --     if not vim.fn["skkeleton#is_enabled"]() then
+  --       vim.api.nvim_set_hl(0, "Cursor", default_hl_cursor)
+  --     end
+  --   end,
+  -- })
+
+  vim.fn["skkeleton#initialize"]()
+"""

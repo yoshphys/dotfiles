@@ -1,0 +1,368 @@
+[[plugins]]
+repo = "Shougo/ddc.vim"
+depends = "denops.vim"
+on_event = ["InsertEnter", "CmdlineEnter"]
+hooks_file = "$VIM_CONFIG_PATH/rc/hooks/ddc.lua"
+
+
+##################################################
+# UI #############################################
+##################################################
+
+[[plugins]]
+repo = "Shougo/ddc-ui-native"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "Shougo/ddc-ui-none"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-pum'
+depends = 'pum.vim'
+on_source = 'ddc.vim'
+
+
+##################################################
+# sources ########################################
+##################################################
+
+[[plugins]]
+repo = "Shougo/ddc-source-around"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = 'matsui54/ddc-source-buffer'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-source-cmdline'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-source-cmdline_history'
+on_source = 'ddc.vim'
+
+# [[plugins]]
+# repo = 'Shougo/ddc-source-copilot'
+# depends = "copilot.lua"
+# on_source = 'ddc.vim'
+
+[[plugins]]
+repo = "LumaKernel/ddc-source-file"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = 'Shougo/ddc-source-input'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-source-line'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = "Shougo/ddc-source-lsp"
+depends = "nvim-lspconfig"
+# depends = "lspoints"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "Shougo/ddc-source-mocword"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "Milly/ddc-source-register"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = 'Shougo/ddc-source-shell_history'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-source-shell_native'
+on_source = 'ddc.vim'
+
+
+##################################################
+# filters ########################################
+##################################################
+
+[[plugins]]
+repo = "Shougo/ddc-filter-converter_remove_overlap"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "Shougo/ddc-filter-converter_truncate_abbr"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "Shougo/ddc-filter-matcher_head"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = 'Shougo/ddc-filter-matcher_prefix'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-filter-matcher_length'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = "Shougo/ddc-filter-sorter_rank"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "Shougo/ddc-filter-sorter_head"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "tani/ddc-fuzzy"
+on_source = "ddc.vim"
+
+[[plugins]]
+repo = "matsui54/ddc-postfilter_score"
+on_source = "ddc.vim"
+
+
+##################################################
+# snippet ########################################
+##################################################
+
+[[plugins]]
+repo = 'uga-rosa/denippet.vim'
+depends = "denops.vim"
+on_source = "ddc.vim"
+lua_add = """
+  vim.keymap.set({'i', 's'}, "<Tab>", function()
+    if vim.fn["denippet#jumpable"](1) then
+      return vim.fn["denippet#jump"](1)
+    end
+    return "<Tab>"
+  end, { expr = true })
+
+  vim.keymap.set({'i', 's'}, "<S-Tab>", function()
+    if vim.fn["denippet#jumpable"](-1) then
+      return vim.fn["denippet#jump"](-1)
+    end
+    return "<S-Tab>"
+  end, { expr = true })
+"""
+
+[[plugins]]
+repo = 'ryoppippi/denippet-autoimport-vscode'
+depends = ["denops.vim", "friendly-snippets"]
+on_event = "InsertEnter"
+
+[[plugins]]
+repo = 'rafamadriz/friendly-snippets'
+on_event = "InsertEnter"
+
+[[multiple_hooks]]
+plugins = ["ddc.vim", "denippet.vim", "pum.vim"]
+hook_add = """
+lua << EOF
+  vim.keymap.set('i', "<C-n>", function()
+    if vim.fn["denippet#choosable"]() then
+      return vim.fn["denippet#choice"](1)
+    elseif vim.fn["pum#visible"]() then
+      return vim.fn["pum#map#select_relative"](1)
+    else
+      vim.fn["ddc#map#manual_complete"]()
+    end
+  end, { expr = true })
+
+  vim.keymap.set('i', "<C-p>", function()
+    if vim.fn["denippet#choosable"]() then
+      return vim.fn["denippet#choice"](-1)
+    elseif vim.fn["pum#visible"]() then
+      return vim.fn["pum#map#select_relative"](-1)
+    else
+      vim.fn["ddc#map#manual_complete"]()
+    end
+  end, { expr = true })
+EOF
+"""
+hook_source = """
+lua << EOF
+  local Popup = {}
+                                                                         
+  function Popup.new()
+    return setmetatable({
+      nsid = vim.api.nvim_create_namespace("denippet_choice_popup"),
+    }, { __index = Popup })
+  end
+                                                                         
+  function Popup:open(node)
+    self.buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_text(self.buf, 0, 0, 0, 0, node.items)
+    local w, h = vim.lsp.util._make_floating_popup_size(node.items, {})
+    self.win = vim.api.nvim_open_win(self.buf, false, {
+      relative = "win",
+      width = w,
+      height = h,
+      bufpos = { node.range.start.line, node.range.start.character },
+      style = "minimal",
+      border = "single",
+    })
+    self.extmark = vim.api.nvim_buf_set_extmark(
+      self.buf,
+      self.nsid,
+      node.index,
+      0,
+      { hl_group = "incsearch", end_line = node.index + 1 }
+    )
+  end
+                                                                         
+  function Popup:update()
+    vim.api.nvim_buf_del_extmark(self.buf, self.nsid, self.extmark)
+    local node = vim.b.denippet_current_node
+    self.extmark = vim.api.nvim_buf_set_extmark(
+      self.buf,
+      self.nsid,
+      node.index,
+      0,
+      { hl_group = "incsearch", end_line = node.index + 1 }
+    )
+  end
+                                                                         
+  function Popup:close()
+    if self.win then
+      vim.api.nvim_win_close(self.win, true)
+      self.buf = nil
+      self.win = nil
+      self.extmark = nil
+    end
+  end
+                                                                         
+  local popup = Popup.new()
+                                                                         
+  local group = vim.api.nvim_create_augroup("denippet_choice_popup", {})
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "DenippetNodeEnter",
+    callback = function()
+      local node = vim.b.denippet_current_node
+      if node and node.type == "choice" then
+        vim.fn["ddc#custom#patch_global"]("ui", "none")
+        popup:open(node)
+      end
+    end,
+  })
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "DenippetChoiceSelected",
+    callback = function()
+      popup:update()
+    end,
+  })
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "DenippetNodeLeave",
+    callback = function()
+      popup:close()
+      vim.fn["ddc#custom#patch_global"]("ui", "pum")
+    end,
+  })
+EOF
+"""
+
+##################################################
+# others #########################################
+##################################################
+
+# [[plugins]]
+# repo = "uga-rosa/ddc-previewer-floating"
+# on_source = "ddc.vim"
+# lua_source = """
+#   local previewer = require("ddc_previewer_floating")
+#   previewer.setup({
+#     max_width = 50,
+#     window_options = {
+#       wrap = true,
+#     },
+#   })
+#   previewer.enable()
+# """
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+lua_add = """
+  vim.keymap.set({'i', 'c'}, "<C-d>", function()
+    if vim.fn["pum#preview_visible"]() then
+      vim.fn["pum#map#scroll_preview"](4)
+    end
+  end)
+  vim.keymap.set({'i', 'c'}, "<C-u>", function()
+    if vim.fn["pum#preview_visible"]() then
+      vim.fn["pum#map#scroll_preview"](-4)
+    end
+  end)
+"""
+lua_source = """
+  vim.fn["pum#set_option"]({
+    auto_confirm_time = 0,
+    auto_select = false,
+    -- border = 'none',
+    border = 'single',
+    commit_characters = {'.'},
+    highlight_scrollbar = 'None',
+    insert_preview = true,
+    -- max_width = 80,
+    max_width = 0,
+    offset_cmdcol = 0,
+    offset_cmdrow = 1, -- added
+    padding = false,
+    -- preview = false,
+    preview = true,
+    preview_border = "single", -- added
+    -- preview_width = 80,
+    reversed = false,
+    scrollbar_char = '║',
+    use_setline = false,
+  })
+  -- vim.fn["pum#set_local_option"]('c', {
+  --   max_width = 0,
+  -- })
+
+  -- NOTE: For horizontal_menu
+  vim.fn["pum#set_option"]({
+    follow_cursor = false,
+    horizontal_menu = false,
+    max_horizontal_items = 2,
+    max_height = 3,
+  })
+"""
+
+[[multiple_hooks]]
+plugins = ["ddc.vim", "skkeleton"]
+hook_source = """
+lua << EOF
+  local prev_buffer_config = nil
+  vim.api.nvim_create_autocmd("User", {
+    group = "MyAutoCmd",
+    pattern = "skkeleton-enable-pre",
+    callback = function()
+      -- Overwrite soureces
+      prev_buffer_config = vim.fn["ddc#custom#get_buffer"]()
+      vim.fn["ddc#custom#patch_buffer"]({
+        sources = {"around", "skkeleton", "line"},
+        sourceOptions = {
+          _ = {
+            keywordPattern = "[ァ-ヮア-ンー]+",
+          },
+        },
+      })
+    end
+  })
+  vim.api.nvim_create_autocmd("User", {
+    group = "MyAutoCmd",
+    pattern = "skkeleton-disable-pre",
+    callback = function()
+      if prev_buffer_config then
+        -- Restore sources
+        vim.fn["ddc#custom#set_buffer"](prev_buffer_config)
+      end
+    end,
+  })
+EOF
+"""

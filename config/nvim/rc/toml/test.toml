@@ -1,0 +1,60 @@
+##################################################
+## essential plugins #############################
+##################################################
+
+[[plugins]]
+repo = "vim-denops/denops.vim"
+lua_add = """
+  vim.g["denops#server#deno_args"] = {
+    "-q",
+    "-A",
+    "--unstable-kv", -- for skkeleton
+    "--unstable-ffi", -- for ddt-ui-shell
+  }
+"""
+
+[[plugins]]
+repo = "Shougo/dpp.vim"
+
+[[plugins]]
+repo = "Shougo/dpp-protocol-git"
+
+[[plugins]]
+repo = "Shougo/dpp-ext-lazy"
+
+[[plugins]]
+repo = "Shougo/dpp-ext-toml"
+
+[[plugins]]
+repo = "Shougo/dpp-ext-installer"
+
+##################################################
+## Setup test environment below ##################
+##################################################
+[[plugins]]
+repo = "akinsho/bufferline.nvim"
+lua_source = """
+  require("bufferline").setup({
+    options = {
+      indicator = {
+        style = "underline",
+      },
+      numbers = function(opts)
+        return string.format("%s%s", opts.ordinal, opts.raise(opts.id))
+      end,
+    }
+  })
+"""
+lua_add = """
+  vim.keymap.set('n', "[Space]1", "<Cmd>BufferLineGoToBuffer 1<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]2", "<Cmd>BufferLineGoToBuffer 2<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]3", "<Cmd>BufferLineGoToBuffer 3<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]4", "<Cmd>BufferLineGoToBuffer 4<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]5", "<Cmd>BufferLineGoToBuffer 5<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]6", "<Cmd>BufferLineGoToBuffer 6<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]7", "<Cmd>BufferLineGoToBuffer 7<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]8", "<Cmd>BufferLineGoToBuffer 8<CR>", {silent = true})
+  vim.keymap.set('n', "[Space]9", "<Cmd>BufferLineGoToBuffer 9<CR>", {silent = true})
+  -- vim.keymap.set('n', "gB", "<Cmd>BufferLinePick<CR>", {silent = true})
+  vim.keymap.set('n', "gD", "<Cmd>BufferLinePickClose<CR>", {silent = true})
+"""
