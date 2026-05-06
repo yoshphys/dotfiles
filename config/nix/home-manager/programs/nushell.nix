@@ -7,7 +7,6 @@ let
     "direnv"
     "keychain"
     "lazygit"
-    "starship" # prompt
     "television" # fuzzy finder
     "zoxide" # directory jump
   ];
@@ -20,6 +19,13 @@ in {
       enable = true;
       configFile.source = ../../../nushell/config.nu;
       envFile.source = ../../../nushell/env.nu;
+    };
+    starship = {
+      enable = true;
+      enableNushellIntegration = true;
+      settings = {
+        jobs.disabled = true;
+      };
     };
   };
 }
