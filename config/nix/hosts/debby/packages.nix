@@ -57,7 +57,6 @@ with pkgs; [
 
   # science/technology #############################
   root
-  gnuplot
 
   # audio/video ####################################
   # ffmpeg
