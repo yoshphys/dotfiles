@@ -669,6 +669,21 @@ lua_source = """
   vim.api.nvim_create_user_command("AiboVsplit", function(opts)
     vim.cmd("Aibo -opener=vsplit " .. opts.args)
   end, { nargs = "+" })
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "aibo-prompt*",
+    callback = function()
+      local opts = { buffer = true }
+      for _, dir in ipairs({ "h", "j", "k", "l", "w", "W" }) do
+        vim.keymap.set("n", "<C-w>" .. dir, function()
+          vim.cmd("q")
+          vim.schedule(function()
+            vim.cmd("wincmd " .. dir)
+          end)
+        end, opts)
+      end
+    end,
+  })
+
 """
 
 ##################################################
