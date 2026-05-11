@@ -14,6 +14,10 @@ def minvim [] {
   nvim -u ($env.HOME | path join ".config/minvim/init.lua")
 }
 
+def testnvim [] {
+  with-env { XDG_CONFIG_HOME: ($env.HOME + "/dotfiles/config") } { nvim }
+}
+
 def --env sd [] {
   let dir = (ghq list --full-path | peco | str trim)
   if $dir != "" { cd $dir }
