@@ -18,6 +18,7 @@ lua_source = """
     'lua',
     'rust',
     'nix',
+    'nu',
     'python',
     'toml',
     'typescript',
@@ -727,6 +728,7 @@ repo = "Kicamon/markdown-table-mode.nvim"
 on_ft = "markdown"
 lua_source = """
   require("markdown-table-mode").setup({})
+  -- The toggle command is `:Mtm`
 """
 
 # [[plugins]] # for obsidian utility

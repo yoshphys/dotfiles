@@ -355,6 +355,7 @@ export class Config extends BaseConfig {
         "c",
         "cpp",
         "typescript",
+        "nu",
       ]
     ) {
       args.contextBuilder.patchFiletype(filetype, {

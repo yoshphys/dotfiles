@@ -67,7 +67,6 @@ local lsp_servers = {
   "tinymist",     -- for typst
   "clangd",       -- for c/c++
   "lua_ls",       -- for lua
-  -- "julials",      -- for julia
   "jetls",        -- for julia
   "basedpyright", -- for python
 }
@@ -128,19 +127,7 @@ vim.lsp.config("clangd", {
   }
 })
 
--- julials ---------------------------------------
--- vim.lsp.config("julials", {
---   on_new_config = function(new_config, _)
---     local julia = vim.fn.expand("~/.julia/environments/nvim-lspconfig/bin/julia")
---     if require("lspconfig").util.path.is_file(julia) then
---       new_config.cmd[1] = julia
---       new_config.capabilities = capabilities
---     end
---   end
--- })
--- vim.lsp.config('julials', {
---   filetypes = { "julia", 'aibo-prompt.aibo-tool-julia' },
--- })
+-- jetls -----------------------------------------
 vim.lsp.config("jetls", {
     cmd = {
         "jetls",
