@@ -146,6 +146,8 @@ lua_add = """
     end
     return "<S-Tab>"
   end, { expr = true })
+
+  vim.fn["denippet#load"](vim.fn.stdpath("config") .. "/snippets/global.ts", "*")
 """
 
 [[plugins]]
