@@ -684,7 +684,14 @@ lua_source = """
       end
     end,
   })
-
+"""
+lua_add = """
+  vim.filetype.add({
+    extension = {
+      ["aibo-tool-claude"] = "markdown",
+      ["aibo-tool-julia"] = "julia",
+    },
+  })
 """
 
 ##################################################
