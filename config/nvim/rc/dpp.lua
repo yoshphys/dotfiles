@@ -1,4 +1,4 @@
-local cache_path = os.getenv("HOME") .. "/.cache/dpp"
+local cache_path = vim.fn.stdpath('cache') .. "/dpp"
 vim.env.DPP_CACHE_PATH = cache_path
 
 local function dpp_init_plugin(plugin)
@@ -13,7 +13,7 @@ dpp_init_plugin("Shougo/dpp.vim")
 local dpp = require("dpp")
 
 
-local dpp_config = "$VIM_CONFIG_PATH/rc/ts/dpp.ts"
+local dpp_config = vim.env.VIM_CONFIG_PATH .. "/rc/ts/dpp.ts"
 
 local load_state_failed = dpp.load_state(cache_path)
 

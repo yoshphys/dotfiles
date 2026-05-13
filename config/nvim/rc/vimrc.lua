@@ -81,7 +81,7 @@ vim.opt.signcolumn = "yes:1"
 vim.diagnostic.config { severity_sort = true }
 
 -- dpp.vim ---------------------------------------
-vim.cmd("source $VIM_CONFIG_PATH/rc/dpp.lua")
+vim.cmd.source(vim.env.VIM_CONFIG_PATH .. "/rc/dpp.lua")
 
 -- builtin plugins -------------------------------
 vim.cmd.packadd('nvim.undotree')

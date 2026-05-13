@@ -39,7 +39,7 @@ export class Config extends BaseConfig {
       extParams: {
         installer: {
           checkDiff: true,
-          logFilePath: "~/.cache/dpp/installer-log.txt",
+          logFilePath: "$DPP_CACHE_PATH/installer-log.txt",
           githubAPIToken: Deno.env.get("GITHUB_API_TOKEN"),
           maxProcesses: 10,
         },
