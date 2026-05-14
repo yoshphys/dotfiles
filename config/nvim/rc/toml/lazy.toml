@@ -37,10 +37,6 @@ lua_source = """
       vim.treesitter.start()
     end,
   })
-
-  vim.treesitter.language.register("julia", "aibo-prompt.aibo-tool-julia")
-  vim.treesitter.language.register("python", "aibo-prompt.aibo-tool-python")
-  vim.treesitter.language.register("markdown", "aibo-prompt.aibo-tool-claude")
 """
 
 [[plugins]] # visualize the current block
@@ -64,6 +60,7 @@ lua_source = """
 ##################################################
 # function #######################################
 ##################################################
+
 [[plugins]] # to create user modes
 repo = "pogyomo/submode.nvim"
 on_event = "UIEnter"
@@ -665,7 +662,47 @@ lua_source = """
       on_attach = function(bufnr, info)
         vim.bo[bufnr].buflisted = true
       end,
-    }
+    },
+    prompt = {
+      no_default_mappings = true,
+      on_attach = function(bufnr, info)
+        -- these maps are from nvim-aibo/ftplugin/aibo-prompt.lua excluding <C-n> and <C-p>
+        local opts = { buffer = bufnr, nowait = true, silent = true }
+        vim.keymap.set({ "n", "i" }, "<C-g><C-o>", "<Plug>(aibo-send)", { buffer = bufnr, nowait = true })
+        vim.keymap.set("n", "<CR>", "<Plug>(aibo-submit)", opts)
+        vim.keymap.set("n", "<Esc>", "<Cmd>q<CR>", opts)
+        vim.keymap.set("n", "<C-Enter>", "<Plug>(aibo-submit)<Cmd>q<CR>", opts)
+        vim.keymap.set("n", "<F5>", "<Plug>(aibo-submit)<Cmd>q<CR>", opts)
+        vim.keymap.set("i", "<C-Enter>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", opts)
+        vim.keymap.set("i", "<F5>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", opts)
+        vim.keymap.set("n", "<C-c>", "<Plug>(aibo-send)<Esc>", opts)
+        vim.keymap.set("n", "g<C-c>", "<Plug>(aibo-send)<C-c>", opts)
+        vim.keymap.set("n", "<C-l>", "<Plug>(aibo-send)<C-l>", opts)
+        vim.keymap.set("n", "<C-n>", "<Plug>(aibo-send)<C-n>", opts)
+        vim.keymap.set("n", "<C-p>", "<Plug>(aibo-send)<C-p>", opts)
+        vim.keymap.set("n", "<Down>", "<Plug>(aibo-send)<Down>", opts)
+        vim.keymap.set("n", "<Up>", "<Plug>(aibo-send)<Up>", opts)
+
+        -- Currently tool-base setting is unavalable due to bug (PR#52)
+        if info.cmd == "julia" then
+          pcall(vim.treesitter.start, bufnr, "julia")
+          vim.lsp.start({
+            name = "jetls",
+            cmd = { "jetls", "serve" },
+            root_dir = vim.fs.root(vim.fn.getcwd(), { "Project.toml" }) or vim.fn.getcwd(),
+          }, { bufnr = bufnr })
+        elseif info.cmd == "python" then
+          pcall(vim.treesitter.start, bufnr, "python")
+          vim.lsp.start({
+            name = "basedpyright",
+            cmd = { "basedpyright-langserver", "--stdio" },
+            root_dir = vim.fs.root(vim.fn.getcwd(), { "pyproject.toml", "setup.py", ".git" }) or vim.fn.getcwd(),
+          }, { bufnr = bufnr })
+        elseif info.cmd == "claude" then
+          pcall(vim.treesitter.start, bufnr, "markdown")
+        end
+      end,
+    },
   })
   vim.api.nvim_create_user_command("AiboVsplit", function(opts)
     vim.cmd("Aibo -opener=vsplit " .. opts.args)
@@ -683,14 +720,6 @@ lua_source = """
         end, opts)
       end
     end,
-  })
-"""
-lua_add = """
-  vim.filetype.add({
-    extension = {
-      ["aibo-tool-claude"] = "markdown",
-      ["aibo-tool-julia"] = "julia",
-    },
   })
 """
 

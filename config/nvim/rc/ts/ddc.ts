@@ -279,7 +279,7 @@ export class Config extends BaseConfig {
     // for claude code in nvim-aibo
     args.contextBuilder.patchFiletype("aibo-prompt.aibo-tool-claude", {
       specialBufferCompletion: true,
-      sources: ["mocWord", ].concat(commonSources),
+      sources: [...mocWord, ].concat(commonSources),
     });
 
     // for julia REPL in nvim-aibo
