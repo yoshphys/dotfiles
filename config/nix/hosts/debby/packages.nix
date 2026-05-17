@@ -66,6 +66,9 @@ with pkgs; [
   claude-code
   github-copilot-cli
 
+  # SKK ############################################
+  yaskkserv2
+
   # editor #########################################
   vim-startuptime
   neovim # from neovim-overlay
