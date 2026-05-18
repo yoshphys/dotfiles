@@ -272,7 +272,7 @@ export class Config extends BaseConfig {
       ]
     ) {
       args.contextBuilder.patchFiletype(filetype, {
-        sources: [...commonSources, "line", ...mocWord],
+        sources: [...commonSources, "line", "denippet", ...mocWord],
       });
     }
 
