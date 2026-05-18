@@ -39,7 +39,7 @@ vim.api.nvim_create_autocmd("User", {
     end,
 })
 
-vim.keymap.set('n', "/", function()
+vim.keymap.set('n', ";/", function()
     vim.fn["ddu#start"]({
       name = "search",
       resume = false,
@@ -64,7 +64,7 @@ vim.keymap.set('n', "/", function()
     })
     end)
 
-vim.keymap.set('n', "*", function()
+vim.keymap.set('n', ";*", function()
     vim.fn["ddu#start"]({
       name = "search",
       resume = false,
@@ -74,13 +74,6 @@ vim.keymap.set('n', "*", function()
       },
       sources = { "line" },
       input = vim.fn.expand('<cword>')
-    })
-    end)
-
-vim.keymap.set('n', "n", function()
-    vim.fn["ddu#start"]({
-      name = "search",
-      resume = true,
     })
     end)
 
