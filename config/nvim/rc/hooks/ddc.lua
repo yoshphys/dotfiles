@@ -20,6 +20,11 @@ vim.keymap.set('c', "<C-n>", function()
         return vim.fn["pum#map#select_relative"](1)
     end
     vim.fn["ddc#map#manual_complete"]()
+    vim.defer_fn(function()
+        if vim.fn["pum#visible"]() == 1 then
+            vim.fn["pum#map#select_relative"](1)
+        end
+    end, 100)
 end)
 
 vim.keymap.set('c', "<C-p>", function()
