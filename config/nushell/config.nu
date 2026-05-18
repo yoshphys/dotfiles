@@ -14,8 +14,8 @@ def minvim [] {
   nvim -u ($env.HOME | path join ".config/minvim/init.lua")
 }
 
-def testnvim [] {
-  with-env { XDG_CONFIG_HOME: ($env.HOME + "/dotfiles/config") } { nvim }
+def testnvim [...args] {
+  with-env { XDG_CONFIG_HOME: ($env.HOME + "/dotfiles/config") } { nvim ...$args }
 }
 
 def --env sd [] {
