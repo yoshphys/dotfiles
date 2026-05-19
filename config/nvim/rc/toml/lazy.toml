@@ -656,6 +656,9 @@ lua_source = """
 [[plugins]]
 repo = "lambdalisue/nvim-aibo"
 on_cmd = "Aibo*"
+lua_add = """
+  vim.keymap.set('v', "<C-g><C-s>", ":<C-u>'<,'>AiboSend -input<CR>", { silent = true })
+"""
 lua_source = """
   require("aibo").setup({
     console = {
