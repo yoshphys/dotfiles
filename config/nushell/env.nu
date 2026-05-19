@@ -12,8 +12,7 @@ $env.PATH = ($env.PATH | prepend [
     ($env.HOME + "/utilities/bin") # user software
     ($env.HOME + "/.cargo/bin") # rust
     ($env.HOME + "/zk-lsp/tools") # zk-lsp
-    ($env.HOME + "/.juliaup/bin") # julia
-    ($env.HOME + "/.julia/bin") # jetls
+    ($env.HOME + "/.julia/bin") # julia apps
 ] | uniq)
 
 $env.MOCWORD_DATA = ($env.HOME + '/.mocword/mocword.sqlite')

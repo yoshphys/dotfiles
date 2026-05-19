@@ -4,7 +4,6 @@
 ## aliases
 
 alias root = ^root -l
-alias julia = ^julia --banner=no
 
 
 ##################################################

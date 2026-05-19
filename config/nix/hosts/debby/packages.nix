@@ -28,7 +28,7 @@ with pkgs; [
   lazygit
 
   # programming ####################################
-  uv # python package manager
+uv # python package manager
   (pkgs.python3.withPackages (python-pkgs: [
       python-pkgs.root # for enabling cern ROOT
   ]))

@@ -21,7 +21,6 @@ nix-darwin.lib.darwinSystem {
       nixpkgs.overlays = [
         inputs.neovim-overlay.overlays.default # Comment out this line if neovim-overlay gets problems.
         inputs.fenix.overlays.default
-        # inputs.hf-nix.overlays.default
         (final: prev: {
           yaskkserv2 = prev.callPackage ../../pkgs/yaskkserv2 { };
         })
@@ -38,6 +37,7 @@ nix-darwin.lib.darwinSystem {
           ../../home-manager/programs/nushell.nix
           ../../home-manager/programs/nvim.nix
           ../../home-manager/programs/yaskkserv2.nix
+          ../../home-manager/programs/julia.nix
         ];
 
         services.yaskkserv2.enable = true;
