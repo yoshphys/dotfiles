@@ -275,7 +275,7 @@ export class Config extends BaseConfig {
             //   call ddu#ui#do_action('itemAction', #{name: 'diff'})
             //   call ddu#ui#do_action('itemAction', #{name: 'diff', params: #{cached: v:true}})
             commit: async () => {
-              await args.denops.call("Gin commit");
+              await args.denops.cmd("Gin commit");
               return ActionFlags.None;
             },
             diff: async (args) => {
