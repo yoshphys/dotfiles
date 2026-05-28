@@ -30,10 +30,10 @@ vim.opt.ambiwidth = "single"
 vim.opt.clipboard:append { "unnamedplus" }
 
 -- file ------------------------------------------
-vim.opt.swapfile = false
+vim.opt.swapfile = true
 vim.opt.hidden = true
 vim.opt.backup = true
-vim.opt.backupdir = os.getenv "HOME" .. "/.vim/backups"
+vim.opt.backupdir = os.getenv("HOME") .. "/.vim/backups"
 
 -- indent ----------------------------------------
 vim.opt.tabstop = 2
