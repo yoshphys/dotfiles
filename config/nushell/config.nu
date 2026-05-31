@@ -27,8 +27,7 @@ def --env load-apikeys [] {
      | lines
      | where { |line| ($line | str trim) != "" and not ($line | str starts-with "#") }
      | parse -r '^\s*(?P<key>\S+)\s+(?P<value>.+)'
-     | each { |row| { ($row.key): ($row.value | str trim) } }
+     | each { |row| { ($row.key): ($row.value | str trim | str trim --char '"') } }
      | into record
      | load-env
 }
-load-apikeys

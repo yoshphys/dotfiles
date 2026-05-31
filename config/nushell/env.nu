@@ -16,3 +16,15 @@ $env.PATH = ($env.PATH | prepend [
 ] | uniq)
 
 $env.MOCWORD_DATA = ($env.HOME + '/.mocword/mocword.sqlite')
+
+# Load API keys from ~/.apikeys so they're available in non-interactive sessions too
+let _apikeys_path = ($env.HOME + '/.apikeys')
+if ($_apikeys_path | path exists) {
+    open $_apikeys_path
+    | lines
+    | where { |line| ($line | str trim) != "" and not ($line | str starts-with "#") }
+    | parse -r '^\s*(?P<key>\S+)\s+(?P<value>.+)'
+    | each { |row| { ($row.key): ($row.value | str trim | str trim --char '"') } }
+    | into record
+    | load-env
+}
