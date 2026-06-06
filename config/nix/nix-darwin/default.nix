@@ -24,6 +24,9 @@
       autoUpdate = true;
       upgrade = true;
       cleanup = "uninstall";
+      extraFlags = [
+        "--force-cleanup"
+      ];
     };
     casks = inputs.brewCasks;
     taps = inputs.brewTaps;
