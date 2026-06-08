@@ -685,26 +685,34 @@ lua_source = """
         vim.keymap.set("n", "<C-p>", "<Plug>(aibo-send)<C-p>", opts)
         vim.keymap.set("n", "<Down>", "<Plug>(aibo-send)<Down>", opts)
         vim.keymap.set("n", "<Up>", "<Plug>(aibo-send)<Up>", opts)
-
-        -- Currently tool-base setting is unavalable due to bug (PR#52)
-        if info.cmd == "julia" then
+      end,
+    },
+    tools = {
+      julia = {
+        on_attach = function(bufnr, info)
           pcall(vim.treesitter.start, bufnr, "julia")
           vim.lsp.start({
             name = "jetls",
             cmd = { "jetls", "serve" },
             root_dir = vim.fs.root(vim.fn.getcwd(), { "Project.toml" }) or vim.fn.getcwd(),
           }, { bufnr = bufnr })
-        elseif info.cmd == "python" then
+        end,
+      },
+      python = {
+        on_attach = function(bufnr, info)
           pcall(vim.treesitter.start, bufnr, "python")
           vim.lsp.start({
             name = "basedpyright",
             cmd = { "basedpyright-langserver", "--stdio" },
             root_dir = vim.fs.root(vim.fn.getcwd(), { "pyproject.toml", "setup.py", ".git" }) or vim.fn.getcwd(),
           }, { bufnr = bufnr })
-        elseif info.cmd == "claude" then
+        end,
+      },
+      claude = {
+        on_attach = function(bufnr, info)
           pcall(vim.treesitter.start, bufnr, "markdown")
-        end
-      end,
+        end,
+      },
     },
   })
   vim.api.nvim_create_user_command("AiboVsplit", function(opts)
