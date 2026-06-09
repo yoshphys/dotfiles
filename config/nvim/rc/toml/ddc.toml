@@ -348,7 +348,8 @@ lua << EOF
       -- Overwrite soureces
       prev_buffer_config = vim.fn["ddc#custom#get_buffer"]()
       vim.fn["ddc#custom#patch_buffer"]({
-        sources = {"around", "skkeleton", "line"},
+        -- sources = {"around", "skkeleton", "line"},
+        sources = {"skkeleton"},
         sourceOptions = {
           _ = {
             keywordPattern = "[ァ-ヮア-ンー]+",
