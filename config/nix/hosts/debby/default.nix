@@ -7,12 +7,14 @@ let
 
   brewCasks = builtins.map (x: {name = x; greedy = true;}) (import ./brewCasks.nix);
   brewTaps = [
-    {
-      name = "pxwg/zk-lsp";
-      clone_target = "https://github.com/pxwg/zk-lsp.typst";
-    }
+    # {
+    #   name = "pxwg/zk-lsp";
+    #   clone_target = "https://github.com/pxwg/zk-lsp.typst";
+    # }
   ];
-  brewFormulas = [ "zk-lsp" ];
+  brewFormulas = [ 
+    # "zk-lsp"
+  ];
 in
 nix-darwin.lib.darwinSystem {
   modules = [
@@ -23,6 +25,7 @@ nix-darwin.lib.darwinSystem {
         inputs.fenix.overlays.default
         (final: prev: {
           yaskkserv2 = prev.callPackage ../../pkgs/yaskkserv2 { };
+          kakehashi = prev.callPackage ../../pkgs/kakehashi { };
         })
       ];
     }

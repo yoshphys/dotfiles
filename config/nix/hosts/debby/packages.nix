@@ -74,6 +74,7 @@ uv # python package manager
   neovim # from neovim-overlay
 
   # LSP/formatter ##################################
+  # kakehashi
   tree-sitter
   tinymist
   basedpyright
