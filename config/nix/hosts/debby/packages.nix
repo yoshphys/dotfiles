@@ -57,6 +57,7 @@ uv # python package manager
 
   # science/technology #############################
   root
+  geant4
 
   # audio/video ####################################
   # ffmpeg
