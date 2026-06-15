@@ -26,6 +26,7 @@ nix-darwin.lib.darwinSystem {
         (final: prev: {
           yaskkserv2 = prev.callPackage ../../pkgs/yaskkserv2 { };
           kakehashi = prev.callPackage ../../pkgs/kakehashi { };
+          zk-lsp = prev.callPackage ../../pkgs/zk-lsp { };
         })
       ];
     }

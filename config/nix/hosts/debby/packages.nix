@@ -76,6 +76,7 @@ uv # python package manager
 
   # LSP/formatter ##################################
   # kakehashi
+  zk-lsp
   tree-sitter
   tinymist
   basedpyright
