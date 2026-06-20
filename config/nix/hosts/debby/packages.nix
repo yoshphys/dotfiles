@@ -28,7 +28,8 @@ with pkgs; [
   lazygit
 
   # programming ####################################
-uv # python package manager
+  cmake
+  uv # python package manager
   (pkgs.python3.withPackages (python-pkgs: [
       python-pkgs.root # for enabling cern ROOT
   ]))
@@ -57,7 +58,6 @@ uv # python package manager
 
   # science/technology #############################
   root
-  geant4
 
   # audio/video ####################################
   # ffmpeg
