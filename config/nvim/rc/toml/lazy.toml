@@ -477,8 +477,11 @@ lua_source = """
 ##################################################
 
 [[plugins]]
+repo = "atusy/kakehashi.nvim"
+
+[[plugins]]
 repo = "neovim/nvim-lspconfig"
-depends = "ddc-source-lsp"
+depends = ["ddc-source-lsp", "kakehashi.nvim"]
 on_event = ["BufNewFile", "BufReadPre" ]
 hooks_file = "$VIM_CONFIG_PATH/rc/hooks/lspconfig.lua"
 

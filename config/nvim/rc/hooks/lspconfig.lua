@@ -53,6 +53,19 @@ on_attach(function(client, bufnr)
   end
 end)
 
+--- publishDiagnostics is ignored ----------------
+--- in the case of kakehashi ---------------------
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+
+  local ignore_pull = { "kakehashi" }
+  if client and vim.tbl_contains(ignore_pull, client.name) then
+    return
+  end
+
+  return vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx)
+end
+
 -- on_attach(function(client, buffer)
 --     require("illuminate").attach(client, buffer)
 -- end)
@@ -63,12 +76,12 @@ end)
 
 local lsp_servers = {
   -- "copilot",
-  "denols",       -- for deno
-  "tinymist",     -- for typst
-  "clangd",       -- for c/c++
-  "lua_ls",       -- for lua
-  "jetls",        -- for julia
-  "basedpyright", -- for python
+  "denols",   -- for deno
+  "tinymist", -- for typst
+  "clangd",   -- for c/c++
+  "lua_ls",   -- for lua
+  "jetls",    -- for julia
+  "ruff",     -- for python
 }
 
 local capabilities = require("ddc_source_lsp").make_client_capabilities()
@@ -129,12 +142,12 @@ vim.lsp.config("clangd", {
 
 -- jetls -----------------------------------------
 vim.lsp.config("jetls", {
-    cmd = {
-        "jetls",
-        "serve",
-    },
-    filetypes = { "julia" },
-    root_markers = { "Project.toml" }
+  cmd = {
+    "jetls",
+    "serve",
+  },
+  filetypes = { "julia" },
+  root_markers = { "Project.toml" }
 })
 
 --------------------------------------------------
@@ -144,6 +157,28 @@ vim.lsp.config("jetls", {
 for _, server in pairs(lsp_servers) do
   vim.lsp.enable(server)
 end
+
+--------------------------------------------------
+-- kakehashi -------------------------------------
+--------------------------------------------------
+
+vim.lsp.config("kakehashi", {
+  filetypes = { "markdown", "typst", "html" },
+})
+vim.lsp.enable("kakehashi")
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client and client.name == "kakehashi" then
+      require("kakehashi").inherit_nvim_lsp_config(
+        client,
+        vim.tbl_keys(vim.lsp._enabled_configs),
+        "keep"
+      )
+    end
+  end,
+})
 
 --------------------------------------------------
 -- zk-lsp ----------------------------------------

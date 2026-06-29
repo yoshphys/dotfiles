@@ -75,7 +75,7 @@ with pkgs; [
   neovim # from neovim-overlay
 
   # LSP/formatter ##################################
-  # kakehashi
+  kakehashi
   zk-lsp
   tree-sitter
   tinymist
