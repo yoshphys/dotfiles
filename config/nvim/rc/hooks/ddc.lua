@@ -5,6 +5,18 @@ vim.fn["ddc#enable"]({ context_filetype = "treesitter" })
 -- }}}
 
 -- lua_add {{{
+-- When skkeleton opens native pum for henkan candidates, close pum.vim to
+-- prevent insert_preview text from being left in the buffer.
+vim.api.nvim_create_autocmd("CompleteChanged", {
+  group = "MyAutoCmd",
+  callback = function()
+    if vim.fn["pum#visible"]() then
+      vim.fn["ddc#hide"]()
+      vim.fn["pum#close"]()
+    end
+  end,
+})
+
 vim.api.nvim_create_autocmd("CmdlineLeave", {
   group = "MyAutoCmd",
   callback = function()
