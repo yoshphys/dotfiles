@@ -7,13 +7,8 @@ let
 
   brewCasks = builtins.map (x: {name = x; greedy = true;}) (import ./brewCasks.nix);
   brewTaps = [
-    # {
-    #   name = "pxwg/zk-lsp";
-    #   clone_target = "https://github.com/pxwg/zk-lsp.typst";
-    # }
   ];
   brewFormulas = [ 
-    # "zk-lsp"
   ];
 in
 nix-darwin.lib.darwinSystem {
