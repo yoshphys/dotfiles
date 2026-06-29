@@ -79,7 +79,7 @@ with pkgs; [
   zk-lsp
   tree-sitter
   tinymist
-  basedpyright
+  ruff
   lua-language-server
   copilot-language-server
 
