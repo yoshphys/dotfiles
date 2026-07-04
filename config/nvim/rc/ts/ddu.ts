@@ -325,6 +325,9 @@ export class Config extends BaseConfig {
         url: {
           defaultAction: "browse",
         },
+        "custom-list": {
+          defaultAction: "callback",
+        },
       },
       kindParams: {
         file: {

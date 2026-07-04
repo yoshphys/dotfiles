@@ -45,6 +45,15 @@ on_source = "ddu.vim"
 repo = "matsui54/ddu-source-command_history"
 on_source = "ddu.vim"
 
+[[plugins]] # from arbitrary generated list, used for vim-sonictemplate
+repo = "liquidz/ddu-source-custom-list"
+on_source = "ddu.vim"
+
+[[plugins]]
+repo = "mattn/vim-sonictemplate"
+on_event = "VimEnter"
+hooks_file = "$VIM_CONFIG_PATH/rc/hooks/sonictemplate.lua"
+
 [[plugins]] # from file
 repo = "Shougo/ddu-source-file"
 on_source = "ddu.vim"
@@ -184,4 +193,3 @@ on_source = "ddu.vim"
 [[plugins]]
 repo = "ryota2357/ddu-column-icon_filename"
 on_source = "ddu.vim"
-

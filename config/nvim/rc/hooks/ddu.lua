@@ -229,4 +229,35 @@ vim.keymap.set('n', "[Space]gS", function()
     })
     end)
 
+vim.keymap.set('n', "[Space]T", function()
+    local candidates = vim.fn["sonictemplate#complete"]('', '', 0)
+    if vim.tbl_isempty(candidates) then
+      vim.notify(
+        "sonictemplate: no template for filetype '" .. vim.bo.filetype .. "'",
+        vim.log.levels.WARN
+      )
+      return
+    end
+
+    local mode = vim.fn.mode()
+    local callbackId = vim.fn["denops#callback#register"](function(name)
+      vim.fn["sonictemplate#apply"](name, mode)
+    end, { once = true })
+
+    vim.fn["ddu#start"]({
+      name = "template",
+      resume = false,
+      ui = {
+        name = "ff",
+        params = { autoResize = true },
+      },
+      sources = {
+        {
+          name = "custom-list",
+          params = { texts = candidates, callbackId = callbackId },
+        },
+      },
+    })
+    end)
+
 -- }}}
