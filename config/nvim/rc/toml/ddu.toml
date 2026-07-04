@@ -45,8 +45,8 @@ on_source = "ddu.vim"
 repo = "matsui54/ddu-source-command_history"
 on_source = "ddu.vim"
 
-[[plugins]] # from arbitrary generated list, used for vim-sonictemplate
-repo = "liquidz/ddu-source-custom-list"
+[[plugins]] # from vim-sonictemplate
+repo = "yoshphys/ddu-source-sonictemplate"
 on_source = "ddu.vim"
 
 [[plugins]]
