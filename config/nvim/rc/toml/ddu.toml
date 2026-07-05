@@ -49,10 +49,14 @@ on_source = "ddu.vim"
 repo = "yoshphys/ddu-source-sonictemplate"
 on_source = "ddu.vim"
 
-[[plugins]]
-repo = "mattn/vim-sonictemplate"
+[[plugins]] # fork with sonictemplate#find_template_file() exposed for preview, until merged upstream
+repo = "yoshphys/vim-sonictemplate"
+rev = "expose-find-template-file"
 on_event = "VimEnter"
-hooks_file = "$VIM_CONFIG_PATH/rc/hooks/sonictemplate.lua"
+lua_add = """
+  -- user templates take precedence over the bundled ones (searched first)
+  vim.g.sonictemplate_vim_template_dir = { vim.env.VIM_CONFIG_PATH .. "/template" }
+"""
 
 [[plugins]] # from file
 repo = "Shougo/ddu-source-file"

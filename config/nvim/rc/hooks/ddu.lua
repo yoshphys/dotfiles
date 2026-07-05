@@ -196,6 +196,18 @@ vim.keymap.set('n', ";H", function()
     })
     end)
 
+vim.keymap.set('n', ";t", function()
+    vim.fn["ddu#start"]({
+      name = "template",
+      resume = false,
+      ui = {
+        name = "ff",
+        params = { autoResize = true },
+      },
+      sources = { "sonictemplate" },
+    })
+    end)
+
 vim.keymap.set('n', "[Space]gs", function()
     vim.fn["ddu#start"]({
       name = "git_status",
@@ -226,18 +238,6 @@ vim.keymap.set('n', "[Space]gS", function()
         resume = true,
       },
       sources = { "git_stash" },
-    })
-    end)
-
-vim.keymap.set('n', "[Space]T", function()
-    vim.fn["ddu#start"]({
-      name = "template",
-      resume = false,
-      ui = {
-        name = "ff",
-        params = { autoResize = true },
-      },
-      sources = { "sonictemplate" },
     })
     end)
 
