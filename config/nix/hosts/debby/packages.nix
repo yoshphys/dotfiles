@@ -10,6 +10,7 @@ with pkgs; [
   unar # richer unzip
   peco # richer `command | grep`
   tmux
+  herdr
 
   # system #########################################
   gdu # disk capacity analyzer
