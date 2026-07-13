@@ -1,6 +1,6 @@
 { lib, stdenv, fetchurl }:
 let
-  version = "0.5.3";
+  version = "0.5.4";
 in
 stdenv.mkDerivation {
   pname = "zk-lsp";
@@ -8,7 +8,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://github.com/pxwg/zk-lsp.typ/releases/download/v${version}/zk-lsp-aarch64-apple-darwin.tar.gz";
-    hash = "sha256-JYiI9r9AtN2d9EazDS3glsb8C1a7M8OEOe9Pjmpk2Tg=";
+    hash = "sha256-F1B7+P9qXp0X98W23MRZGZ0TCqQrBIVfRWOs3Cxn6cs=";
   };
   dontUnpack = true;
 
