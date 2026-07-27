@@ -56,6 +56,7 @@ with pkgs; [
   pdf2svg
   yj # enable shell parsing yaml
   poppler-utils # for handling PDF
+  touying # Export presentation slides in various formats for Touying
 
   # science/technology #############################
   root
