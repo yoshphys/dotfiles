@@ -60,6 +60,7 @@ with pkgs; [
 
   # science/technology #############################
   root
+  arduino-cli
 
   # audio/video ####################################
   # ffmpeg
