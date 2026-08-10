@@ -6,7 +6,7 @@ $env.XDG_CACHE_HOME = ($env.HOME + '/.cache')
 $env.XDG_DATA_HOME = ($env.HOME + '/.local/share')
 $env.XDG_STATE_HOME = ($env.HOME + '/.local/state')
 $env.EDITOR = 'nvim'
-$env.MANPAGER = "sh -c 'col -bx | bat -p -lman'"
+$env.MANPAGER = "sh -c 'col -bx | bat -l man -p'"
 
 $env.PATH = ($env.PATH | prepend [
     ($env.HOME + "/utilities/bin") # user software
