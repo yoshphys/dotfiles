@@ -7,6 +7,7 @@ let
 
   brewCasks = builtins.map (x: {name = x; greedy = true;}) (import ./brewCasks.nix);
   brewTaps = [
+    "arto-app/tap"
   ];
   brewFormulas = [ 
   ];

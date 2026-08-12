@@ -1,6 +1,7 @@
 [
   "amical" # AI powered dictation
   "arduino"
+  "arto-app/tap/arto" # markdown reader (needs arto-app/tap)
   "blender" # rendering engene
   "calibre"
   "claude"
@@ -24,12 +25,10 @@
   "microsoft-powerpoint"
   "microsoft-teams"
   "microsoft-word"
-  # "nextcloud"
   "obsidian"
   "raycast"
   "slack"
   "stats"
-  "thaw" # menubar manager
   "xquartz"
   "zoom"
 ]
