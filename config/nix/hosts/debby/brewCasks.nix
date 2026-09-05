@@ -22,6 +22,7 @@
   "macskk"
   "mactex"
   "microsoft-auto-update"
+  "microsoft-excel"
   "microsoft-powerpoint"
   "microsoft-teams"
   "microsoft-word"
