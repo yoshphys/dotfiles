@@ -67,7 +67,7 @@ with pkgs; [
   ffmpeg
 
   # AI #############################################
-  gemini-cli
+  antigravity-cli # successor of gemini-cli; provides the `agy` command
   claude-code
   github-copilot-cli
 
