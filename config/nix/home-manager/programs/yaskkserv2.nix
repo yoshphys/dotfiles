@@ -14,7 +14,7 @@ let
     types
     ;
   cfg = config.services.yaskkserv2;
-  isDarwin = pkgs.stdenv.isDarwin;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   cacheDir = "${config.xdg.cacheHome}/yaskkserv2";
 in
 {
