@@ -57,7 +57,7 @@ with pkgs; [
   yj # enable shell parsing yaml
   poppler-utils # for handling PDF
   touying # Export presentation slides in various formats for Touying
-  tanim-cli # Render typst files to video in command line
+  # tanim-cli # Render typst files to video in command line
 
   # science/technology #############################
   root
