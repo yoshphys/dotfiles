@@ -279,6 +279,22 @@ lua_source = '''
     {
       kind = "constant",
       opts = {
+        elements = { "０", "１", "２", "３", "４", "５", "６", "７", "８", "９" },
+        cycle = true,
+        word = false,
+      },
+    },
+    {
+      kind = "constant",
+      opts = {
+        elements = { "〇", "一", "二", "三", "四", "五", "六", "七", "八", "九" },
+        cycle = true,
+        word = false,
+      },
+    },
+    {
+      kind = "constant",
+      opts = {
         elements = { "true", "false" },
         cycle = true,
         word = true,
