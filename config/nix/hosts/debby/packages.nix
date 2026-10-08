@@ -11,6 +11,7 @@ with pkgs; [
   peco # richer `command | grep`
   tmux
   herdr
+  editprompt # write prompts for CLI agents in $EDITOR
 
   # system #########################################
   gdu # disk capacity analyzer

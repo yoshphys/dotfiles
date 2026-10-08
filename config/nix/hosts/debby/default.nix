@@ -24,6 +24,7 @@ nix-darwin.lib.darwinSystem {
           kakehashi = prev.callPackage ../../pkgs/kakehashi { };
           zk-lsp = prev.callPackage ../../pkgs/zk-lsp { };
           tanim-cli = prev.callPackage ../../pkgs/tanim-cli { };
+          editprompt = prev.callPackage ../../pkgs/editprompt { };
         })
       ];
     }
