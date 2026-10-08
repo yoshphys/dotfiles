@@ -657,6 +657,31 @@ lua_source = """
 """
 
 [[plugins]]
+repo = "eetann/editprompt.nvim"
+on_cmd = "Editprompt"
+lua_add = """
+  -- Map only in buffers opened by the editprompt CLI (e.g. .editprompt-20261008162544-e972554e.md)
+  vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = '*/.editprompt-*.md',
+    callback = function(args)
+      local opts = { buffer = args.buf }
+      vim.keymap.set('n', "[Space]ei", "<Cmd>Editprompt input --auto-send<CR>", opts)
+      vim.keymap.set('n', "[Space]eI", "<Cmd>Editprompt input<CR>", opts)
+      vim.keymap.set('x', "[Space]ei", "<Cmd>Editprompt input --visual --auto-send<CR>", opts)
+      vim.keymap.set('n', "[Space]ep", "<Cmd>Editprompt history prev<CR>", opts)
+      vim.keymap.set('n', "[Space]en", "<Cmd>Editprompt history next<CR>", opts)
+      vim.keymap.set('n', "[Space]eh", "<Cmd>Editprompt history list<CR>", opts)
+      vim.keymap.set('n', "[Space]ek", "<Cmd>Editprompt press_mode<CR>", opts)
+      vim.keymap.set('n', "[Space]es", "<Cmd>Editprompt stash pop<CR>", opts)
+      vim.keymap.set('n', "[Space]eS", "<Cmd>Editprompt stash push<CR>", opts)
+    end,
+  })
+"""
+lua_source = """
+  require("editprompt").setup({})
+"""
+
+[[plugins]]
 repo = "lambdalisue/nvim-aibo"
 on_cmd = "Aibo*"
 lua_add = """

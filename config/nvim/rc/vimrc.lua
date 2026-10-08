@@ -6,6 +6,8 @@ vim.api.nvim_create_augroup("MyAutoCmd", {})
 vim.api.nvim_set_keymap('n', "<Space>", "[Space]", { noremap = false })
 -- vim.keymap.set('n', "<Space>", "[Space]", { noremap = false })
 vim.keymap.set('n', "[Space]", "<Nop>")
+vim.api.nvim_set_keymap('x', "<Space>", "[Space]", { noremap = false })
+vim.keymap.set('x', "[Space]", "<Nop>")
 
 vim.keymap.set('c', "<C-f>", "<Right>")
 vim.keymap.set('c', "<C-b>", "<Left>")
