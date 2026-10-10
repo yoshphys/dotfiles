@@ -62,7 +62,7 @@ vim.keymap.set('n', ";/", function()
             vim.fn["ddu#ui#async_action"]("openFilterWindow")
         end,
     })
-    end)
+    end, { desc = "ddu: live filter lines of the current buffer" })
 
 vim.keymap.set('n', ";*", function()
     vim.fn["ddu#start"]({
@@ -75,7 +75,7 @@ vim.keymap.set('n', ";*", function()
       sources = { "line" },
       input = vim.fn.expand('<cword>')
     })
-    end)
+    end, { desc = "ddu: filter lines of the current buffer with the word under the cursor" })
 
 vim.keymap.set('n', ";g", function()
     vim.fn["ddu#start"]({
@@ -99,7 +99,7 @@ vim.keymap.set('n', ";g", function()
             vim.fn["ddu#ui#async_action"]("openFilterWindow")
         end,
     })
-    end)
+    end, { desc = "ddu: live ripgrep in the working directory" })
 
 vim.keymap.set('x', ";g", function()
     local selected = vim.fn.getregion(
@@ -123,7 +123,7 @@ vim.keymap.set('x', ";g", function()
       },
       input = vim.fn.escape(text, " "),
     })
-    end)
+    end, { desc = "ddu: ripgrep with the selected text" })
 
 vim.keymap.set('n', ";G", function()
     vim.fn["ddu#start"]({
@@ -141,7 +141,7 @@ vim.keymap.set('n', ";G", function()
       },
       input = vim.fn.expand('<cword>')
     })
-    end)
+    end, { desc = "ddu: ripgrep with the word under the cursor" })
 
 vim.keymap.set('n', ";r", function()
     vim.fn["ddu#start"]({
@@ -157,7 +157,7 @@ vim.keymap.set('n', ";r", function()
         },
       },
     })
-    end)
+    end, { desc = "ddu: choose a register and insert/append its content" })
 
 vim.keymap.set('n', ";b", function()
     vim.fn["ddu#start"]({
@@ -165,7 +165,7 @@ vim.keymap.set('n', ";b", function()
       ui = "ff" ,
       sources = { "buffer" },
     })
-    end)
+    end, { desc = "ddu: list buffers" })
 
 vim.keymap.set('n', ";h", function()
     vim.fn["ddu#start"]({
@@ -173,7 +173,7 @@ vim.keymap.set('n', ";h", function()
       ui = "ff",
       sources = { "command_history" },
     })
-    end)
+    end, { desc = "ddu: list the command-line history" })
 
 vim.keymap.set('n', ";H", function()
     vim.fn["ddu#start"]({
@@ -194,7 +194,7 @@ vim.keymap.set('n', ";H", function()
             vim.fn["ddu#ui#async_action"]("openFilterWindow")
         end,
     })
-    end)
+    end, { desc = "ddu: live search help tags" })
 
 vim.keymap.set('n', ";t", function()
     vim.fn["ddu#start"]({
@@ -206,7 +206,7 @@ vim.keymap.set('n', ";t", function()
       },
       sources = { "sonictemplate" },
     })
-    end)
+    end, { desc = "ddu: apply a sonictemplate template" })
 
 vim.keymap.set('n', "[Space]gs", function()
     vim.fn["ddu#start"]({
@@ -217,7 +217,7 @@ vim.keymap.set('n', "[Space]gs", function()
       },
       sources = { "git_status" },
     })
-    end)
+    end, { desc = "ddu: show git status (resume the previous session)" })
 
 vim.keymap.set('n', "[Space]gl", function()
     vim.fn["ddu#start"]({
@@ -228,7 +228,7 @@ vim.keymap.set('n', "[Space]gl", function()
       },
       sources = { "git_log" },
     })
-    end)
+    end, { desc = "ddu: show git log (resume the previous session)" })
 
 vim.keymap.set('n', "[Space]gS", function()
     vim.fn["ddu#start"]({
@@ -239,6 +239,6 @@ vim.keymap.set('n', "[Space]gS", function()
       },
       sources = { "git_stash" },
     })
-    end)
+    end, { desc = "ddu: show git stash list (resume the previous session)" })
 
 -- }}}

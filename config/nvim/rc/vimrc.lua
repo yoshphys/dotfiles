@@ -5,22 +5,22 @@ vim.api.nvim_create_augroup("MyAutoCmd", {})
 -- Smart space mapping.
 vim.api.nvim_set_keymap('n', "<Space>", "[Space]", { noremap = false })
 -- vim.keymap.set('n', "<Space>", "[Space]", { noremap = false })
-vim.keymap.set('n', "[Space]", "<Nop>")
+vim.keymap.set('n', "[Space]", "<Nop>", { desc = "Disable the [Space] prefix key itself" })
 vim.api.nvim_set_keymap('x', "<Space>", "[Space]", { noremap = false })
-vim.keymap.set('x', "[Space]", "<Nop>")
+vim.keymap.set('x', "[Space]", "<Nop>", { desc = "Disable the [Space] prefix key itself" })
 
-vim.keymap.set('c', "<C-f>", "<Right>")
-vim.keymap.set('c', "<C-b>", "<Left>")
-vim.keymap.set('c', "<C-a>", "<Home>")
-vim.keymap.set('c', "<C-e>", "<End>")
-vim.keymap.set('c', "<C-d>", "<Delete>")
+vim.keymap.set('c', "<C-f>", "<Right>", { desc = "Cmdline: move the cursor one character to the right" })
+vim.keymap.set('c', "<C-b>", "<Left>", { desc = "Cmdline: move the cursor one character to the left" })
+vim.keymap.set('c', "<C-a>", "<Home>", { desc = "Cmdline: move the cursor to the beginning of the line" })
+vim.keymap.set('c', "<C-e>", "<End>", { desc = "Cmdline: move the cursor to the end of the line" })
+vim.keymap.set('c', "<C-d>", "<Delete>", { desc = "Cmdline: delete the character under the cursor" })
 vim.keymap.set('c', "<C-k>", function()
   local cmd = vim.fn.getcmdline()
   local pos = vim.fn.getcmdpos()
   vim.fn.setcmdline(string.sub(cmd, 1, pos - 1))
   vim.fn.setcmdpos(pos)
   return ''
-end, {expr = true})
+end, { expr = true, desc = "Cmdline: delete from the cursor to the end of the line" })
 
 -- lang ------------------------------------------
 vim.cmd "language en_US.UTF-8"

@@ -138,14 +138,14 @@ lua_add = """
       return vim.fn["denippet#jump"](1)
     end
     return "<Tab>"
-  end, { expr = true })
+  end, { expr = true, desc = "denippet: jump to the next placeholder, otherwise insert <Tab>" })
 
   vim.keymap.set({'i', 's'}, "<S-Tab>", function()
     if vim.fn["denippet#jumpable"](-1) then
       return vim.fn["denippet#jump"](-1)
     end
     return "<S-Tab>"
-  end, { expr = true })
+  end, { expr = true, desc = "denippet: jump to the previous placeholder, otherwise insert <S-Tab>" })
 """
 lua_source = """
   vim.fn["denippet#load"](vim.fn.stdpath("config") .. "/snippets/global.ts", "*")
@@ -172,7 +172,7 @@ lua << EOF
     else
       vim.fn["ddc#map#manual_complete"]()
     end
-  end, { expr = true })
+  end, { expr = true, desc = "ddc: choose next snippet choice / select next candidate / start completion" })
 
   vim.keymap.set('i', "<C-p>", function()
     if vim.fn["denippet#choosable"]() then
@@ -182,7 +182,7 @@ lua << EOF
     else
       vim.fn["ddc#map#manual_complete"]()
     end
-  end, { expr = true })
+  end, { expr = true, desc = "ddc: choose previous snippet choice / select previous candidate / start completion" })
 EOF
 """
 hook_source = """
@@ -294,12 +294,12 @@ lua_add = """
     if vim.fn["pum#preview_visible"]() then
       vim.fn["pum#map#scroll_preview"](4)
     end
-  end)
+  end, { desc = "pum: scroll the preview window down" })
   vim.keymap.set({'i', 'c'}, "<C-u>", function()
     if vim.fn["pum#preview_visible"]() then
       vim.fn["pum#map#scroll_preview"](-4)
     end
-  end)
+  end, { desc = "pum: scroll the preview window up" })
 """
 lua_source = """
   vim.fn["pum#set_option"]({

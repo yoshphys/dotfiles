@@ -4,13 +4,13 @@ vim.keymap.set('n', "[Space]s", function()
     name = vim.t["ddt_ui_shell_last_name"] or ("shell-" .. vim.fn.win_getid()),
     ui = "shell",
   })
-end)
+end, { desc = "ddt: open the shell UI (reuse the last one of the tab)" })
 vim.keymap.set('n', "[Space]t", function()
   vim.fn["ddt#start"]({
     name = vim.t["ddt_ui_terminal_last_name"] or ("terminal-" .. vim.fn.win_getid()),
     ui = "terminal",
   })
-end)
+end, { desc = "ddt: open the terminal UI (reuse the last one of the tab)" })
 -- }}}
 
 -- lua_source {{{
@@ -94,7 +94,7 @@ for i, color in ipairs(ansi_map) do
   vim.api.nvim_set_hl(0, 'DDTShellBg' .. color_id, { bg = color })
 end
 
-vim.keymap.set('c', "<C-t>", "<Tab>")
+vim.keymap.set('c', "<C-t>", "<Tab>", { desc = "Cmdline: insert a native <Tab> (<Tab> is used to select pum candidates)" })
 vim.keymap.set('c', "<Tab>", function()
   if vim.fn["pum#visible"]() then
     vim.fn["pum#map#select_relative"](1)
@@ -102,44 +102,44 @@ vim.keymap.set('c', "<Tab>", function()
     -- vim.fn["feedkeys"]("<Tab>")
     return "<Tab>"
   end
-end)
+end, { desc = "Cmdline: select the next pum candidate, otherwise fall back to <Tab>" })
 
 -- }}}
 
 -- lua_ddt-terminal {{{
-vim.keymap.set('t', "<C-]>", "<C-\\><C-n>") -- map <C-]> to go to normal mode
+vim.keymap.set('t', "<C-]>", "<C-\\><C-n>", { desc = "Terminal: go to normal mode" }) -- map <C-]> to go to normal mode
 vim.keymap.set('n', "<C-n>", function()
   vim.fn["ddt#ui#do_action"]("nextPrompt")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: jump to the next prompt" })
 vim.keymap.set('n', "<C-p>", function()
   vim.fn["ddt#ui#do_action"]("previousPrompt")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: jump to the previous prompt" })
 vim.keymap.set('n', "<C-y>", function()
   vim.fn["ddt#ui#do_action"]("pastePrompt")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: paste the command of the current line to the prompt" })
 vim.keymap.set('n', "<CR>", function()
   vim.fn["ddt#ui#do_action"]("executeLine")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: execute the command of the current line" })
 vim.keymap.set('n', "[Space]gd", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git diff',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: send `git diff`" })
 vim.keymap.set('n', "[Space]gc", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git commit',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: send `git commit`" })
 vim.keymap.set('n', "[Space]gs", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git status',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: send `git status`" })
 vim.keymap.set('n', "[Space]gA", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git commit --amend',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-terminal: send `git commit --amend`" })
 
 vim.api.nvim_create_autocmd('DirChanged', {
   group = vim.api.nvim_create_augroup('ddt-ui-terminal', { clear = false }),
@@ -159,39 +159,39 @@ end
 -- lua_ddt-shell {{{
 vim.keymap.set('n', "<C-n>", function()
   vim.fn["ddt#ui#do_action"]("nextPrompt")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: jump to the next prompt" })
 vim.keymap.set('n', "<C-p>", function()
   vim.fn["ddt#ui#do_action"]("previousPrompt")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: jump to the previous prompt" })
 vim.keymap.set('n', "<C-y>", function()
   vim.fn["ddt#ui#do_action"]("pastePrompt")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: paste the command of the current line to the prompt" })
 vim.keymap.set({'n', 'i'}, "<CR>", function()
   vim.fn["ddt#ui#do_action"]("executeLine")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: execute the command of the current line" })
 vim.keymap.set('n', "<C-c>", function()
   vim.fn["ddt#ui#do_action"]("terminate")
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: terminate the running command" })
 vim.keymap.set('n', "[Space]gd", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git diff',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: send `git diff`" })
 vim.keymap.set('n', "[Space]gc", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git commit',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: send `git commit`" })
 vim.keymap.set('n', "[Space]gs", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git status',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: send `git status`" })
 vim.keymap.set('n', "[Space]gA", function()
   vim.fn["ddt#ui#do_action"]('send', {
     str = 'git commit --amend',
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: send `git commit --amend`" })
 vim.keymap.set('i', "<C-n>", function()
   if vim.fn["pum#visible"]() then
     vim.fn["pum#map#insert_relative"](1, "empty")
@@ -200,7 +200,7 @@ vim.keymap.set('i', "<C-n>", function()
       sources = { 'shell_history' },
     })
   end
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: select the next candidate, or complete from shell history" })
 vim.keymap.set('i', "<C-p>", function()
   if vim.fn["pum#visible"]() then
     vim.fn["pum#map#insert_relative"](-1, "empty")
@@ -209,7 +209,7 @@ vim.keymap.set('i', "<C-p>", function()
       sources = { 'shell_history' },
     })
   end
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: select the previous candidate, or complete from shell history" })
 vim.keymap.set('n', "<C-h>", function()
   vim.fn["ddu#start"]({
     name   = "ddt",
@@ -217,7 +217,7 @@ vim.keymap.set('n', "<C-h>", function()
     input  = vim.fn["ddt#ui#get_input"](),
     sources = { { name = "ddt_shell_history" } },
   })
-end, { buffer = true })
+end, { buffer = true, desc = "ddt-shell: search the shell history with ddu using the current input" })
 
 vim.api.nvim_create_autocmd('DirChanged', {
   group = vim.api.nvim_create_augroup('ddt-ui-shell', { clear = false }),

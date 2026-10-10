@@ -32,21 +32,21 @@ vim.keymap.set('c', "<C-n>", function()
         return vim.fn["pum#map#select_relative"](1)
     end
     vim.fn["ddc#map#manual_complete"]()
-end)
+end, { desc = "ddc: select the next candidate in the cmdline (start completion if hidden)" })
 
 vim.keymap.set('c', "<C-p>", function()
     if vim.fn["pum#visible"]() then
         return vim.fn["pum#map#select_relative"](-1)
     end
     vim.fn["ddc#map#manual_complete"]()
-end)
+end, { desc = "ddc: select the previous candidate in the cmdline (start completion if hidden)" })
 
 vim.keymap.set({ 'i', 'c' }, "<C-y>", function()
     if vim.fn["pum#visible"]() then
         return vim.fn["pum#map#confirm"]()
     end
     return "<C-y>"
-end, { expr = true })
+end, { expr = true, desc = "pum: confirm the selected candidate" })
 
 vim.keymap.set({ 'i', 'c' }, "<C-g>", function()
   if vim.fn["pum#visible"]() then
@@ -56,7 +56,7 @@ vim.keymap.set({ 'i', 'c' }, "<C-g>", function()
       return ""
   end
   return "<C-g>"
-end, { expr = true, nowait = true })
+end, { expr = true, nowait = true, desc = "pum: close the completion menu" })
 
 function CommandlinePre(mode)
     if vim.fn.exists("*ddc#enable_cmdline_completion") == 0 then
@@ -100,6 +100,6 @@ function CommandlinePre(mode)
     vim.fn["ddc#enable_cmdline_completion"]()
 end
 
-vim.keymap.set({ 'n', 'x' }, ':', "<CMD>lua CommandlinePre(':')<CR>:")
-vim.keymap.set('n', '?', "<CMD>lua CommandlinePre('/')<CR>?")
+vim.keymap.set({ 'n', 'x' }, ':', "<CMD>lua CommandlinePre(':')<CR>:", { desc = "Cmdline: enter command-line mode with ddc cmdline completion" })
+vim.keymap.set('n', '?', "<CMD>lua CommandlinePre('/')<CR>?", { desc = "Cmdline: enter backward search mode with ddc cmdline completion" })
 -- }}}

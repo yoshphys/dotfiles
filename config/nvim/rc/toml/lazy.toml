@@ -156,9 +156,9 @@ vim.api.nvim_create_autocmd(
 repo = "kamecha/bimove"
 on_event = ["BufReadPre", "BufNewFile"]
 lua_add = """
-  vim.keymap.set('n', "M", "<Plug>(bimove-enter)<Plug>(bimove)", {silent = true})
-  vim.keymap.set('n', "<Plug>(bimove)k", "<Plug>(bimove-high)<Plug>(bimove)", {silent = true})
-  vim.keymap.set('n', "<Plug>(bimove)j", "<Plug>(bimove-low)<Plug>(bimove)", {silent = true})
+  vim.keymap.set('n', "M", "<Plug>(bimove-enter)<Plug>(bimove)", { silent = true, desc = "bimove: start binary-search cursor movement from the middle of the screen" })
+  vim.keymap.set('n', "<Plug>(bimove)k", "<Plug>(bimove-high)<Plug>(bimove)", { silent = true, desc = "bimove: move to the upper half of the search range" })
+  vim.keymap.set('n', "<Plug>(bimove)j", "<Plug>(bimove-low)<Plug>(bimove)", { silent = true, desc = "bimove: move to the lower half of the search range" })
   local function set_bimove_hl()
     vim.api.nvim_set_hl(0, 'BimoveHigh',   { bg = "#a86464" })
     vim.api.nvim_set_hl(0, 'BimoveCursor', { bg = "#4e7a8c" })
@@ -327,10 +327,10 @@ lua_source = '''
   )
 '''
 lua_add = """
-  vim.keymap.set({'n', 'x'}, "<C-a>", "<Plug>(dps-dial-increment)", {remap = ture})
-  vim.keymap.set({'n', 'x'}, "<C-x>", "<Plug>(dps-dial-decrement)", {remap = true})
-  vim.keymap.set('x', "g<C-a>", "g<Plug>(dps-dial-increment)", {remap = true})
-  vim.keymap.set('x', "g<C-x>", "g<Plug>(dps-dial-decrement)", {remap = true})
+  vim.keymap.set({'n', 'x'}, "<C-a>", "<Plug>(dps-dial-increment)", { remap = ture, desc = "dps-dial: increment the value under the cursor / in the selection" })
+  vim.keymap.set({'n', 'x'}, "<C-x>", "<Plug>(dps-dial-decrement)", { remap = true, desc = "dps-dial: decrement the value under the cursor / in the selection" })
+  vim.keymap.set('x', "g<C-a>", "g<Plug>(dps-dial-increment)", { remap = true, desc = "dps-dial: increment the selection progressively line by line" })
+  vim.keymap.set('x', "g<C-x>", "g<Plug>(dps-dial-decrement)", { remap = true, desc = "dps-dial: decrement the selection progressively line by line" })
 """
 
 
@@ -467,7 +467,7 @@ lua_source = """
   vim.g.fuzzy_motion_matchers = {"kensaku", "fzf"}
 """
 lua_add = """
-  vim.keymap.set('n', 'S', "<Cmd>FuzzyMotion<Cr>", {silent = true})
+  vim.keymap.set('n', 'S', "<Cmd>FuzzyMotion<Cr>", { silent = true, desc = "fuzzy-motion: jump to a position using fuzzy (kensaku/fzf) search" })
 """
 
 
@@ -680,16 +680,15 @@ lua_add = """
   vim.api.nvim_create_autocmd('BufEnter', {
     pattern = '*/.editprompt-*.md',
     callback = function(args)
-      local opts = { buffer = args.buf }
-      vim.keymap.set('n', "[Space]ei", "<Cmd>Editprompt input --auto-send<CR>", opts)
-      vim.keymap.set('n', "[Space]eI", "<Cmd>Editprompt input<CR>", opts)
-      vim.keymap.set('x', "[Space]ei", "<Cmd>Editprompt input --visual --auto-send<CR>", opts)
-      vim.keymap.set('n', "[Space]ep", "<Cmd>Editprompt history prev<CR>", opts)
-      vim.keymap.set('n', "[Space]en", "<Cmd>Editprompt history next<CR>", opts)
-      vim.keymap.set('n', "[Space]eh", "<Cmd>Editprompt history list<CR>", opts)
-      vim.keymap.set('n', "[Space]ek", "<Cmd>Editprompt press_mode<CR>", opts)
-      vim.keymap.set('n', "[Space]es", "<Cmd>Editprompt stash pop<CR>", opts)
-      vim.keymap.set('n', "[Space]eS", "<Cmd>Editprompt stash push<CR>", opts)
+      vim.keymap.set('n', "[Space]ei", "<Cmd>Editprompt input --auto-send<CR>", { buffer = args.buf, desc = "editprompt: send the buffer to the target pane and auto-send" })
+      vim.keymap.set('n', "[Space]eI", "<Cmd>Editprompt input<CR>", { buffer = args.buf, desc = "editprompt: send the buffer to the target pane without auto-send" })
+      vim.keymap.set('x', "[Space]ei", "<Cmd>Editprompt input --visual --auto-send<CR>", { buffer = args.buf, desc = "editprompt: send the selected lines to the target pane and auto-send" })
+      vim.keymap.set('n', "[Space]ep", "<Cmd>Editprompt history prev<CR>", { buffer = args.buf, desc = "editprompt: recall the previous prompt from history" })
+      vim.keymap.set('n', "[Space]en", "<Cmd>Editprompt history next<CR>", { buffer = args.buf, desc = "editprompt: recall the next prompt from history" })
+      vim.keymap.set('n', "[Space]eh", "<Cmd>Editprompt history list<CR>", { buffer = args.buf, desc = "editprompt: pick a prompt from history and insert it" })
+      vim.keymap.set('n', "[Space]ek", "<Cmd>Editprompt press_mode<CR>", { buffer = args.buf, desc = "editprompt: enter press mode (forward keys to the target pane)" })
+      vim.keymap.set('n', "[Space]es", "<Cmd>Editprompt stash pop<CR>", { buffer = args.buf, desc = "editprompt: restore (pop) the stashed content" })
+      vim.keymap.set('n', "[Space]eS", "<Cmd>Editprompt stash push<CR>", { buffer = args.buf, desc = "editprompt: stash the buffer content" })
     end,
   })
 """
@@ -701,7 +700,7 @@ lua_source = """
 repo = "lambdalisue/nvim-aibo"
 on_cmd = "Aibo*"
 lua_add = """
-  vim.keymap.set('v', "<C-g><C-s>", ":<C-u>'<,'>AiboSend -input<CR>", { silent = true })
+  vim.keymap.set('v', "<C-g><C-s>", ":<C-u>'<,'>AiboSend -input<CR>", { silent = true, desc = "aibo: send the selected lines to the console prompt" })
 """
 lua_source = """
   require("aibo").setup({
@@ -714,21 +713,20 @@ lua_source = """
       no_default_mappings = true,
       on_attach = function(bufnr, info)
         -- these maps are from nvim-aibo/ftplugin/aibo-prompt.lua excluding <C-n> and <C-p>
-        local opts = { buffer = bufnr, nowait = true, silent = true }
-        vim.keymap.set({ "n", "i" }, "<C-g><C-o>", "<Plug>(aibo-send)", { buffer = bufnr, nowait = true })
-        vim.keymap.set("n", "<CR>", "<Plug>(aibo-submit)", opts)
-        vim.keymap.set("n", "<Esc>", "<Cmd>q<CR>", opts)
-        vim.keymap.set("n", "<C-Enter>", "<Plug>(aibo-submit)<Cmd>q<CR>", opts)
-        vim.keymap.set("n", "<F5>", "<Plug>(aibo-submit)<Cmd>q<CR>", opts)
-        vim.keymap.set("i", "<C-Enter>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", opts)
-        vim.keymap.set("i", "<F5>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", opts)
-        vim.keymap.set("n", "<C-c>", "<Plug>(aibo-send)<Esc>", opts)
-        vim.keymap.set("n", "g<C-c>", "<Plug>(aibo-send)<C-c>", opts)
-        vim.keymap.set("n", "<C-l>", "<Plug>(aibo-send)<C-l>", opts)
-        vim.keymap.set("n", "<C-n>", "<Plug>(aibo-send)<C-n>", opts)
-        vim.keymap.set("n", "<C-p>", "<Plug>(aibo-send)<C-p>", opts)
-        vim.keymap.set("n", "<Down>", "<Plug>(aibo-send)<Down>", opts)
-        vim.keymap.set("n", "<Up>", "<Plug>(aibo-send)<Up>", opts)
+        vim.keymap.set({ "n", "i" }, "<C-g><C-o>", "<Plug>(aibo-send)", { buffer = bufnr, nowait = true, desc = "aibo-prompt: send the next typed key to the console" })
+        vim.keymap.set("n", "<CR>", "<Plug>(aibo-submit)", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt to the console" })
+        vim.keymap.set("n", "<Esc>", "<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: close the prompt window" })
+        vim.keymap.set("n", "<C-Enter>", "<Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("n", "<F5>", "<Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("i", "<C-Enter>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("i", "<F5>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("n", "<C-c>", "<Plug>(aibo-send)<Esc>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <Esc> to the console" })
+        vim.keymap.set("n", "g<C-c>", "<Plug>(aibo-send)<C-c>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-c> (interrupt) to the console" })
+        vim.keymap.set("n", "<C-l>", "<Plug>(aibo-send)<C-l>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-l> (clear) to the console" })
+        vim.keymap.set("n", "<C-n>", "<Plug>(aibo-send)<C-n>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-n> (next history) to the console" })
+        vim.keymap.set("n", "<C-p>", "<Plug>(aibo-send)<C-p>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-p> (previous history) to the console" })
+        vim.keymap.set("n", "<Down>", "<Plug>(aibo-send)<Down>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <Down> to the console" })
+        vim.keymap.set("n", "<Up>", "<Plug>(aibo-send)<Up>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <Up> to the console" })
       end,
     },
     tools = {
@@ -765,14 +763,13 @@ lua_source = """
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "aibo-prompt*",
     callback = function()
-      local opts = { buffer = true }
       for _, dir in ipairs({ "h", "j", "k", "l", "w", "W" }) do
         vim.keymap.set("n", "<C-w>" .. dir, function()
           vim.cmd("q")
           vim.schedule(function()
             vim.cmd("wincmd " .. dir)
           end)
-        end, opts)
+        end, { buffer = true, desc = "aibo-prompt: close the prompt and run <C-w>" .. dir })
       end
     end,
   })

@@ -9,78 +9,77 @@ vim.api.nvim_create_autocmd({ "TabEnter", "WinEnter", "CursorHold", "FocusGained
 -- }}}
 
 -- lua_ddu-filer {{{
-local opts = { buffer = true, }
 vim.keymap.set('n', "<CR>",
   function()
     vim.fn["ddu#ui#do_action"]("itemAction")
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: run the default item action (open file / enter directory)" })
 vim.keymap.set('n', "<Space>",
   function()
     vim.fn["ddu#ui#do_action"]("toggleSelectItem")
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: toggle selection of the item" })
 vim.keymap.set('n', 'a',
   function()
     vim.fn["ddu#ui#do_action"]("chooseAction")
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: choose an item action from a list" })
 vim.keymap.set('n', 'A',
   function()
     vim.fn["ddu#ui#do_action"]("inputAction")
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: input an item action name" })
 vim.keymap.set('n', 'gr',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", { name = "grep" })
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: grep from the path of the item" })
 vim.keymap.set('n', 'o',
   function()
     vim.fn["ddu#ui#do_action"]("expandItem",
       { mode = "toggle", isGrouped = true, isInTree = false })
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: toggle expansion of the directory" })
 vim.keymap.set('n', 'O',
   function()
     vim.fn["ddu#ui#do_action"]("expandItem",
       { maxLevel = -1 })
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: recursively expand the directory (all levels)" })
 vim.keymap.set('n', 'P',
   function()
     vim.fn["ddu#ui#do_action"]("togglePreview")
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: toggle the preview window" })
 vim.keymap.set('n', 'q',
   function()
     vim.fn["ddu#ui#do_action"]("quit")
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: quit the filer" })
 vim.keymap.set('n', 't',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", {
         name = "open",
         params = { command = "tabedit" },
     })
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: open the item in a new tab" })
 vim.keymap.set('n', '<C-l>',
     function()
         vim.fn["ddu#ui#do_action"]("redraw", { method = "refreshItems" })
-    end, opts)
+    end, { buffer = true, desc = "ddu-filer: refresh the items of the sources" })
 vim.keymap.set('n', 's',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", {
       name = "open",
       params = { command = "split" }
     })
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: open the item in a horizontal split" })
 vim.keymap.set('n', 'v',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", {
       name = "open",
       params = { command = "vsplit" }
     })
-  end, opts)
+  end, { buffer = true, desc = "ddu-filer: open the item in a vertical split" })
 vim.keymap.set('n', "<C-d>",
     function()
         vim.fn["ddu#ui#do_action"]("previewExecute", { command = "normal! \x04" }) -- \x04 is ASCII code of <C-d>
-    end, opts)
+    end, { buffer = true, desc = "ddu-filer: scroll the preview window down" })
 vim.keymap.set('n', "<C-u>",
     function()
         vim.fn["ddu#ui#do_action"]("previewExecute", { command = "normal! \x15" }) -- \x15 is ASCII code of <C-u>
-    end, opts)
+    end, { buffer = true, desc = "ddu-filer: scroll the preview window up" })
 -- }}}
 
 -- lua_add {{{
@@ -159,6 +158,6 @@ local function open_filer(ui_params, name_suffix)
     }))
 end
 
-vim.keymap.set('n', "[Space]f", function() open_filer(filer_ui_params_h, "_h") end)
-vim.keymap.set('n', "[Space]v", function() open_filer(filer_ui_params_v, "_v") end)
+vim.keymap.set('n', "[Space]f", function() open_filer(filer_ui_params_h, "_h") end, { desc = "ddu-filer: open the filer as a panel at the bottom of the current window" })
+vim.keymap.set('n', "[Space]v", function() open_filer(filer_ui_params_v, "_v") end, { desc = "ddu-filer: open the filer as a panel at the right of the current window" })
 -- }}}

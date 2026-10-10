@@ -39,7 +39,6 @@ vim.api.nvim_create_autocmd("VimResized", {
 -- }}}
 
 -- lua_ddu-ff {{{
-local opts = { buffer = true, }
 vim.keymap.set('n', "<CR>",
     function()
         local item = vim.fn["ddu#ui#get_item"]()
@@ -47,71 +46,71 @@ vim.keymap.set('n', "<CR>",
         local is_directory = action.isDirectory or false
         vim.fn["ddu#ui#do_action"]("itemAction",
             is_directory and { name = "narrow" } or { name = "default" })
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: narrow into directory, otherwise run the default item action" })
 vim.keymap.set('n', "<Space>",
     function()
         vim.fn["ddu#ui#do_action"]("toggleSelectItem")
-    end, vim.tbl_extend('force', opts, { silent = true }))
+    end, { buffer = true, silent = true, desc = "ddu-ff: toggle selection of the item" })
 vim.keymap.set('n', 'a',
     function()
         vim.fn["ddu#ui#do_action"]("chooseAction")
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: choose an item action from a list" })
 vim.keymap.set('n', 'A',
     function()
         vim.fn["ddu#ui#do_action"]("inputAction")
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: input an item action name" })
 vim.keymap.set('n', 'gr',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", { name = "grep" })
-  end, opts)
+  end, { buffer = true, desc = "ddu-ff: grep from the path of the item" })
 vim.keymap.set('n', 'i',
     function()
         vim.fn["ddu#ui#do_action"]("openFilterWindow")
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: open the filter input window" })
 vim.keymap.set('n', 'K',
     function()
         vim.fn["ddu#ui#do_action"]("kensaku")
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: switch to the kensaku (migemo) matcher" })
 vim.keymap.set('n', 'n',
     function()
         vim.fn["ddu#ui#do_action"]("itemAction", { name = "narrow" })
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: narrow the source into the item" })
 vim.keymap.set('n', 'o',
     function()
         vim.fn["ddu#ui#do_action"]("expandItem", { mode = "toggle" })
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: toggle expansion of the item (tree)" })
 vim.keymap.set('n', 'P',
     function()
         vim.fn["ddu#ui#do_action"]("togglePreview", { mode = "toggle" })
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: toggle the preview window" })
 vim.keymap.set('n', 'q',
     function()
         vim.fn["ddu#ui#do_action"]("quit")
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: quit ddu" })
 vim.keymap.set('n', 's',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", {
       name = "open",
       params = { command = "split" }
     })
-  end, opts)
+  end, { buffer = true, desc = "ddu-ff: open the item in a horizontal split" })
 vim.keymap.set('n', 'v',
   function()
     vim.fn["ddu#ui#do_action"]("itemAction", {
       name = "open",
       params = { command = "vsplit" }
     })
-  end, opts)
+  end, { buffer = true, desc = "ddu-ff: open the item in a vertical split" })
 vim.keymap.set('n', '<C-l>',
     function()
         vim.fn["ddu#ui#do_action"]("redraw", { method = "refreshItems" })
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: refresh the items of the sources" })
 vim.keymap.set('n', "<C-d>",
     function()
         vim.fn["ddu#ui#do_action"]("previewExecute", { command = "normal! \x04" }) -- \x04 is ASCII code of <C-d>
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: scroll the preview window down" })
 vim.keymap.set('n', "<C-u>",
     function()
         vim.fn["ddu#ui#do_action"]("previewExecute", { command = "normal! \x15" }) -- \x15 is ASCII code of <C-u>
-    end, opts)
+    end, { buffer = true, desc = "ddu-ff: scroll the preview window up" })
 -- }}}

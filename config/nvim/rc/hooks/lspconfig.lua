@@ -30,10 +30,10 @@ end
 
 --- format keymap --------------------------------
 on_attach(function(client, bufnr)
-  vim.keymap.set('n', 'gf', '<Cmd>lua vim.lsp.buf.format()<CR>', { silent = true, buffer = bufnr })
-  vim.keymap.set('n', 'K', "<Cmd>lua vim.lsp.buf.hover({border = 'single'})<CR>", { silent = true, buffer = bufnr })
+  vim.keymap.set('n', 'gf', '<Cmd>lua vim.lsp.buf.format()<CR>', { silent = true, buffer = bufnr, desc = "LSP: format the buffer" })
+  vim.keymap.set('n', 'K', "<Cmd>lua vim.lsp.buf.hover({border = 'single'})<CR>", { silent = true, buffer = bufnr, desc = "LSP: show hover documentation" })
   vim.keymap.set('n', '<C-w>d', "<Cmd>lua vim.diagnostic.open_float({border = 'single'})<CR>",
-    { silent = true, buffer = bufnr })
+    { silent = true, buffer = bufnr, desc = "LSP: show diagnostics of the line in a floating window" })
 
   if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlineCompletion, bufnr) then
     vim.lsp.inline_completion.enable(true, { bufnr = bufnr })
