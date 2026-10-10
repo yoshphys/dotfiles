@@ -327,7 +327,7 @@ lua_source = '''
   )
 '''
 lua_add = """
-  vim.keymap.set({'n', 'x'}, "<C-a>", "<Plug>(dps-dial-increment)", { remap = ture, desc = "dps-dial: increment the value under the cursor / in the selection" })
+  vim.keymap.set({'n', 'x'}, "<C-a>", "<Plug>(dps-dial-increment)", { remap = true, desc = "dps-dial: increment the value under the cursor / in the selection" })
   vim.keymap.set({'n', 'x'}, "<C-x>", "<Plug>(dps-dial-decrement)", { remap = true, desc = "dps-dial: decrement the value under the cursor / in the selection" })
   vim.keymap.set('x', "g<C-a>", "g<Plug>(dps-dial-increment)", { remap = true, desc = "dps-dial: increment the selection progressively line by line" })
   vim.keymap.set('x', "g<C-x>", "g<Plug>(dps-dial-decrement)", { remap = true, desc = "dps-dial: decrement the selection progressively line by line" })
