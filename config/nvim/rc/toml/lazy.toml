@@ -847,22 +847,22 @@ on_ft = ["c", "cpp"]
 # SKK ############################################
 ##################################################
 
-[[plugins]]
-repo = "NI57721/skkeleton-henkan-highlight"
-on_event = "InsertEnter"
-lua_add = """
-  -- Highlight words with underline when using a normal terminal,
-  -- and with reverse when using a colour one.
-  vim.api.nvim_set_hl(0, "SkkeletonHenkan", { reverse = true })
-  vim.api.nvim_set_hl(0, "SkkeletonHenkanSelect", { reverse = true })
-"""
-
-[[plugins]]
-repo = "delphinus/skkeleton_indicator.nvim"
-on_event = "InsertEnter"
-lua_source = """
-require("skkeleton_indicator").setup({})
-"""
+# [[plugins]]
+# repo = "NI57721/skkeleton-henkan-highlight"
+# on_event = "InsertEnter"
+# lua_add = """
+#   -- Highlight words with underline when using a normal terminal,
+#   -- and with reverse when using a colour one.
+#   vim.api.nvim_set_hl(0, "SkkeletonHenkan", { reverse = true })
+#   vim.api.nvim_set_hl(0, "SkkeletonHenkanSelect", { reverse = true })
+# """
+#
+# [[plugins]]
+# repo = "delphinus/skkeleton_indicator.nvim"
+# on_event = "InsertEnter"
+# lua_source = """
+# require("skkeleton_indicator").setup({})
+# """
 
 ##################################################
 # multiple hooks #################################

@@ -336,37 +336,37 @@ lua_source = """
   })
 """
 
-[[multiple_hooks]]
-plugins = ["ddc.vim", "skkeleton"]
-hook_source = """
-lua << EOF
-  local prev_buffer_config = nil
-  vim.api.nvim_create_autocmd("User", {
-    group = "MyAutoCmd",
-    pattern = "skkeleton-enable-pre",
-    callback = function()
-      -- Overwrite soureces
-      prev_buffer_config = vim.fn["ddc#custom#get_buffer"]()
-      vim.fn["ddc#custom#patch_buffer"]({
-        -- sources = {"around", "skkeleton", "line"},
-        sources = {"skkeleton"},
-        sourceOptions = {
-          _ = {
-            keywordPattern = "[ァ-ヮア-ンー]+",
-          },
-        },
-      })
-    end
-  })
-  vim.api.nvim_create_autocmd("User", {
-    group = "MyAutoCmd",
-    pattern = "skkeleton-disable-pre",
-    callback = function()
-      if prev_buffer_config then
-        -- Restore sources
-        vim.fn["ddc#custom#set_buffer"](prev_buffer_config)
-      end
-    end,
-  })
-EOF
-"""
+# [[multiple_hooks]]
+# plugins = ["ddc.vim", "skkeleton"]
+# hook_source = """
+# lua << EOF
+#   local prev_buffer_config = nil
+#   vim.api.nvim_create_autocmd("User", {
+#     group = "MyAutoCmd",
+#     pattern = "skkeleton-enable-pre",
+#     callback = function()
+#       -- Overwrite soureces
+#       prev_buffer_config = vim.fn["ddc#custom#get_buffer"]()
+#       vim.fn["ddc#custom#patch_buffer"]({
+#         -- sources = {"around", "skkeleton", "line"},
+#         sources = {"skkeleton"},
+#         sourceOptions = {
+#           _ = {
+#             keywordPattern = "[ァ-ヮア-ンー]+",
+#           },
+#         },
+#       })
+#     end
+#   })
+#   vim.api.nvim_create_autocmd("User", {
+#     group = "MyAutoCmd",
+#     pattern = "skkeleton-disable-pre",
+#     callback = function()
+#       if prev_buffer_config then
+#         -- Restore sources
+#         vim.fn["ddc#custom#set_buffer"](prev_buffer_config)
+#       end
+#     end,
+#   })
+# EOF
+# """

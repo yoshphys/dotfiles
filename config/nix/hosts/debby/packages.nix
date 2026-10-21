@@ -78,6 +78,7 @@ with pkgs; [
   # editor #########################################
   vim-startuptime
   neovim # from neovim-overlay
+  espanso
 
   # LSP/formatter ##################################
   kakehashi

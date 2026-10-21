@@ -16,6 +16,7 @@
   "google-chrome"
   "honto"
   "inkscape"
+  "kanaemi-app/tap/kanaemi" # Japanese IME based on SKK (needs kanaemi-app/tap)
   "karabiner-elements"
   "kobo"
   "ltspice"
