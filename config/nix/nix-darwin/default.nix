@@ -66,6 +66,10 @@
   };
 
   security = {
-    pam.services.sudo_local.touchIdAuth = true;
+    pam.services.sudo_local = {
+      touchIdAuth = true;
+      # pam_reattach: allow Touch ID inside persistent session managers (herdr, tmux)
+      reattach = true;
+    };
   };
 }
