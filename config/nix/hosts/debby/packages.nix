@@ -11,6 +11,7 @@ with pkgs; [
   peco # richer `command | grep`
   tmux
   herdr
+  edit-in-app # edit any macOS text field in Ghostty + nvim
   editprompt # write prompts for CLI agents in $EDITOR
 
   # system #########################################

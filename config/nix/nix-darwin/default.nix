@@ -44,6 +44,12 @@
   system = {
     stateVersion = 6;
 
+    activationScripts.postActivation.text = ''
+      # pbs caches the Services list, including their shortcuts. Activation runs
+      # as root, but the Services status lives in the user's own preferences.
+      sudo -u ${inputs.username} /System/Library/CoreServices/pbs -flush || true
+    '';
+
     primaryUser = inputs.username;
 
     defaults = {
@@ -61,6 +67,23 @@
         autohide = true;
         show-recents = false;
         launchanim = false;
+      };
+      # Keyboard shortcuts for the edit-in-app services. @ = cmd, ~ = opt,
+      # ^ = ctrl, $ = shift. Each key is the service's own identifier, as the
+      # Services system spells it.
+      CustomUserPreferences.pbs.NSServicesStatus = {
+        # Edit what is selected.
+        "(null) - Edit in nvim - runWorkflowAsService" = {
+          enabled_context_menu = 1;
+          enabled_services_menu = 1;
+          key_equivalent = "@~^e";
+        };
+        # Start from an empty buffer, for a field with nothing selected.
+        "(null) - Write in nvim - runWorkflowAsService" = {
+          enabled_context_menu = 1;
+          enabled_services_menu = 1;
+          key_equivalent = "@~^n";
+        };
       };
     };
   };

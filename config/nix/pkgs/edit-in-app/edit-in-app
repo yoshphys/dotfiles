@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Capture side of edit-in-app. Runs from the macOS service while the target app
+# is still frontmost.
+#
+# This must return immediately. A service request left pending is invalidated as
+# soon as the originating app's first responder or selection changes, which
+# silently drops the write-back -- so the edited text is sent back by
+# edit-in-app-edit instead, not by returning it from here.
+set -euo pipefail
+
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+dir="${XDG_CACHE_HOME:-$HOME/.cache}/edit-in-app"
+mkdir -p "$dir"
+
+# Keep a week of edits around: they are the only copy if a write-back is lost.
+find "$dir" -name '.editinapp-*' -mtime +7 -delete 2>/dev/null || true
+
+base="$dir/.editinapp-$(date +%Y%m%d%H%M%S)-$$"
+
+cat > "$base.md"
+lsappinfo info -only bundleid "$(lsappinfo front)" | sed 's/.*=//; s/"//g' > "$base.app"
+
+# Ghostty instances that already exist, so edit-in-app-edit can tell its own
+# throwaway instance apart from the terminal the user is working in.
+ps -Ao pid=,comm= | awk '$2 ~ /Ghostty\.app/ {print $1}' > "$base.pre"
+
+open -na Ghostty.app --args -e @out@/bin/edit-in-app-edit "$base"

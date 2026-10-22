@@ -110,3 +110,18 @@ vim.api.nvim_create_autocmd('QuitPre', {
   end,
   desc = 'Close all special buffers and quit Neovim',
 })
+
+-- Buffers opened by the edit-in-app service
+-- (e.g. ~/.cache/edit-in-app/.editinapp-20261022160534-1234.md)
+vim.api.nvim_create_autocmd('BufEnter', {
+  group = "MyAutoCmd",
+  pattern = '*/.editinapp-*.md',
+  callback = function(args)
+    -- Prose from a mail or a web form, not code.
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.keymap.set('n', "[Space]q", "<Cmd>cquit<CR>",
+      { buffer = args.buf, desc = "edit-in-app: discard the edit and leave the form untouched" })
+  end,
+  desc = 'Set up buffers opened by the edit-in-app service',
+})

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>NSServices</key>
+  <array>
+    <dict>
+      <key>NSMenuItem</key>
+      <dict><key>default</key><string>Write in nvim</string></dict>
+      <key>NSMessage</key><string>runWorkflowAsService</string>
+      <!-- No NSSendTypes: this one is offered because the focused field can
+           accept text, not because something is selected, so it also works in
+           an empty field. Declaring only a return type is what makes that
+           match; nothing is actually returned. -->
+      <key>NSReturnTypes</key>
+      <array><string>NSStringPboardType</string></array>
+    </dict>
+  </array>
+</dict>
+</plist>

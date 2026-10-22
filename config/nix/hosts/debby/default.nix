@@ -26,6 +26,7 @@ nix-darwin.lib.darwinSystem {
           zk-lsp = prev.callPackage ../../pkgs/zk-lsp { };
           tanim-cli = prev.callPackage ../../pkgs/tanim-cli { };
           editprompt = prev.callPackage ../../pkgs/editprompt { };
+          edit-in-app = prev.callPackage ../../pkgs/edit-in-app { };
         })
       ];
     }
@@ -39,6 +40,7 @@ nix-darwin.lib.darwinSystem {
           ../../home-manager/base.nix
           ../../home-manager/programs/nushell.nix
           ../../home-manager/programs/nvim.nix
+          ../../home-manager/programs/edit-in-app.nix
           ../../home-manager/programs/yaskkserv2.nix
           ../../home-manager/programs/julia.nix
         ];
