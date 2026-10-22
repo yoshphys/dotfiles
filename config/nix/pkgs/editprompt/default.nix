@@ -1,10 +1,9 @@
 {
   lib,
-  stdenvNoCC,
+  buildNpmPackage,
+  fetchNpmDeps,
   fetchurl,
-  cacert,
   nodejs,
-  makeWrapper,
 }:
 let
   pname = "editprompt";
@@ -15,41 +14,48 @@ let
     hash = "sha256-XqYgC17wemQ5x+T6zOKndZe946j8nVAa+4UATaF+H/M=";
   };
 
-  # The published dist/index.js leaves its dependencies external,
-  # so they are installed in a fixed-output derivation.
-  nodeModules = stdenvNoCC.mkDerivation {
-    name = "${pname}-node-modules-${version}";
-    inherit src;
-    nativeBuildInputs = [ nodejs cacert ];
-    sourceRoot = "package";
-    dontConfigure = true;
-    buildPhase = ''
-      export HOME=$TMPDIR
-      # devDependencies conflict on peer deps and are not needed at runtime
-      node -e 'const p=require("./package.json");delete p.devDependencies;require("fs").writeFileSync("package.json",JSON.stringify(p))'
-      npm install --omit=dev --ignore-scripts --no-audit --no-fund --no-package-lock
-    '';
-    installPhase = ''
-      cp -r node_modules $out
-    '';
-    dontFixup = true;
-    outputHashMode = "recursive";
-    outputHash = "sha256-bjiz1PFOIZJD+6eTzyOTvq1CgErJszF5kTbmqHUkIok=";
-  };
-in
-stdenvNoCC.mkDerivation {
-  inherit pname version src;
   sourceRoot = "package";
-  nativeBuildInputs = [ makeWrapper ];
-  dontBuild = true;
 
-  installPhase = ''
-    mkdir -p $out/lib/${pname} $out/bin
-    cp -r dist package.json $out/lib/${pname}/
-    cp -r ${nodeModules} $out/lib/${pname}/node_modules
-    makeWrapper ${nodejs}/bin/node $out/bin/${pname} \
-      --add-flags $out/lib/${pname}/dist/index.js
+  # The published tarball ships no lockfile, so one is vendored next to this
+  # file; without it npm re-resolves the semver ranges on every build and the
+  # dependency hash drifts whenever a transitive dependency is republished.
+  #
+  # The lockfile is generated from a package.json with devDependencies and
+  # peerDependencies dropped: the former conflict on peer deps and are not
+  # needed at runtime, the latter only asks for typescript, which the prebuilt
+  # dist/index.js never imports. postPatch repeats that removal so `npm ci`
+  # sees a package.json in sync with the lockfile.
+  #
+  # To regenerate after a version bump:
+  #   tar xzf editprompt-<version>.tgz && cd package
+  #   node -e 'const p=require("./package.json");delete p.devDependencies;delete p.peerDependencies;require("fs").writeFileSync("package.json",JSON.stringify(p))'
+  #   npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+  postPatch = ''
+    node -e 'const p=require("./package.json");delete p.devDependencies;delete p.peerDependencies;require("fs").writeFileSync("package.json",JSON.stringify(p))'
+    cp ${./package-lock.json} package-lock.json
   '';
+in
+buildNpmPackage {
+  inherit
+    pname
+    version
+    src
+    sourceRoot
+    postPatch
+    ;
+
+  # fetchNpmDeps replays postPatch to pick up the vendored lockfile, but it does
+  # not pull in nodejs on its own, so npmDeps is spelled out instead of relying
+  # on the npmDepsHash shorthand.
+  npmDeps = fetchNpmDeps {
+    inherit src sourceRoot postPatch;
+    name = "${pname}-${version}-npm-deps";
+    hash = "sha256-ZKrVKOJCn1OczT6WLzmdw5wH93bkasRrsVd1w/Ou3HY=";
+    nativeBuildInputs = [ nodejs ];
+  };
+
+  # dist/ is already built in the published tarball.
+  dontNpmBuild = true;
 
   meta = {
     description = "Write prompts for CLI tools in your favorite editor";
