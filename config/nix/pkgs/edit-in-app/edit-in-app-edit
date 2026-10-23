@@ -2,52 +2,38 @@
 # Editor side of edit-in-app. Runs inside the throwaway Ghostty window and sends
 # the result back to the app the text came from.
 #
-#   :wq / :x  (exit 0)      commit
-#   :cq       (exit non-0)  discard
+#   :wq / :x  commit
+#   :q!       discard: nothing was written, so nothing is sent back
+#   :cq       discard after having saved, by exiting non-zero
 set -uo pipefail
 
 export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 
 base="$1"
 app=$(cat "$base.app")
-original=$(cat "$base.md")
 
 front_bundle() {
   lsappinfo info -only bundleid "$(lsappinfo front)" 2>/dev/null | sed 's/.*=//; s/"//g'
 }
 
-# Close only the Ghostty instance running this script. Quitting Ghostty by name
-# would take the user's own terminal windows down with it.
-quit_own_ghostty() {
-  local p=$$
-  while [ "$p" -gt 1 ]; do
-    case "$(ps -o comm= -p "$p" 2>/dev/null)" in
-      */Ghostty.app/*)
-        grep -qx "$p" "$base.pre" 2>/dev/null || kill "$p"
-        return ;;
-    esac
-    p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
-    [ -n "$p" ] || return
-  done
-}
-
-@nvim@ "$base.md"
+# Prose for a mail or a web form, not code, and the global config turns wrap off.
+@nvim@ -c 'setlocal wrap linebreak' "$base.md"
 code=$?
 
-# Nothing to send back: discarded, or saved without changing anything.
-if [ "$code" -ne 0 ] || [ "$(cat "$base.md")" = "$original" ]; then
+# Command substitution drops the trailing newline nvim adds: pasting that into a
+# single-line field would commit the form.
+text=$(cat "$base.md")
+
+# Nothing to send back: discarded, or saved without writing anything.
+if [ "$code" -ne 0 ] || [ -z "$text" ]; then
   open -b "$app"
-  quit_own_ghostty
   exit 0
 fi
 
 saved=$(pbpaste)
-# "$(cat ...)" drops the trailing newline nvim adds: pasting it into a
-# single-line field would commit the form.
-printf '%s' "$(cat "$base.md")" | pbcopy
+printf '%s' "$text" | pbcopy
 
-# LaunchServices, so this needs no automation permission. Switching apps keeps
-# the originating selection intact; clicking inside it would not.
+# LaunchServices, so bringing the app back needs no automation permission.
 open -b "$app"
 
 # Paste only once the originating app is really frontmost. A stray Cmd-V into
@@ -67,5 +53,3 @@ else
                 "A copy is kept at $base.md" >&2
   sleep 5
 fi
-
-quit_own_ghostty

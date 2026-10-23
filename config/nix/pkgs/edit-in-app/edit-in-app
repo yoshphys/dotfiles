@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Capture side of edit-in-app. Runs from the macOS service while the target app
-# is still frontmost.
+# Launcher side of edit-in-app. Runs from the macOS service while the target app
+# is still frontmost, so it is the only place that can tell which app asked.
 #
 # This must return immediately. A service request left pending is invalidated as
-# soon as the originating app's first responder or selection changes, which
-# silently drops the write-back -- so the edited text is sent back by
-# edit-in-app-edit instead, not by returning it from here.
+# soon as the originating app's first responder changes, which silently drops the
+# write-back -- so the text is sent back by edit-in-app-edit instead, not by
+# returning it from here.
 set -euo pipefail
 
 export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
@@ -18,11 +18,55 @@ find "$dir" -name '.editinapp-*' -mtime +7 -delete 2>/dev/null || true
 
 base="$dir/.editinapp-$(date +%Y%m%d%H%M%S)-$$"
 
-cat > "$base.md"
+# The service hands over no text, so the buffer always starts empty.
+: > "$base.md"
 lsappinfo info -only bundleid "$(lsappinfo front)" | sed 's/.*=//; s/"//g' > "$base.app"
 
-# Ghostty instances that already exist, so edit-in-app-edit can tell its own
-# throwaway instance apart from the terminal the user is working in.
-ps -Ao pid=,comm= | awk '$2 ~ /Ghostty\.app/ {print $1}' > "$base.pre"
+# The window size is in cells, not pixels. window-save-state=never is needed
+# with it: without it macOS restores a previous window size and the size flags
+# are ignored.
+#
+# The window opens at the pointer, because Ghostty otherwise cascades new
+# windows and this one ends up in a screen corner. NSEvent reports the pointer
+# from the bottom-left of the screen going up, while window-position counts from
+# the top-left of the visible area going down, hence the flip. 90x28 cells is
+# 724x464 points at the current font size; that size is only used to keep the
+# window on screen near an edge, so a different font only makes the clamping
+# slightly off.
+pos=$(osascript 2>/dev/null <<'OSA'
+use framework "Foundation"
+use framework "AppKit"
 
-open -na Ghostty.app --args -e @out@/bin/edit-in-app-edit "$base"
+set p to (current application's NSEvent's mouseLocation()) as list
+set vf to (current application's NSScreen's mainScreen()'s visibleFrame()) as list
+set visY to item 2 of (item 1 of vf)
+set visW to item 1 of (item 2 of vf)
+set visH to item 2 of (item 2 of vf)
+
+set winW to 724
+set winH to 464
+
+set posX to item 1 of p
+set posY to (visY + visH) - (item 2 of p)
+
+if posX > visW - winW then set posX to visW - winW
+if posX < 0 then set posX to 0
+if posY > visH - winH then set posY to visH - winH
+if posY < 0 then set posY to 0
+
+return ((posX as integer) as text) & " " & ((posY as integer) as text)
+OSA
+) || pos=""
+
+geometry=(--window-width=90 --window-height=28 --window-save-state=never)
+if [ -n "$pos" ]; then
+  geometry+=(--window-position-x="${pos% *}" --window-position-y="${pos#* }")
+fi
+
+# quit-after-last-window-closed makes this instance end itself once the editor
+# exits, which also hands the front back to the app the text is going to. It
+# defaults to false on macOS, and it only applies to this instance, so the
+# terminal the user is working in is unaffected.
+open -na Ghostty.app --args "${geometry[@]}" \
+  --quit-after-last-window-closed=true \
+  -e @out@/bin/edit-in-app-edit "$base"

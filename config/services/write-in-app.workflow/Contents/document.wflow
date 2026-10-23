@@ -16,7 +16,7 @@
         <dict>
           <key>CheckedForUserDefaultShell</key><true/>
           <key>COMMAND_STRING</key><string>exec "$HOME/.nix-profile/bin/edit-in-app"</string>
-          <!-- 0 passes the selection on stdin, 1 would pass it as arguments. -->
+          <!-- 0 would pass input on stdin, 1 as arguments. There is no input. -->
           <key>inputMethod</key><integer>0</integer>
           <key>shell</key><string>/bin/zsh</string>
           <key>source</key><string></string>
@@ -63,13 +63,19 @@
   <key>workflowMetaData</key>
   <dict>
     <key>inputTypeIdentifier</key><string>com.apple.Automator.nothing</string>
-    <key>outputTypeIdentifier</key><string>com.apple.Automator.text</string>
+    <key>outputTypeIdentifier</key><string>com.apple.Automator.nothing</string>
     <key>presentationMode</key><integer>15</integer>
     <key>processesInput</key><false/>
     <key>serviceApplicationBundleID</key><string></string>
     <key>serviceApplicationPath</key><string></string>
     <key>serviceInputTypeIdentifier</key><string>com.apple.Automator.nothing</string>
-    <key>serviceOutputTypeIdentifier</key><string>com.apple.Automator.text</string>
+    <!-- Nothing out. Declaring a text output makes an app that honours it
+         (TextEdit does, Mail and Slack do not) put up "the workflow did not
+         provide valid data" every time, because the write-back is done by
+         edit-in-app-edit and the workflow itself returns none. Whether the
+         service gets offered at all is decided by NSReturnTypes in Info.plist,
+         not by this. -->
+    <key>serviceOutputTypeIdentifier</key><string>com.apple.Automator.nothing</string>
     <key>serviceProcessesInput</key><false/>
     <key>systemImageName</key><string>NSActionTemplate</string>
     <key>useAutomaticInputType</key><false/>

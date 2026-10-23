@@ -8,10 +8,10 @@
       <key>NSMenuItem</key>
       <dict><key>default</key><string>Write in nvim</string></dict>
       <key>NSMessage</key><string>runWorkflowAsService</string>
-      <!-- No NSSendTypes: this one is offered because the focused field can
-           accept text, not because something is selected, so it also works in
-           an empty field. Declaring only a return type is what makes that
-           match; nothing is actually returned. -->
+      <!-- Declaring only a return type is what gets the service offered
+           whenever the focused field can accept text, rather than only when
+           something is selected. Nothing is actually returned: the write-back
+           is done by edit-in-app-edit. -->
       <key>NSReturnTypes</key>
       <array><string>NSStringPboardType</string></array>
     </dict>

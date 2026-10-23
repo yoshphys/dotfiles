@@ -18,7 +18,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Edit any macOS text field in Ghostty + nvim";
+    description = "Write into any macOS text field with Ghostty + nvim";
     platforms = lib.platforms.darwin;
     mainProgram = "edit-in-app";
   };
