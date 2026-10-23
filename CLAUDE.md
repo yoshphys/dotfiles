@@ -6,10 +6,10 @@
 
 ## config/nix/
 - `home-manager/base.nix` — base home-manager config
-- `home-manager/programs/` — per-program home-manager modules (nvim, nushell, yaskkserv2)
+- `home-manager/programs/` — per-program home-manager modules (nvim, nushell, edit-in-app, julia)
 - `hosts/debby/` — host-specific config (Mac: default.nix, packages.nix, brewCasks.nix)
 - `nix-darwin/default.nix` — system-level nix-darwin config
-- `pkgs/yaskkserv2/` — custom Nix package for yaskkserv2
+- `pkgs/` — custom Nix packages (edit-in-app, editprompt, kakehashi, tanim-cli, zk-lsp)
 
 ## config/nvim/
 - `init.lua` — entry point
@@ -23,6 +23,3 @@
 
 ## config/nushell/
 - `config.nu`, `env.nu`
-
-## config/scripts/
-- `make-yaskkserv2-dict.nu` — script to generate yaskkserv2 dictionary

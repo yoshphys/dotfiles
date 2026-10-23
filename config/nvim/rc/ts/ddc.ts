@@ -177,21 +177,6 @@ export class Config extends BaseConfig {
           mark: "[sh]",
           forceCompletionPattern: String.raw`\S/\S*`,
         },
-        // skkeleton: {
-        //   mark: "[SKK]",
-        //   matchers: [],
-        //   sorters: [],
-        //   converters: [],
-        //   isVolatile: true,
-        //   minAutoCompleteLength: 1,
-        // },
-        // skkeleton_okuri: {
-        //   mark: "[SKK*]",
-        //   matchers: [],
-        //   sorters: [],
-        //   converters: [],
-        //   isVolatile: true,
-        // },
       },
       sourceParams: {
         buffer: {
@@ -241,7 +226,6 @@ export class Config extends BaseConfig {
         },
         postfilter_score: {
           excludeSources: [
-            // "skkeleton",
             // "copilot",
           ],
         }

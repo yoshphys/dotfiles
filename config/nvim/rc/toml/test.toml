@@ -8,7 +8,6 @@ lua_add = """
   vim.g["denops#server#deno_args"] = {
     "-q",
     "-A",
-    "--unstable-kv", -- for skkeleton
     "--unstable-ffi", -- for ddt-ui-shell
   }
 """

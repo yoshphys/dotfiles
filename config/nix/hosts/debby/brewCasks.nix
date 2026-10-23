@@ -20,7 +20,6 @@
   "karabiner-elements"
   "kobo"
   "ltspice"
-  "macskk"
   "mactex"
   "microsoft-auto-update"
   "microsoft-excel"

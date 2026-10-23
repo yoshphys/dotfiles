@@ -21,7 +21,6 @@ nix-darwin.lib.darwinSystem {
         inputs.neovim-overlay.overlays.default # Comment out this line if neovim-overlay gets problems.
         inputs.fenix.overlays.default
         (final: prev: {
-          yaskkserv2 = prev.callPackage ../../pkgs/yaskkserv2 { };
           kakehashi = prev.callPackage ../../pkgs/kakehashi { };
           zk-lsp = prev.callPackage ../../pkgs/zk-lsp { };
           tanim-cli = prev.callPackage ../../pkgs/tanim-cli { };
@@ -41,11 +40,8 @@ nix-darwin.lib.darwinSystem {
           ../../home-manager/programs/nushell.nix
           ../../home-manager/programs/nvim.nix
           ../../home-manager/programs/edit-in-app.nix
-          ../../home-manager/programs/yaskkserv2.nix
           ../../home-manager/programs/julia.nix
         ];
-
-        services.yaskkserv2.enable = true;
 
         home.packages = (import ./packages.nix { inherit pkgs; }) ++ [
           # inputs.neovim-overlay.packages.${system}.default # Comment out this line if neovim-overlay does NOT get problems.
