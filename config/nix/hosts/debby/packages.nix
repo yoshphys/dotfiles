@@ -70,7 +70,16 @@ with pkgs; [
 
   # AI #############################################
   antigravity-cli # successor of gemini-cli; provides the `agy` command
-  claude-code
+  # nixpkgs pins CLAUDE_CODE_CERT_STORE=system, which drops the bundled roots in
+  # favour of the macOS keychain. Node only sees keychain entries that carry
+  # explicit trust settings, so no public root is trusted and every HTTPS call
+  # fails with UNABLE_TO_GET_ISSUER_CERT_LOCALLY (login, MCP, WebFetch).
+  (pkgs.symlinkJoin {
+    name = "claude-code-bundled-ca";
+    paths = [ pkgs.claude-code ];
+    nativeBuildInputs = [ pkgs.makeBinaryWrapper ];
+    postBuild = "wrapProgram $out/bin/claude --set CLAUDE_CODE_CERT_STORE bundled,system";
+  })
   github-copilot-cli
 
   # editor #########################################
