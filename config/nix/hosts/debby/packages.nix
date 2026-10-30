@@ -37,6 +37,7 @@ with pkgs; [
       python-pkgs.root # for enabling cern ROOT
   ]))
   nodejs_24
+  bun # JS runtime, bundler and test runner
   (pkgs.symlinkJoin { # to unlink `dx` command which conflicts with dioxus-cli
     name = "deno-no-dx";
     paths = [ pkgs.deno ];
