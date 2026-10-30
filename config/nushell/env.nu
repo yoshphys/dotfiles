@@ -15,6 +15,14 @@ $env.PATH = ($env.PATH | prepend [
     ($env.HOME + "/.julia/bin") # julia apps
 ] | uniq)
 
+# Rex adds its CLI to the PATH of the terminals it opens, but nix-darwin rebuilds
+# PATH from a fixed list on every shell start and drops it. Re-add it here. The
+# variable is empty outside Rex, so guard it rather than prepending blindly,
+# which would leave an empty PATH entry.
+if ($env.REX_BIN_DIR? | is-not-empty) {
+    $env.PATH = ($env.PATH | prepend $env.REX_BIN_DIR)
+}
+
 $env.MOCWORD_DATA = ($env.HOME + '/.mocword/mocword.sqlite')
 
 # Load API keys from ~/.apikeys so they're available in non-interactive sessions too

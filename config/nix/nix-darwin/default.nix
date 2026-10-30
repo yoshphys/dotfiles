@@ -26,6 +26,17 @@
     home = "/Users/${inputs.username}";
   };
 
+  # Rex adds its CLI to the PATH of the terminals it opens, but nix-darwin
+  # rebuilds PATH from a fixed list on every shell start and drops it, so each
+  # shell has to put it back. nushell does this in config/nushell/env.nu; this
+  # covers bash and zsh. REX_BIN_DIR is empty outside Rex, hence the guard:
+  # home.sessionPath would leave an empty PATH entry there.
+  environment.interactiveShellInit = ''
+    if [ -n "$REX_BIN_DIR" ]; then
+      export PATH="$REX_BIN_DIR:$PATH"
+    fi
+  '';
+
   homebrew = {
     enable = true;
     onActivation = {
