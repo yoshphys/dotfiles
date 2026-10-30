@@ -110,3 +110,22 @@ vim.api.nvim_create_autocmd('QuitPre', {
   end,
   desc = 'Close all special buffers and quit Neovim',
 })
+
+-- Buffers that Rex's cmd+y opens: a frozen snapshot of a pane's scrollback,
+-- there only to read and pick text out of. Searching and moving are vim's own;
+-- these two only shorten copying to the system clipboard.
+vim.api.nvim_create_autocmd('BufEnter', {
+  group = "MyAutoCmd",
+  pattern = '*/rex-scrollback-*.log',
+  callback = function(args)
+    vim.keymap.set('x', 'y', '"+y', {
+      buffer = args.buf,
+      desc = 'Rex scrollback: yank to the clipboard',
+    })
+    vim.keymap.set('x', 'Y', '"+y<Cmd>qa!<CR>', {
+      buffer = args.buf,
+      desc = 'Rex scrollback: yank to the clipboard and close the pane',
+    })
+  end,
+  desc = 'Map y and Y in a Rex scrollback snapshot buffer',
+})
