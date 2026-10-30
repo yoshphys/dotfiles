@@ -7,6 +7,7 @@
   "claude"
   "cmux" # integrated terminal app using libghostty
   "deepl"
+  "discord"
   "freecad"
   "firefox"
   "font-hack-nerd-font"
