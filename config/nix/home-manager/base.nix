@@ -1,5 +1,5 @@
 { ... }: {
-  home.stateVersion = "24.11";
+  home.stateVersion = "26.11";
   xdg.enable = true;
   programs = {
     direnv = {

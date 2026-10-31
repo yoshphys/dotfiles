@@ -53,7 +53,7 @@
   };
 
   system = {
-    stateVersion = 6;
+    stateVersion = 7;
 
     activationScripts.postActivation.text = ''
       # pbs caches the Services list, including their shortcuts. Activation runs

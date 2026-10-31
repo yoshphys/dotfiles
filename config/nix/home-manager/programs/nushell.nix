@@ -19,6 +19,9 @@ in {
       enable = true;
       configFile.source = ../../../nushell/config.nu;
       envFile.source = ../../../nushell/env.nu;
+      # home.sessionVariables only carries values env.nu already sets by hand,
+      # so loading them would just add a bash subprocess to every startup.
+      loadSessionVariables = false;
     };
     starship = {
       enable = true;
