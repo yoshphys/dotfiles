@@ -8,6 +8,7 @@
   "cmux" # integrated terminal app using libghostty
   "deepl"
   "discord"
+  "espanso" # text expander
   "freecad"
   "firefox"
   "font-hack-nerd-font"
