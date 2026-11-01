@@ -7,11 +7,11 @@
 }:
 let
   pname = "editprompt";
-  version = "1.6.0";
+  version = "1.8.1";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-XqYgC17wemQ5x+T6zOKndZe946j8nVAa+4UATaF+H/M=";
+    hash = "sha256-P6AJnNEj93e0eI2xrxSUIWeI6+WGoO4sAEFn6Nd64ys=";
   };
 
   sourceRoot = "package";
@@ -50,7 +50,7 @@ buildNpmPackage {
   npmDeps = fetchNpmDeps {
     inherit src sourceRoot postPatch;
     name = "${pname}-${version}-npm-deps";
-    hash = "sha256-ZKrVKOJCn1OczT6WLzmdw5wH93bkasRrsVd1w/Ou3HY=";
+    hash = "sha256-SV4IF8w8lu1Vv6Kkpa7ssp2QRAOiGaS/1fVYeM7czG8=";
     nativeBuildInputs = [ nodejs ];
   };
 
