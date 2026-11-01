@@ -693,12 +693,9 @@ lua_add = """
   })
 """
 lua_source = """
-  -- editprompt.nvim runs `editprompt` from the PATH, and the released build has
-  -- no Rex backend yet, so point it at the fork's build while that is a pull
-  -- request. Drop `cmd` once it ships.
-  require("editprompt").setup({
-    cmd = { vim.fn.expand("~/.local/share/editprompt-dev/bin/editprompt") },
-  })
+  -- The plugin ships no plugin/ directory, so setup() is what registers the
+  -- real :Editprompt command. Needed even with no options to override.
+  require("editprompt").setup()
 """
 
 [[plugins]]
