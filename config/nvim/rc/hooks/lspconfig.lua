@@ -82,6 +82,7 @@ local lsp_servers = {
   "lua_ls",   -- for lua
   "jetls",    -- for julia
   "ruff",     -- for python
+  "gopls",    -- for golang
 }
 
 local capabilities = require("ddc_source_lsp").make_client_capabilities()

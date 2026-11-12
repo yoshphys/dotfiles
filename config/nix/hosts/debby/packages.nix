@@ -32,12 +32,13 @@ with pkgs; [
 
   # programming ####################################
   cmake
+  go
   uv # python package manager
   (pkgs.python3.withPackages (python-pkgs: [
       python-pkgs.root # for enabling cern ROOT
+      python-pkgs.jupyter
   ]))
   nodejs_24
-  bun # JS runtime, bundler and test runner
   (pkgs.symlinkJoin { # to unlink `dx` command which conflicts with dioxus-cli
     name = "deno-no-dx";
     paths = [ pkgs.deno ];
@@ -50,7 +51,7 @@ with pkgs; [
   rlwrap # for CLI tools
 
   # web app ########################################
-  dioxus-cli
+  # dioxus-cli
 
   # productivity ###################################
   typst
@@ -84,10 +85,10 @@ with pkgs; [
   tree-sitter
   tinymist
   ruff
+  gopls # LSP for golang
   lua-language-server
   copilot-language-server
 
   # brewCasks ######################################
   # I decided not to use brewCasks of brew-nix. I use brewCasks in nix-darwin instead.
-  # brewCasks.ghostty
 ]
