@@ -1,0 +1,2 @@
+" goda-pm.vim ---------------------------------------
+execute 'source' ($VIM_CONFIG_PATH .. '/rc/goda-pm.vim')->fnameescape()

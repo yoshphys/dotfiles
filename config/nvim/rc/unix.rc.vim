@@ -3,7 +3,7 @@
 "
 
 if !has('gui_running')
-  " Disable the mouse. Toggle with the mouse keymap in vimrc.lua.
+  " Disable the mouse. Toggle with the mouse keymap in neovim.rc.lua.
   set mouse=
 endif
 

@@ -13,8 +13,8 @@
 
 ## config/nvim/
 - `init.lua` — entry point
-- `rc/vimrc.lua` — sources `rc/goda-pm.lua`
-- `rc/goda-pm.lua` — goda-pm.vim plugin manager bootstrap
+- `rc/vimrc` — common entry (vim/neovim), sources `rc/goda-pm.vim`
+- `rc/goda-pm.vim` — goda-pm.vim plugin manager bootstrap (vimscript: shared by vim/neovim)
 - `rc/goda-pm/main.go` — goda-pm.vim config (Go module): loads the TOML files below, sets up InlineVimrcs
 - `rc/merge.toml`, `rc/lazy.toml`, `rc/ddc.toml`, `rc/ddu.toml`, `rc/goda.toml`, `rc/neovim.toml` — plugin definitions, by load strategy
 - `rc/*.lua` (`ddc.lua`, `ddt.lua`, `ddu.lua`, `ddu-ui-ff.lua`, `ddu-ui-filer.lua`, `lspconfig.lua`) — per-plugin hook configs, referenced by `hooks_file` in the TOML files above
