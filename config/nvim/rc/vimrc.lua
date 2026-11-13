@@ -9,6 +9,11 @@ vim.keymap.set('n', "[Space]", "<Nop>", { desc = "Disable the [Space] prefix key
 vim.api.nvim_set_keymap('x', "<Space>", "[Space]", { noremap = false })
 vim.keymap.set('x', "[Space]", "<Nop>", { desc = "Disable the [Space] prefix key itself" })
 
+vim.keymap.set('n', "[Space]m", function()
+  vim.o.mouse = vim.o.mouse == "" and "nvi" or ""
+  vim.notify("mouse=" .. vim.o.mouse)
+end, { desc = "Toggle the mouse option" })
+
 vim.keymap.set('c', "<C-f>", "<Right>", { desc = "Cmdline: move the cursor one character to the right" })
 vim.keymap.set('c', "<C-b>", "<Left>", { desc = "Cmdline: move the cursor one character to the left" })
 vim.keymap.set('c', "<C-a>", "<Home>", { desc = "Cmdline: move the cursor to the beginning of the line" })

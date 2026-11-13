@@ -1,0 +1,110 @@
+##################################################
+# color scheme ###################################
+##################################################
+
+[[plugins]]
+repo = "catppuccin/nvim"
+name = "catppuccin"
+lua_add = """
+  vim.cmd("colorscheme catppuccin-macchiato")
+"""
+
+##################################################
+# Denops #########################################
+##################################################
+
+[[plugins]]
+repo = "vim-denops/denops.vim"
+lua_source = """
+  vim.g["denops#server#deno_args"] = {
+    "-q",
+    "--no-check",  -- skip type checking for faster startup
+    "-A",
+    "--unstable-ffi", -- for ddt-ui-shell
+  }
+  -- vim.g["denops#debug"] = 1
+"""
+
+##################################################
+# Lua ############################################
+##################################################
+
+[[plugins]]
+repo = "nvim-lua/plenary.nvim"
+
+##################################################
+# others #########################################
+##################################################
+
+[[plugins]] # nerd icons
+repo = "nvim-tree/nvim-web-devicons"
+
+[[plugins]] # statusline on the bottom
+repo = "nvim-lualine/lualine.nvim"
+depends = ["catppuccin", "nvim-web-devicons"]
+lua_source = """
+  local lsp_names = function()
+    local clients = vim
+      .iter(vim.lsp.get_clients { bufnr = 0 })
+      :map(function(client)
+        if client.name == 'null-ls' then
+          return ('null-ls(%s)'):format(table.concat(
+            vim
+              .iter(require('null-ls.sources').get_available(vim.bo.filetype))
+              :map(function(source)
+                return source.name
+              end)
+              :totable(),
+            ', '
+          ))
+        else
+          return client.name
+        end
+      end)
+      :totable()
+    return ' ' .. table.concat(clients, ', ')
+  end
+
+  require("lualine").setup({
+    options = {
+      theme = "auto",
+    },
+    sections = {
+      lualine_x = { lsp_names, "encoding", "fileformat", "filetype" },
+    },
+  })
+"""
+
+##################################################
+# ddt.vim ########################################
+##################################################
+
+[[plugins]]
+repo = "Shougo/ddt.vim"
+depends = "denops.vim"
+hooks_file = "$VIM_CONFIG_PATH/rc/ddt.lua"
+
+[[plugins]]
+repo = "Shougo/ddt-ui-terminal"
+on_source = "ddt.vim"
+
+[[plugins]]
+repo = "Shougo/ddt-ui-shell"
+on_source = "ddt.vim"
+
+[[plugins]]
+repo = "lambdalisue/vim-guise"
+on_source = "ddt.vim"
+
+##################################################
+# goda-pm.vim (bootstrap, for update tracking) ##
+##################################################
+
+[[plugins]]
+repo = "Shougo/goda-pm.vim"
+
+[[plugins]]
+repo = "Shougo/goda.vim"
+
+[[plugins]]
+repo = "Shougo/goda-pm-ext-lazy.vim"

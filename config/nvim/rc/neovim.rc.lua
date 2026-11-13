@@ -1,0 +1,3 @@
+-- Neovim-only settings.
+-- Currently empty: today's options all live in vimrc.lua (Lua-only) and
+-- still need to be sorted into this file vs options.rc.vim (shared).

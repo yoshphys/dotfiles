@@ -1,0 +1,5 @@
+##################################################
+# plugins depending on goda.vim (e.g. a ddu source
+# for browsing/managing plugins) go here.
+# Currently empty: nothing needs goda.vim itself yet.
+##################################################

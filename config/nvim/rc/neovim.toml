@@ -1,0 +1,6 @@
+##################################################
+# Neovim-only plugins go here.
+# Currently empty: everything in lazy.toml/merge.toml
+# already assumes Neovim, and there is no plain-Vim
+# target to differentiate against yet.
+##################################################
