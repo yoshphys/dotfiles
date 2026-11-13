@@ -85,6 +85,9 @@ vim.diagnostic.config { severity_sort = true }
 -- dpp.vim ---------------------------------------
 vim.cmd.source(vim.env.VIM_CONFIG_PATH .. "/rc/dpp.lua")
 
+-- goda-pm.vim ---------------------------------------
+vim.cmd.source(vim.env.VIM_CONFIG_PATH .. "/rc/goda-pm.lua")
+
 -- builtin plugins -------------------------------
 vim.cmd.packadd('nvim.undotree')
 
