@@ -76,23 +76,6 @@ if load_state_failed or version_changed then
             goda_pm.make_state(cache_path)
         end,
     })
--- else
---     vim.api.nvim_create_autocmd("BufWritePost", {
---         group = "MyAutoCmd",
---         pattern = vim.env.VIM_CONFIG_PATH .. "/**/*",
---         callback = function()
---             dpp.check_files()
---         end,
---     })
---     vim.api.nvim_create_autocmd("BufWritePost", {
---         pattern = vim.env.VIM_CONFIG_PATH .. "/rc/toml/*.toml",
---         callback = function()
---             local not_installed = dpp.sync_ext_action("installer", "getNotInstalled")
---             if not vim.tbl_isempty(not_installed) then
---                 dpp.async_ext_action("installer", "install")
---             end
---         end,
---     })
 end
 
 vim.api.nvim_create_autocmd("User", {
