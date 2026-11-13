@@ -4,6 +4,10 @@ if vim.uv.fs_stat(cache_path) then
 end
 vim.env.GODA_PM_CACHE_PATH = cache_path
 
+-- Needed here (not just in neovim.rc.lua) because this file uses the group
+-- below, before neovim.rc.lua is sourced via InlineVimrcs during load_state.
+vim.api.nvim_create_augroup("MyAutoCmd", {})
+
 local function goda_pm_init_plugin(plugin)
     local dir = cache_path .. "/repos/github.com/" .. plugin
     if not vim.uv.fs_stat(dir) then
@@ -13,6 +17,11 @@ local function goda_pm_init_plugin(plugin)
 end
 
 goda_pm_init_plugin("Shougo/goda-pm.vim")
+-- goda.vim's goda#register() is needed by goda_pm.vim itself whenever it
+-- talks to the Go binary (make_state/install/update), not just on a cold
+-- bootstrap, so it must always be on runtimepath, unlike goda-pm-ext-lazy.vim
+-- (which is loaded eagerly from the generated state once it exists).
+goda_pm_init_plugin("Shougo/goda.vim")
 local goda_pm = require("goda_pm")
 
 vim.g["goda_pm#config_dir"] = vim.env.VIM_CONFIG_PATH .. "/rc/goda-pm"
@@ -43,12 +52,7 @@ if load_state_failed or version_changed then
     if version_changed then
         goda_pm.clear_state()
     end
-    for _, ext in ipairs({
-        "Shougo/goda.vim",
-        "Shougo/goda-pm-ext-lazy.vim",
-    }) do
-        goda_pm_init_plugin(ext)
-    end
+    goda_pm_init_plugin("Shougo/goda-pm-ext-lazy.vim")
 
     local reason
     if not version_changed then
@@ -117,19 +121,17 @@ vim.api.nvim_create_user_command("GodaPmMakeState",
     {}
 )
 
--- -- install
--- vim.api.nvim_create_user_command("GodaPmInstall",
---     function()
---         goda_pm.async_ext_action('installer', 'install')
---     end,
---     {}
--- )
---
--- -- update
--- vim.api.nvim_create_user_command("GodaPmUpdate",
---     function(opts)
---         local args = opts.fargs
---         goda_pm.async_ext_action('installer', 'update', { names = args })
---     end,
---     { nargs = "*" }
--- )
+-- Force-rebuild the Go binary from main.go. goda-pm.vim normally rebuilds
+-- automatically when main.go is newer than the cached binary, but every
+-- file under $VIM_CONFIG_PATH is deployed read-only from the Nix store
+-- (mtime fixed at the epoch), so that staleness check never fires here;
+-- run this explicitly after editing rc/goda-pm/main.go.
+vim.api.nvim_create_user_command("GodaPmBuild",
+    function()
+        goda_pm.build()
+    end,
+    {}
+)
+
+-- NOTE: GodaPmInstall/GodaPmUpdate are defined in goda.toml's
+-- "Shougo/goda-pm.vim" entry's lua_add hook, not here.

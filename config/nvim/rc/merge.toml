@@ -1,4 +1,11 @@
 ##################################################
+# goda-pm.vim ecosystem (goda.vim itself; see goda.toml for the rest) #
+##################################################
+
+[[plugins]]
+repo = "Shougo/goda.vim"
+
+##################################################
 # color scheme ###################################
 ##################################################
 
@@ -95,16 +102,3 @@ on_source = "ddt.vim"
 [[plugins]]
 repo = "lambdalisue/vim-guise"
 on_source = "ddt.vim"
-
-##################################################
-# goda-pm.vim (bootstrap, for update tracking) ##
-##################################################
-
-[[plugins]]
-repo = "Shougo/goda-pm.vim"
-
-[[plugins]]
-repo = "Shougo/goda.vim"
-
-[[plugins]]
-repo = "Shougo/goda-pm-ext-lazy.vim"

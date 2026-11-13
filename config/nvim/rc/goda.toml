@@ -1,5 +1,28 @@
 ##################################################
+# goda-pm.vim ecosystem.
+# NOTE: goda.vim itself is registered in merge.toml, not here: every
+# plugin loaded from this file defaults to "depends: goda.vim" (see
+# main.go), so registering goda.vim here would make it depend on itself.
+##################################################
+
+[[plugins]]
+repo = "Shougo/goda-pm.vim"
+rtp = ""
+lua_add = """
+  vim.api.nvim_create_user_command("GodaPmInstall", function()
+    require("goda_pm").async_ext_action("installer", "install")
+  end, {})
+  vim.api.nvim_create_user_command("GodaPmUpdate", function(opts)
+    require("goda_pm").async_ext_action("installer", "update", { names = opts.fargs })
+  end, { nargs = "*" })
+"""
+
+[[plugins]]
+repo = "Shougo/goda-pm-ext-lazy.vim"
+lazy = false
+
+##################################################
 # plugins depending on goda.vim (e.g. a ddu source
 # for browsing/managing plugins) go here.
-# Currently empty: nothing needs goda.vim itself yet.
+# Currently empty: nothing else needs goda.vim yet.
 ##################################################

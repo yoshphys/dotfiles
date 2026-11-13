@@ -99,6 +99,14 @@ func config(ctx context.Context, c *pm.ConfigArgs) (*pm.ConfigReturn, error) {
 			pm.Plugin{"lazy": true},
 		},
 		{
+			"$VIM_CONFIG_PATH/rc/ddc.toml",
+			pm.Plugin{"lazy": true},
+		},
+		{
+			"$VIM_CONFIG_PATH/rc/ddu.toml",
+			pm.Plugin{"lazy": true},
+		},
+		{
 			"$VIM_CONFIG_PATH/rc/goda.toml",
 			pm.Plugin{"lazy": true, "depends": "goda.vim"},
 		},
