@@ -12,6 +12,7 @@ lua_source = """
     'bash',
     'c',
     'cpp',
+    'go',
     'javascript',
     'julia',
     'latex',
