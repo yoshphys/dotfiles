@@ -109,46 +109,6 @@ lua_source = """
   })
 """
 
-[[plugins]]
-repo = "folke/styler.nvim"
-depends = "catppuccin"
-on_event = ["WinEnter"]
-lua_add = """
-INACTIVE_COLORSCHEME = 'catppuccin-mocha'
-
--- for inactive windows (including ddu floating windows)
-local function inactivate(win)
-  if not vim.api.nvim_win_is_valid(win) then return end
-  -- skip non-ddu floating windows (e.g. completion popups)
-  local cfg = vim.api.nvim_win_get_config(win)
-  if cfg.relative ~= "" then
-    local ft = vim.bo[vim.api.nvim_win_get_buf(win)].filetype
-    if not vim.startswith(ft, "ddu-") then return end
-  end
-  if (vim.w[win].theme or {}).colorscheme ~= INACTIVE_COLORSCHEME then
-    require('styler').set_theme(win, { colorscheme = INACTIVE_COLORSCHEME })
-  end
-end
-
-vim.api.nvim_create_autocmd(
-  { 'WinEnter' },
-  {
-    group = vim.api.nvim_create_augroup('styler-nvim-custom', {}),
-    callback = function()
-      vim.schedule(function()
-        local win_cursor = vim.api.nvim_get_current_win()
-        require('styler').clear(win_cursor)
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          if win ~= win_cursor then
-            inactivate(win)
-          end
-        end
-      end)
-    end
-  }
-)
-"""
-
 ##################################################
 # jump ###########################################
 ##################################################
@@ -650,28 +610,6 @@ on_cmd = "Partedit"
 #     },
 #   })
 # """
-
-[[plugins]]
-repo = "CopilotC-Nvim/CopilotChat.nvim"
-depents = "nvim-lua/plenary.nvim"
-on_event = ["BufReadPre", "BufNewFile"]
-lua_source = """
-  local default_prompts = require('CopilotChat.config.prompts')
-  local in_japanese = 'なお、説明は日本語にすること。'
-  require('CopilotChat').setup({
-    prompts = vim.tbl_deep_extend('force', default_prompts, {
-      Explain = { prompt = default_prompts.Explain.prompt .. in_japanese },
-      Review = { prompt = default_prompts.Review.prompt .. in_japanese },
-      Fix = { prompt = default_prompts.Fix.prompt .. in_japanese },
-      Optimize = { prompt = default_prompts.Optimize.prompt .. in_japanese },
-      TranslateJE = {
-        prompt = 'Translate the selected text from English to Japanese if it is in English, or from Japanese to English if it is in Japanese. Please do not include unnecessary line breaks, line numbers, comments, etc. in the result.',
-        system_prompt = 'You are an excellent Japanese-English translator. You can translate the original text correctly without losing its meaning. You also have deep knowledge of system engineering and are good at translating technical documents.',
-        description = 'Translate text from Japanese to English or vice versa',
-      },
-    }),
-  })
-"""
 
 [[plugins]]
 repo = "eetann/editprompt.nvim"

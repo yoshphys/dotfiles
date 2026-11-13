@@ -10,11 +10,11 @@ repo = "Shougo/goda.vim"
 ##################################################
 
 [[plugins]]
-repo = "catppuccin/nvim"
+repo = "catppuccin/vim"
 name = "catppuccin"
-lua_add = """
-  vim.cmd("colorscheme catppuccin-macchiato")
-"""
+hook_add = '''
+  colorscheme catppuccin_macchiato
+'''
 
 ##################################################
 # Denops #########################################
@@ -33,54 +33,11 @@ lua_source = """
 """
 
 ##################################################
-# Lua ############################################
-##################################################
-
-[[plugins]]
-repo = "nvim-lua/plenary.nvim"
-
-##################################################
 # others #########################################
 ##################################################
 
 [[plugins]] # nerd icons
 repo = "nvim-tree/nvim-web-devicons"
-
-[[plugins]] # statusline on the bottom
-repo = "nvim-lualine/lualine.nvim"
-depends = ["catppuccin", "nvim-web-devicons"]
-lua_source = """
-  local lsp_names = function()
-    local clients = vim
-      .iter(vim.lsp.get_clients { bufnr = 0 })
-      :map(function(client)
-        if client.name == 'null-ls' then
-          return ('null-ls(%s)'):format(table.concat(
-            vim
-              .iter(require('null-ls.sources').get_available(vim.bo.filetype))
-              :map(function(source)
-                return source.name
-              end)
-              :totable(),
-            ', '
-          ))
-        else
-          return client.name
-        end
-      end)
-      :totable()
-    return ' ' .. table.concat(clients, ', ')
-  end
-
-  require("lualine").setup({
-    options = {
-      theme = "auto",
-    },
-    sections = {
-      lualine_x = { lsp_names, "encoding", "fileformat", "filetype" },
-    },
-  })
-"""
 
 ##################################################
 # ddt.vim ########################################

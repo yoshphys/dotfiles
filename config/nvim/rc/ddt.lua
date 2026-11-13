@@ -69,24 +69,25 @@ vim.cmd([[
   endfunction
 ]])
 
--- Define ANSI color highlight groups from Catppuccin Mocha palette
-local palette = require('catppuccin.palettes').get_palette('mocha')
+-- Define ANSI color highlight groups from the Catppuccin Mocha palette.
+-- Hardcoded (catppuccin/vim has no Lua palette module, unlike the former
+-- catppuccin/nvim) since ddt.vim is slated for removal anyway.
 local ansi_map = {
-  palette.red,     -- 01: red
-  palette.green,   -- 02: green
-  palette.yellow,  -- 03: yellow
-  palette.blue,    -- 04: blue
-  palette.pink,    -- 05: magenta
-  palette.sky,     -- 06: cyan
-  palette.text,    -- 07: white
-  palette.overlay1,-- 08: bright black
-  palette.maroon,  -- 09: bright red
-  palette.green,   -- 10: bright green
-  palette.yellow,  -- 11: bright yellow
-  palette.lavender,-- 12: bright blue
-  palette.pink,    -- 13: bright magenta
-  palette.teal,    -- 14: bright cyan
-  palette.text,    -- 15: bright white
+  "#F38BA8", -- 01: red
+  "#A6E3A1", -- 02: green
+  "#F9E2AF", -- 03: yellow
+  "#89B4FA", -- 04: blue
+  "#F5C2E7", -- 05: magenta (pink)
+  "#89DCEB", -- 06: cyan (sky)
+  "#CDD6F4", -- 07: white (text)
+  "#7F849C", -- 08: bright black (overlay1)
+  "#EBA0AC", -- 09: bright red (maroon)
+  "#A6E3A1", -- 10: bright green
+  "#F9E2AF", -- 11: bright yellow
+  "#B4BEFE", -- 12: bright blue (lavender)
+  "#F5C2E7", -- 13: bright magenta (pink)
+  "#94E2D5", -- 14: bright cyan (teal)
+  "#CDD6F4", -- 15: bright white (text)
 }
 for i, color in ipairs(ansi_map) do
   local color_id = string.format("%02d", i)
