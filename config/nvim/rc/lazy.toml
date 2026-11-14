@@ -414,23 +414,23 @@ on_cmd = "Partedit"
 ##################################################
 
 [[multiple_hooks]] # start up an IDE like environment
-plugins = ["nvim-aibo", "ddt-ui-shell"]
+plugins = ["nvim-aibo", "goda-term-ui-shell.vim"]
 hook_source = """
 lua << EOF
-  -- Layout: [ ddt-shell | current_buffer ]
-  --         [ Aibo      |                ]
+  -- Layout: [ goda-term-shell | current_buffer ]
+  --         [ Aibo            |                ]
   vim.api.nvim_create_user_command("AiboIDE", function(opts)
 
-    -- Save the current buffer before ddt-shell takes over
+    -- Save the current buffer before goda-term-shell takes over
     local orig_buf = vim.api.nvim_get_current_buf()
 
-    -- Build the entire layout after ddt-shell opens,
-    -- because ddt#start (async) may close windows created beforehand
+    -- Build the entire layout after goda-term-shell opens, because
+    -- goda_term#start (async) may close windows created beforehand
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = "ddt-shell",
+      pattern = "goda-term-shell",
       once = true,
       callback = function()
-        local ddt_win = vim.api.nvim_get_current_win()
+        local term_win = vim.api.nvim_get_current_win()
 
         -- Create right column for the original buffer
         vim.cmd("rightbelow vsplit")
@@ -440,17 +440,17 @@ lua << EOF
           vim.cmd("enew")
         end
 
-        -- Back to ddt-shell; split below for Aibo
-        vim.api.nvim_set_current_win(ddt_win)
+        -- Back to goda-term-shell; split below for Aibo
+        vim.api.nvim_set_current_win(term_win)
         vim.cmd("belowright split")
         vim.cmd("Aibo " .. opts.args)
 
-        -- Leave focus on ddt-shell
-        vim.api.nvim_set_current_win(ddt_win)
+        -- Leave focus on goda-term-shell
+        vim.api.nvim_set_current_win(term_win)
       end,
     })
 
-    vim.fn["ddt#start"]({
+    vim.fn["goda_term#start"]({
       name = "aibo-" .. tostring(vim.fn.win_getid()),
       ui = "shell",
     })

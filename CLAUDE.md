@@ -16,9 +16,10 @@
 - `rc/vimrc` — common entry (vim/neovim), sources `rc/goda-pm.vim`
 - `rc/goda-pm.vim` — goda-pm.vim plugin manager bootstrap (vimscript: shared by vim/neovim)
 - `rc/goda-pm/main.go` — goda-pm.vim config (Go module): loads the TOML files below, sets up InlineVimrcs
+- `rc/goda-term/main.go` — goda-term.vim config (Go module, the successor of ddt.vim; registered in `rc/goda.toml`)
 - `rc/merge.toml`, `rc/lazy.toml`, `rc/ddc.toml`, `rc/ddu.toml`, `rc/goda.toml`, `rc/neovim.toml` — plugin definitions, by load strategy
-- `rc/*.lua` (`ddc.lua`, `ddt.lua`, `ddu.lua`, `ddu-ui-ff.lua`, `ddu-ui-filer.lua`, `lspconfig.lua`) — per-plugin hook configs, referenced by `hooks_file` in the TOML files above
-- `rc/ts/` — TypeScript plugin configs for the denops-based ddc/ddu/ddt plugins
+- `rc/*.lua` (`ddc.lua`, `ddu.lua`, `ddu-ui-ff.lua`, `ddu-ui-filer.lua`, `lspconfig.lua`) / `rc/goda-term.vim` — per-plugin hook configs, referenced by `hooks_file` in the TOML files above
+- `rc/ts/` — TypeScript plugin configs for the denops-based ddc/ddu plugins
 - `rc/options.rc.vim` — vim/neovim-common options and mappings (InlineVimrc, plain vimscript)
 - `rc/neovim.rc.lua` — neovim-only options, keymaps and autocmds (InlineVimrc)
 - `rc/unix.rc.vim` — Unix-only settings (InlineVimrc)

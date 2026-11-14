@@ -22,7 +22,20 @@ repo = "Shougo/goda-pm-ext-lazy.vim"
 lazy = false
 
 ##################################################
-# plugins depending on goda.vim (e.g. a ddu source
-# for browsing/managing plugins) go here.
-# Currently empty: nothing else needs goda.vim yet.
+# plugins depending on goda.vim go here.
 ##################################################
+
+[[plugins]] # terminal/shell UIs; the successor of ddt.vim
+repo = "Shougo/goda-term.vim"
+hooks_file = "$VIM_CONFIG_PATH/rc/goda-term.vim"
+hook_post_update = '''
+  call goda_term#build()
+'''
+
+[[plugins]]
+repo = "Shougo/goda-term-ui-shell.vim"
+on_source = "goda-term.vim"
+
+[[plugins]]
+repo = "Shougo/goda-term-ui-terminal.vim"
+on_source = "goda-term.vim"
