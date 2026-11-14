@@ -1,3 +1,5 @@
+hooks_file = "$VIM_CONFIG_PATH/rc/ft.vim"
+
 ##################################################
 # goda-pm.vim ecosystem (goda.vim itself; see goda.toml for the rest) #
 ##################################################
