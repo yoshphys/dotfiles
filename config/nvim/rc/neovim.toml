@@ -5,7 +5,10 @@
 # aren't excluded from a future plain-Vim target).
 ##################################################
 
-[[plugins]] # statusline on the bottom; Neovim-only (vim.lsp.*, vim.iter)
+[[plugins]] # nerd icons
+repo = "nvim-tree/nvim-web-devicons"
+
+[[plugins]] # statusline on the bottom
 repo = "nvim-lualine/lualine.nvim"
 # VimEnter: the earliest lazy trigger, so the statusline is stable from the
 # first frame (merge.toml's eager plugins still load slightly earlier, but
@@ -44,4 +47,374 @@ lua_source = """
       lualine_x = { lsp_names, "encoding", "fileformat", "filetype" },
     },
   })
+"""
+
+##################################################
+# code view ######################################
+##################################################
+
+[[plugins]]
+repo = "nvim-treesitter/nvim-treesitter"
+rev = "main"
+on_event = ["BufReadPre", "CursorHold"]
+hook_post_update = "TSUpdate"
+lua_source = """
+  local targets = {
+    'bash',
+    'c',
+    'cpp',
+    'go',
+    'javascript',
+    'julia',
+    'latex',
+    'lua',
+    'rust',
+    'nix',
+    'nu',
+    'python',
+    'toml',
+    'typescript',
+    'typst',
+    'yaml',
+    'zsh',
+  }
+
+  -- Install parsers
+  require('nvim-treesitter').install(targets)
+
+  -- Enable highlight
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = targets,
+    callback = function()
+      vim.treesitter.start()
+    end,
+  })
+"""
+
+[[plugins]] # visualize the current block
+repo = "shellRaining/hlchunk.nvim"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = """
+  require("hlchunk").setup({
+    chunk = {
+      enable = true,
+    }
+  })
+"""
+
+[[plugins]] # show its beginning at the end of the block
+repo = "andersevenrud/nvim_context_vt"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = """
+  require("nvim_context_vt").setup()
+"""
+
+##################################################
+# function #######################################
+##################################################
+
+[[plugins]] # to create user modes
+repo = "pogyomo/submode.nvim"
+on_event = "UIEnter"
+lua_source = """
+  local submode = require("submode")
+  submode.create("WinMove", {
+      mode = "n",
+      enter = "[Space]w",
+      leave = { "q", "<ESC>" },
+      default = function(register)
+          register("h", function() vim.cmd("wincmd h") end)
+          register("j", function() vim.cmd("wincmd j") end)
+          register("k", function() vim.cmd("wincmd k") end)
+          register("l", function() vim.cmd("wincmd l") end)
+      end,
+  })
+"""
+
+##################################################
+# window #########################################
+##################################################
+
+[[plugins]] # to simplify keymaps to resize windows
+repo = "pogyomo/winresize.nvim"
+depends = "submode.nvim"
+on_event = "UIEnter"
+lua_source = """
+  local submode = require("submode")
+  local resize = require("winresize").resize
+  submode.create("WinResize", {
+      mode = "n",
+      enter = "[Space]r",
+      leave = { "q", "<ESC>" },
+      default = function(register)
+          register("h", function() resize(0, 1, "left") end)
+          register("j", function() resize(0, 1, "down") end)
+          register("k", function() resize(0, 1, "up") end)
+          register("l", function() resize(0, 1, "right") end)
+          register("H", function() resize(0, 10, "left") end)
+          register("J", function() resize(0, 10, "down") end)
+          register("K", function() resize(0, 10, "up") end)
+          register("L", function() resize(0, 10, "right") end)
+      end,
+  })
+"""
+
+##################################################
+# infomation #####################################
+##################################################
+
+[[plugins]]
+repo = "rcarriga/nvim-notify"
+on_event = "VimEnter"
+lua_source = """
+  local notify = require("notify")
+  notify.setup({
+    render = "wrapped-default",
+    max_width = 50,
+  })
+  vim.notify = notify
+"""
+
+##################################################
+# formatting #####################################
+##################################################
+
+[[plugins]]
+repo = "nmac427/guess-indent.nvim"
+on_event = "BufReadPost"
+lua_source = """
+  require("guess-indent").setup({})
+"""
+
+[[plugins]]
+repo = "JoosepAlviste/nvim-ts-context-commentstring"
+depends = "nvim-treesitter"
+on_event = "BufReadPre"
+lua_source = """
+  require("ts_context_commentstring").setup({
+    enable_autocmd = false,
+  })
+"""
+
+[[plugins]]
+repo = "numToStr/Comment.nvim"
+on_event = "BufReadPre"
+lua_source = """
+  require('Comment').setup {
+    pre_hook = require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook(),
+  }
+"""
+
+##################################################
+# parentheses ####################################
+##################################################
+
+[[plugins]] # auto close html tag
+repo = "windwp/nvim-ts-autotag"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_source = '''
+  require('nvim-ts-autotag').setup({})
+'''
+
+[[plugins]] # edit parentheses
+# repo = "tpope/vim-surround"
+repo = "kylechui/nvim-surround"
+on_event = ["BufReadPre", "BufNewFile"]
+lua_add = """
+  -- To avoid the conflict with ddc-pum-canceling mapping
+  vim.g.nvim_surround_no_insert_mappings = true
+"""
+
+##################################################
+# git ############################################
+##################################################
+
+[[plugins]]
+repo = "lewis6991/gitsigns.nvim"
+on_event = "BufReadPost"
+lua_source = """
+  require('gitsigns').setup()
+"""
+
+##################################################
+# LSP/formatter ##################################
+##################################################
+
+[[plugins]]
+repo = "atusy/kakehashi.nvim"
+
+[[plugins]]
+repo = "neovim/nvim-lspconfig"
+depends = ["ddc-source-lsp", "kakehashi.nvim"]
+on_event = ["BufNewFile", "BufReadPre" ]
+hooks_file = "$VIM_CONFIG_PATH/rc/lspconfig.lua"
+
+[[plugins]]
+repo = "j-hui/fidget.nvim"
+on_event = "LspAttach"
+lua_source = """
+  require("fidget").setup({
+    notification = {
+      window = {
+        winblend = 0,
+      },
+    },
+  })
+"""
+
+[[plugins]] # for c-like to extend clangd
+repo = "p00f/clangd_extensions.nvim"
+on_ft = ["c", "cpp"]
+
+##################################################
+# AI #############################################
+##################################################
+
+[[plugins]]
+repo = "eetann/editprompt.nvim"
+on_cmd = "Editprompt"
+lua_add = """
+  -- Map only in buffers opened by the editprompt CLI (e.g. .editprompt-20261008162544-e972554e.md)
+  vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = '*/.editprompt-*.md',
+    callback = function(args)
+      vim.keymap.set('n', "[Space]ei", "<Cmd>Editprompt input --auto-send<CR>", { buffer = args.buf, desc = "editprompt: send the buffer to the target pane and auto-send" })
+      vim.keymap.set('n', "[Space]eI", "<Cmd>Editprompt input<CR>", { buffer = args.buf, desc = "editprompt: send the buffer to the target pane without auto-send" })
+      vim.keymap.set('x', "[Space]ei", "<Cmd>Editprompt input --visual --auto-send<CR>", { buffer = args.buf, desc = "editprompt: send the selected lines to the target pane and auto-send" })
+      vim.keymap.set('n', "[Space]ep", "<Cmd>Editprompt history prev<CR>", { buffer = args.buf, desc = "editprompt: recall the previous prompt from history" })
+      vim.keymap.set('n', "[Space]en", "<Cmd>Editprompt history next<CR>", { buffer = args.buf, desc = "editprompt: recall the next prompt from history" })
+      vim.keymap.set('n', "[Space]eh", "<Cmd>Editprompt history list<CR>", { buffer = args.buf, desc = "editprompt: pick a prompt from history and insert it" })
+      vim.keymap.set('n', "[Space]ek", "<Cmd>Editprompt press_mode<CR>", { buffer = args.buf, desc = "editprompt: enter press mode (forward keys to the target pane)" })
+      vim.keymap.set('n', "[Space]es", "<Cmd>Editprompt stash pop<CR>", { buffer = args.buf, desc = "editprompt: restore (pop) the stashed content" })
+      vim.keymap.set('n', "[Space]eS", "<Cmd>Editprompt stash push<CR>", { buffer = args.buf, desc = "editprompt: stash the buffer content" })
+    end,
+  })
+"""
+lua_source = """
+  -- The plugin ships no plugin/ directory, so setup() is what registers the
+  -- real :Editprompt command. Needed even with no options to override.
+  require("editprompt").setup()
+"""
+
+[[plugins]]
+repo = "lambdalisue/nvim-aibo"
+on_cmd = "Aibo*"
+lua_add = """
+  vim.keymap.set('v', "<C-g><C-s>", ":<C-u>'<,'>AiboSend -input<CR>", { silent = true, desc = "aibo: send the selected lines to the console prompt" })
+"""
+lua_source = """
+  require("aibo").setup({
+    console = {
+      on_attach = function(bufnr, info)
+        vim.bo[bufnr].buflisted = true
+      end,
+    },
+    prompt = {
+      no_default_mappings = true,
+      on_attach = function(bufnr, info)
+        -- these maps are from nvim-aibo/ftplugin/aibo-prompt.lua excluding <C-n> and <C-p>
+        vim.keymap.set({ "n", "i" }, "<C-g><C-o>", "<Plug>(aibo-send)", { buffer = bufnr, nowait = true, desc = "aibo-prompt: send the next typed key to the console" })
+        vim.keymap.set("n", "<CR>", "<Plug>(aibo-submit)", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt to the console" })
+        vim.keymap.set("n", "<Esc>", "<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: close the prompt window" })
+        vim.keymap.set("n", "<C-Enter>", "<Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("n", "<F5>", "<Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("i", "<C-Enter>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("i", "<F5>", "<Esc><Plug>(aibo-submit)<Cmd>q<CR>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: submit the prompt and close the window" })
+        vim.keymap.set("n", "<C-c>", "<Plug>(aibo-send)<Esc>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <Esc> to the console" })
+        vim.keymap.set("n", "g<C-c>", "<Plug>(aibo-send)<C-c>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-c> (interrupt) to the console" })
+        vim.keymap.set("n", "<C-l>", "<Plug>(aibo-send)<C-l>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-l> (clear) to the console" })
+        vim.keymap.set("n", "<C-n>", "<Plug>(aibo-send)<C-n>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-n> (next history) to the console" })
+        vim.keymap.set("n", "<C-p>", "<Plug>(aibo-send)<C-p>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <C-p> (previous history) to the console" })
+        vim.keymap.set("n", "<Down>", "<Plug>(aibo-send)<Down>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <Down> to the console" })
+        vim.keymap.set("n", "<Up>", "<Plug>(aibo-send)<Up>", { buffer = bufnr, nowait = true, silent = true, desc = "aibo-prompt: send <Up> to the console" })
+      end,
+    },
+    tools = {
+      julia = {
+        on_attach = function(bufnr, info)
+          pcall(vim.treesitter.start, bufnr, "julia")
+          vim.lsp.start({
+            name = "jetls",
+            cmd = { "jetls", "serve" },
+            root_dir = vim.fs.root(vim.fn.getcwd(), { "Project.toml" }) or vim.fn.getcwd(),
+          }, { bufnr = bufnr })
+        end,
+      },
+      python = {
+        on_attach = function(bufnr, info)
+          pcall(vim.treesitter.start, bufnr, "python")
+          vim.lsp.start({
+            name = "basedpyright",
+            cmd = { "basedpyright-langserver", "--stdio" },
+            root_dir = vim.fs.root(vim.fn.getcwd(), { "pyproject.toml", "setup.py", ".git" }) or vim.fn.getcwd(),
+          }, { bufnr = bufnr })
+        end,
+      },
+      claude = {
+        on_attach = function(bufnr, info)
+          pcall(vim.treesitter.start, bufnr, "markdown")
+        end,
+      },
+    },
+  })
+  vim.api.nvim_create_user_command("AiboVsplit", function(opts)
+    vim.cmd("Aibo -opener=vsplit " .. opts.args)
+  end, { nargs = "+" })
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "aibo-prompt*",
+    callback = function()
+      for _, dir in ipairs({ "h", "j", "k", "l", "w", "W" }) do
+        vim.keymap.set("n", "<C-w>" .. dir, function()
+          vim.cmd("q")
+          vim.schedule(function()
+            vim.cmd("wincmd " .. dir)
+          end)
+        end, { buffer = true, desc = "aibo-prompt: close the prompt and run <C-w>" .. dir })
+      end
+    end,
+  })
+"""
+
+##################################################
+# language specific plugins ######################
+##################################################
+
+[[plugins]] # for typst to preview
+repo = "chomosuke/typst-preview.nvim"
+on_ft = "typst"
+lua_source = """
+  require("typst-preview").setup({})
+"""
+
+[[plugins]] # for marpit in markdown
+repo = "nwiizo/marp.nvim"
+on_ft = ["markdown"]
+lua_source = """
+  require("marp").setup({
+    server_mode = true,
+    debug = true,
+  })
+"""
+
+[[plugins]] # for markdown to render
+repo = "MeanderingProgrammer/render-markdown.nvim"
+depends = ["nvim-treesitter", "nvim-web-devicons"]
+on_ft = ["markdown", "markdown.mdx"]
+lua_source = """
+  require("render-markdown").setup({
+    file_types = {"markdown"},
+    overrides = {
+      buftype = {
+        nofile = { enabled = false },
+      },
+    },
+  })
+"""
+
+[[plugins]] # for markdown to make table easier
+repo = "Kicamon/markdown-table-mode.nvim"
+on_ft = "markdown"
+lua_source = """
+  require("markdown-table-mode").setup({})
+  -- The toggle command is `:Mtm`
 """
