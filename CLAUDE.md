@@ -22,8 +22,8 @@
 - `rc/options.rc.vim` — vim/neovim-common options and mappings (InlineVimrc, plain vimscript)
 - `rc/neovim.rc.lua` — neovim-only options, keymaps and autocmds (InlineVimrc)
 - `rc/unix.rc.vim` — Unix-only settings (InlineVimrc)
-- `denops/@lspoints/config.ts` — lspoints (LSP client) config
-- `snippets/global.ts` — global snippets
+- `rc/ft.vim` — plugin-independent per-filetype settings (merge.toml's file-level `hooks_file`, parsed into `[ftplugin]` entries)
+- `snippets/global.ts` — global snippets (loaded by denippet.vim)
 
 ## config/nushell/
 - `config.nu`, `env.nu`
