@@ -1,6 +1,6 @@
 { lib, stdenv, fetchurl }:
 let
-  version = "0.8.0";
+  version = "1.0.0";
 in
 stdenv.mkDerivation {
   pname = "kakehashi";
@@ -8,7 +8,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://github.com/atusy/kakehashi/releases/download/v${version}/kakehashi-v${version}-aarch64-apple-darwin.tar.gz";
-    hash = "sha256-cAPjYbt5pICSUQceKroyGRsBMWMSCz8SF5/4ujFy114=";
+    hash = "sha256-RCHuPqtaIrO2f/6bQqMD5TNZuZUf3zGfjJWHw2uvSxc=";
   };
   dontUnpack = true;
 
