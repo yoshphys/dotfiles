@@ -174,11 +174,6 @@ func main() {
 				MaxItems:               new(5),
 				IsVolatile:             new(true),
 			},
-			"mocword": {
-				Mark:                  "[moc]",
-				MinAutoCompleteLength: new(4),
-				IsVolatile:            new(true),
-			},
 			"register": {Mark: "[reg]"},
 			"shellhistory": {
 				Mark:                  "[history]",
@@ -190,6 +185,17 @@ func main() {
 			},
 		},
 	})
+	if hasMocword {
+		b.PatchGlobal(cmp.Config{
+			SourceOptions: map[string]cmp.SourceOption{
+				"mocword": {
+					Mark:                  "[moc]",
+					MinAutoCompleteLength: new(4),
+					IsVolatile:            new(true),
+				},
+			},
+		})
+	}
 
 	b.PatchFiletypes([]string{"latex", "typst"}, cmp.Config{
 		Sources: append(append([]string{"nvimlsp" /* , "denippet" */}, commonSources...), "line"),
