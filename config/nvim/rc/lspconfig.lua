@@ -85,7 +85,7 @@ local lsp_servers = {
   "gopls",    -- for golang
 }
 
-local capabilities = require("ddc_source_lsp").make_client_capabilities()
+local capabilities = vim.lsp.protocol.make_client_capabilities()
 -- To disable snippets of LSP. Because I prefer to use snippets from plugin
 capabilities.textDocument.completion.completionItem.snippetSupport = false
 vim.lsp.config('*', {

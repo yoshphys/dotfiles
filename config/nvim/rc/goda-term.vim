@@ -95,6 +95,10 @@ cnoremap <Tab> <Cmd>if pum#visible() \| call pum#map#select_relative(1) \| endif
 
 " goda-term-terminal {{{
 tnoremap <buffer> <C-]> <C-\><C-n>
+" Without these, <C-n>/<C-p> while actually typing (terminal-job mode) go to
+" the job itself instead of goda-term's own prompt navigation.
+tnoremap <buffer> <C-n> <Cmd>call goda_term#ui#do_action('nextPrompt')<CR>
+tnoremap <buffer> <C-p> <Cmd>call goda_term#ui#do_action('previousPrompt')<CR>
 nnoremap <buffer> <C-n> <Cmd>call goda_term#ui#do_action('nextPrompt')<CR>
 nnoremap <buffer> <C-p> <Cmd>call goda_term#ui#do_action('previousPrompt')<CR>
 nnoremap <buffer> <C-y> <Cmd>call goda_term#ui#do_action('pastePrompt')<CR>
@@ -128,11 +132,11 @@ nnoremap <buffer> [Space]gA <Cmd>call goda_term#ui#do_action('send', #{ str: 'gi
 inoremap <buffer><expr> <C-n>
       \   pum#visible()
       \ ? '<Cmd>call pum#map#insert_relative(1, "empty")<CR>'
-      \ : ddc#map#manual_complete(#{ sources: ['shell_history'] })
+      \ : goda_cmp#map#manual_complete(#{ sources: ['shellhistory'] })
 inoremap <buffer><expr> <C-p>
       \   pum#visible()
       \ ? '<Cmd>call pum#map#insert_relative(-1, "empty")<CR>'
-      \ : ddc#map#manual_complete(#{ sources: ['shell_history'] })
+      \ : goda_cmp#map#manual_complete(#{ sources: ['shellhistory'] })
 
 augroup goda-term-ui-shell
   autocmd! * <buffer>

@@ -360,6 +360,201 @@ on_cmd = "Partedit"
 
 
 ##################################################
+# completion #####################################
+##################################################
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+lua_add = """
+  vim.keymap.set({'i', 'c'}, "<C-d>", function()
+    if vim.fn["pum#preview_visible"]() then
+      vim.fn["pum#map#scroll_preview"](4)
+    end
+  end, { desc = "pum: scroll the preview window down" })
+  vim.keymap.set({'i', 'c'}, "<C-u>", function()
+    if vim.fn["pum#preview_visible"]() then
+      vim.fn["pum#map#scroll_preview"](-4)
+    end
+  end, { desc = "pum: scroll the preview window up" })
+"""
+lua_source = """
+  vim.fn["pum#set_option"]({
+    auto_confirm_time = 0,
+    auto_select = true,
+    -- border = 'none',
+    border = 'single',
+    commit_characters = {'.'},
+    highlight_scrollbar = 'None',
+    insert_preview = true,
+    -- max_width = 80,
+    max_width = 0,
+    offset_cmdcol = 0,
+    offset_cmdrow = 1, -- added
+    padding = false,
+    -- preview = false,
+    preview = true,
+    preview_border = "single", -- added
+    -- preview_width = 80,
+    reversed = false,
+    scrollbar_char = '║',
+    use_setline = false,
+  })
+  -- vim.fn["pum#set_local_option"]('c', {
+  --   max_width = 0,
+  -- })
+
+  -- NOTE: For horizontal_menu
+  vim.fn["pum#set_option"]({
+    follow_cursor = false,
+    horizontal_menu = false,
+    max_horizontal_items = 2,
+    max_height = 3,
+  })
+"""
+
+[[plugins]]
+repo = 'uga-rosa/denippet.vim'
+depends = "denops.vim"
+on_source = "goda-cmp.vim"
+lua_add = """
+  vim.keymap.set({'i', 's'}, "<Tab>", function()
+    if vim.fn["denippet#jumpable"](1) then
+      return vim.fn["denippet#jump"](1)
+    end
+    return "<Tab>"
+  end, { expr = true, desc = "denippet: jump to the next placeholder, otherwise insert <Tab>" })
+
+  vim.keymap.set({'i', 's'}, "<S-Tab>", function()
+    if vim.fn["denippet#jumpable"](-1) then
+      return vim.fn["denippet#jump"](-1)
+    end
+    return "<S-Tab>"
+  end, { expr = true, desc = "denippet: jump to the previous placeholder, otherwise insert <S-Tab>" })
+"""
+lua_source = """
+  vim.fn["denippet#load"](vim.fn.stdpath("config") .. "/snippets/global.ts", "*")
+"""
+
+[[plugins]]
+repo = 'ryoppippi/denippet-autoimport-vscode'
+depends = ["denops.vim", "friendly-snippets"]
+on_event = "InsertEnter"
+
+[[plugins]]
+repo = 'rafamadriz/friendly-snippets'
+on_event = "InsertEnter"
+
+[[multiple_hooks]]
+plugins = ["goda-cmp.vim", "denippet.vim", "pum.vim"]
+hook_add = """
+lua << EOF
+  vim.keymap.set('i', "<C-n>", function()
+    if vim.fn["denippet#choosable"]() then
+      return vim.fn["denippet#choice"](1)
+    elseif vim.fn["pum#visible"]() then
+      return vim.fn["pum#map#select_relative"](1)
+    else
+      vim.fn["goda_cmp#map#manual_complete"]()
+    end
+  end, { expr = true, desc = "goda-cmp: choose next snippet choice / select next candidate / start completion" })
+
+  vim.keymap.set('i', "<C-p>", function()
+    if vim.fn["denippet#choosable"]() then
+      return vim.fn["denippet#choice"](-1)
+    elseif vim.fn["pum#visible"]() then
+      return vim.fn["pum#map#select_relative"](-1)
+    else
+      vim.fn["goda_cmp#map#manual_complete"]()
+    end
+  end, { expr = true, desc = "goda-cmp: choose previous snippet choice / select previous candidate / start completion" })
+EOF
+"""
+hook_source = """
+lua << EOF
+  local Popup = {}
+
+  function Popup.new()
+    return setmetatable({
+      nsid = vim.api.nvim_create_namespace("denippet_choice_popup"),
+    }, { __index = Popup })
+  end
+
+  function Popup:open(node)
+    self.buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_text(self.buf, 0, 0, 0, 0, node.items)
+    local w, h = vim.lsp.util._make_floating_popup_size(node.items, {})
+    self.win = vim.api.nvim_open_win(self.buf, false, {
+      relative = "win",
+      width = w,
+      height = h,
+      bufpos = { node.range.start.line, node.range.start.character },
+      style = "minimal",
+      border = "single",
+    })
+    self.extmark = vim.api.nvim_buf_set_extmark(
+      self.buf,
+      self.nsid,
+      node.index,
+      0,
+      { hl_group = "incsearch", end_line = node.index + 1 }
+    )
+  end
+
+  function Popup:update()
+    vim.api.nvim_buf_del_extmark(self.buf, self.nsid, self.extmark)
+    local node = vim.b.denippet_current_node
+    self.extmark = vim.api.nvim_buf_set_extmark(
+      self.buf,
+      self.nsid,
+      node.index,
+      0,
+      { hl_group = "incsearch", end_line = node.index + 1 }
+    )
+  end
+
+  function Popup:close()
+    if self.win then
+      vim.api.nvim_win_close(self.win, true)
+      self.buf = nil
+      self.win = nil
+      self.extmark = nil
+    end
+  end
+
+  local popup = Popup.new()
+
+  local group = vim.api.nvim_create_augroup("denippet_choice_popup", {})
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "DenippetNodeEnter",
+    callback = function()
+      local node = vim.b.denippet_current_node
+      if node and node.type == "choice" then
+        vim.fn["goda_cmp#patch_global"]({ ui = "none" })
+        popup:open(node)
+      end
+    end,
+  })
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "DenippetChoiceSelected",
+    callback = function()
+      popup:update()
+    end,
+  })
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "DenippetNodeLeave",
+    callback = function()
+      popup:close()
+      vim.fn["goda_cmp#patch_global"]({ ui = "pum" })
+    end,
+  })
+EOF
+"""
+
+
+##################################################
 # AI #############################################
 ##################################################
 

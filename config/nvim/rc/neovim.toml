@@ -221,7 +221,7 @@ lua_source = '''
 repo = "kylechui/nvim-surround"
 on_event = ["BufReadPre", "BufNewFile"]
 lua_add = """
-  -- To avoid the conflict with ddc-pum-canceling mapping
+  -- To avoid the conflict with goda-cmp's pum-canceling mapping
   vim.g.nvim_surround_no_insert_mappings = true
 """
 
@@ -245,7 +245,7 @@ repo = "atusy/kakehashi.nvim"
 
 [[plugins]]
 repo = "neovim/nvim-lspconfig"
-depends = ["ddc-source-lsp", "kakehashi.nvim"]
+depends = "kakehashi.nvim"
 on_event = ["BufNewFile", "BufReadPre" ]
 hooks_file = "$VIM_CONFIG_PATH/rc/lspconfig.lua"
 

@@ -39,3 +39,26 @@ on_source = "goda-term.vim"
 [[plugins]]
 repo = "Shougo/goda-term-ui-terminal.vim"
 on_source = "goda-term.vim"
+
+[[plugins]] # completion; the successor of ddc.vim
+repo = "Shougo/goda-cmp.vim"
+on_event = ["InsertEnter", "CmdlineEnter"]
+hooks_file = "$VIM_CONFIG_PATH/rc/goda-cmp.vim"
+hook_post_update = '''
+  call goda_cmp#build()
+'''
+
+[[plugins]]
+repo = "Shougo/goda-cmp-ui-pum.vim"
+depends = "pum.vim"
+on_source = "goda-cmp.vim"
+
+[[plugins]]
+repo = "Shougo/goda-cmp-ui-native.vim"
+on_source = "goda-cmp.vim"
+
+[[plugins]] # the nvimlsp bridge source used by rc/goda-cmp/main.go; has Lua
+# modules of its own (lua/goda_cmp_luasrc/*.lua), so it must be a vim
+# plugin too, not just a Go import in main.go.
+repo = "delphinus/goda-cmp-ext-luasrc.vim"
+on_source = "goda-cmp.vim"
