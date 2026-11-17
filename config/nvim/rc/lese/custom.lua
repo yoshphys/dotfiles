@@ -217,6 +217,65 @@ local function register_paste_action(before)
   })
 end
 
+-- custom.source.snippet: every hrsh7th/vim-vsnip snippet applicable to the
+-- buffer that was current when ";s" was pressed (vsnip#source#find resolves
+-- the filetype itself, including "global" and any g:vsnip_filetypes
+-- aliasing; current buffer is captured here, not at preview/action time --
+-- by then it is the picker's own UI buffer, not the one ";s" was pressed in).
+local function snippet_source()
+  return define.source({
+    name = "custom.source.snippet",
+    -- Like builtin.source.line, args[1] (rc/lazy.toml passes ";s"'s bufnr
+    -- explicitly) picks the buffer, rather than this reading "%" itself.
+    collect = function(ctx, params)
+      local fn = ctx.host.fn
+      local bufnr = fn.bufnr(tonumber(params.args[1]) or params.args[1] or "%")
+      local filetype = fn.getbufvar(bufnr, "&filetype")
+      local id = 0
+      for _, source in ipairs(fn["vsnip#source#find"](bufnr)) do
+        for _, snippet in ipairs(source) do
+          id = id + 1
+          local description = snippet.description ~= "" and snippet.description or snippet.label
+          ctx:emit({
+            id = id,
+            value = string.format("%s - %s", table.concat(snippet.prefix, ", "), description),
+            detail = { vsnip = { body = snippet.body, filetype = filetype } },
+          })
+        end
+      end
+    end,
+  })
+end
+
+local function snippet_previewer()
+  return define.previewer({
+    name = "custom.previewer.snippet",
+    preview = function(_, params)
+      -- snippet.body is already an array of lines, unlike the register
+      -- previewer's content: no split() needed.
+      return { content = params.item.detail.vsnip.body, filetype = params.item.detail.vsnip.filetype }
+    end,
+  })
+end
+
+-- Expands at the cursor directly with vsnip#anonymous(), rather than typing
+-- the prefix and relying on vsnip#expand()'s own prefix search: the picker
+-- already chose the exact snippet, so there is no prefix left to match.
+-- vsnip#anonymous() enters insert mode itself when called from Normal mode
+-- (see vsnip's autoload/vsnip/session.vim's jump()), so no mode handling
+-- is needed here.
+local function snippet_expand_action()
+  return define.action({
+    name = "custom.action.snippet_expand",
+    invoke = function(ctx, params)
+      local fn = ctx.host.fn
+      for _, item in ipairs(params.selected_items or { params.item }) do
+        fn["vsnip#anonymous"](table.concat(item.detail.vsnip.body, "\n"))
+      end
+    end,
+  })
+end
+
 ---@param x lese.Entrypoint
 return function(x)
   x.refine_setting({
@@ -353,5 +412,12 @@ return function(x)
       append = register_paste_action(false),
     }),
     default_action = "append",
+  })
+
+  x.define_picker_from_source("snippet", snippet_source(), {
+    matchers = { builtin.matcher.fzf() },
+    previewers = { snippet_previewer() },
+    actions = merge(misc_actions, { expand = snippet_expand_action() }),
+    default_action = "expand",
   })
 end

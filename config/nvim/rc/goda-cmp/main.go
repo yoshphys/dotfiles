@@ -109,17 +109,18 @@ func main() {
 	if hasMocword {
 		withMocword = []string{"mocword"}
 	}
-	// "denippet" dropped from every Sources list below (commented, not
-	// removed): denippet.vim has no goda-cmp source of its own yet, and
-	// it's slated for replacement by a different snippet engine anyway.
-	lspAndSnippet := append([]string{"nvimlsp" /* , "denippet" */}, commonSources...)
+	lspAndSnippet := append([]string{"nvimlsp"}, commonSources...)
 
 	b.PatchGlobal(cmp.Config{
 		UI:      "pum",
 		Sources: commonSources,
 		CmdlineSources: map[string][]string{
 			":": {"cmdline", "cmdlinehistory", "around", "register"},
-			"@": {"input", "cmdlinehistory", "file", "around"},
+			// "@" (input()-type cmdline) dropped: nothing in this config
+			// uses a plain input() prompt that benefits from completion,
+			// and vim-lese's own search box is exactly this cmdline type
+			// too (its own LesePickerEnter hook in rc/lazy.toml is what
+			// actually keeps goda-cmp's <C-n>/<C-p>/<C-g> out of its way).
 			">": {"input", "cmdlinehistory", "file", "around"},
 			"/": {"around", "line"},
 			"?": {"around", "line"},
@@ -147,13 +148,6 @@ func main() {
 				ForceCompletionPattern: `\S/\S*|\.\w*`,
 			},
 			"cmdlinehistory": {Mark: "[history]"},
-			// "denippet": {
-			// 	Mark:                  "[snip]",
-			// 	IgnoreCase:            new(false),
-			// 	MinAutoCompleteLength: new(2),
-			// 	Dup:                   "keep",
-			// 	MaxItems:              new(10),
-			// },
 			"file": {
 				Mark:                   "[F]",
 				IsVolatile:             new(true),
@@ -198,12 +192,12 @@ func main() {
 	}
 
 	b.PatchFiletypes([]string{"latex", "typst"}, cmp.Config{
-		Sources: append(append([]string{"nvimlsp" /* , "denippet" */}, commonSources...), "line"),
+		Sources: append(append([]string{"nvimlsp"}, commonSources...), "line"),
 	})
 	b.PatchFiletypes([]string{
 		"markdown", "markdown_inline", "gitcommit", "comment", "text",
 	}, cmp.Config{
-		Sources: append(append(append([]string{}, commonSources...), "line" /* , "denippet" */), withMocword...),
+		Sources: append(append(append([]string{}, commonSources...), "line"), withMocword...),
 	})
 
 	// For Claude Code / the Julia REPL in nvim-aibo.
@@ -213,7 +207,7 @@ func main() {
 	})
 	b.PatchFiletype("aibo-prompt.aibo-tool-julia", cmp.Config{
 		SpecialBufferCompletion: new(true),
-		Sources:                 append([]string{"nvimlsp" /* , "denippet" */}, commonSources...),
+		Sources:                 append([]string{"nvimlsp"}, commonSources...),
 	})
 
 	for _, ft := range []string{"html", "css"} {

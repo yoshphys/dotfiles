@@ -32,13 +32,23 @@ on_source = "vim-fern"
 # fuzzy finder ###################################
 ##################################################
 
-[[plugins]] # the eventual successor of Shougo/ddu-ui-ff; only ;h/;H/;r/;R
+[[plugins]] # the eventual successor of Shougo/ddu-ui-ff; only ;h/;H/;r/;R/;b/;s
 # are ported so far, the rest of rc/ddu.lua's pickers stay on ddu until
 # migrated too. Ships its own default pickers (file, rg, help, history,
-# ...) with no custom.lua needed; rc/lese/custom.lua only adds "register"
-# (lese has no source for that; see ";R" below).
+# buffer, ...) with no custom.lua needed; rc/lese/custom.lua adds
+# "register" and "snippet", which lese has no source for.
 repo = "lambdalisue/vim-lese"
 on_cmd = "Lese*"
+# Forces goda-cmp.vim to load (if it hasn't already via its own on_event)
+# before vim-lese's own plugin files do: lese's internal mapping save/
+# restore around a picker session (see hook_source below) takes its
+# "previous mappings" snapshot once, lazily, the first time any :Lese
+# command runs, and never retakes it afterward. If that first snapshot is
+# taken before goda-cmp.vim has ever loaded, every picker close for the
+# rest of the session restores to that snapshot's absence of goda-cmp's
+# own <C-n>/<C-p>/<C-y> cmdline mappings, breaking cmdline completion
+# outside lese entirely until nvim restarts.
+depends = "goda-cmp.vim"
 hook_add = '''
   " Unset, this defaults to stdpath('config') .. '/lese/custom.lua'
   " (outside this repo, same issue as g:goda_term#config_dir /
@@ -49,12 +59,50 @@ hook_add = '''
 
   " ;h/;H used to be ddu's command_history/help pickers (see rc/ddu.lua,
   " commented out there to avoid the key clash); ;r takes over from ddu's
-  " register picker's key, so the register picker itself moved to ;R.
+  " register picker's key, so the register picker itself moved to ;R; ;b
+  " takes over ddu's buffer picker's key outright (same picker, 1:1).
   nnoremap ;h <Cmd>Lese history<CR>
   nnoremap ;H <Cmd>Lese help<CR>
   nnoremap ;r <Cmd>Lese rg<CR>
   nnoremap ;R <Cmd>Lese register<CR>
   nnoremap ;b <Cmd>Lese buffer<CR>
+  " Insert a vim-vsnip snippet for the current filetype without typing its
+  " prefix; ddu's own ";t" (sonictemplate, a different, whole-file-template
+  " concept) is untouched.
+  " The bufnr is passed explicitly as an arg, the same convention
+  " builtin.source.line uses, rather than relying on collect() reading "%"
+  " itself.
+  nnoremap <expr> ;s '<Cmd>Lese snippet ' .. bufnr('%') .. '<CR>'
+'''
+hook_source = '''
+  " lese's own floating windows never take focus, so it actually reads its
+  " search box through Vim's input(). Re-asserting lese's own <C-n>/<C-p>/
+  " <C-g> cnoremap once on LesePickerEnter (see :help LesePickerEnter)
+  " wasn't enough: goda_cmp#enable() registers its OWN permanent, always-on
+  " "autocmd CmdlineChanged * if s:input_cmdline() | call
+  " s:on_change('CmdlineChanged') | endif" (rc/goda-cmp/main.go's
+  " CmdlineSources has no "@" entry any more, but that autocmd isn't gated
+  " on CmdlineSources having anything in it, or on goda_cmp#enable_cmdline()
+  " / disable_cmdline() -- only goda_cmp#disable() removes it), which fires
+  " on every keystroke in lese's search box and re-claims the keys. Turn
+  " goda-cmp off entirely for the duration of the picker instead of
+  " fighting it mapping-by-mapping.
+  function s:lese_picker_enter() abort
+    call goda_cmp#disable()
+    cnoremap <nowait> <C-n> <Plug>(lese-list-next)
+    cnoremap <nowait> <C-p> <Plug>(lese-list-prev)
+    cnoremap <nowait> <C-g> <Plug>(lese-list-last)
+  endfunction
+
+  function s:lese_picker_leave() abort
+    call goda_cmp#enable()
+  endfunction
+
+  augroup lese-reclaim-mappings
+    autocmd! *
+    autocmd User LesePickerEnter:* call s:lese_picker_enter()
+    autocmd User LesePickerLeave:* call s:lese_picker_leave()
+  augroup END
 '''
 
 
@@ -472,144 +520,54 @@ lua_source = """
   })
 """
 
-[[plugins]]
-repo = 'uga-rosa/denippet.vim'
-depends = "denops.vim"
-on_source = "goda-cmp.vim"
+[[plugins]] # friendly-snippets' package.json is what vsnip's vscode-
+# extension-style source scans for, so it must be on runtimepath by the
+# time vsnip first runs, hence on_source rather than its own trigger.
+repo = 'rafamadriz/friendly-snippets'
+on_source = "vim-vsnip"
+
+[[plugins]] # snippet engine, the successor of denippet.vim (removed).
+# Picked through lese's ";s" (rc/lese/custom.lua); a goda-cmp completion
+# source is a separate, later task.
+repo = 'hrsh7th/vim-vsnip'
+on_func = 'vsnip#'
 lua_add = """
+  vim.g.vsnip_snippet_dir = vim.env.VIM_CONFIG_PATH .. "/snippets/vsnip"
+
   vim.keymap.set({'i', 's'}, "<Tab>", function()
-    if vim.fn["denippet#jumpable"](1) then
-      return vim.fn["denippet#jump"](1)
+    if vim.fn["vsnip#jumpable"](1) == 1 then
+      return "<Plug>(vsnip-jump-next)"
     end
     return "<Tab>"
-  end, { expr = true, desc = "denippet: jump to the next placeholder, otherwise insert <Tab>" })
+  end, { expr = true, desc = "vsnip: jump to the next placeholder, otherwise insert <Tab>" })
 
   vim.keymap.set({'i', 's'}, "<S-Tab>", function()
-    if vim.fn["denippet#jumpable"](-1) then
-      return vim.fn["denippet#jump"](-1)
+    if vim.fn["vsnip#jumpable"](-1) == 1 then
+      return "<Plug>(vsnip-jump-prev)"
     end
     return "<S-Tab>"
-  end, { expr = true, desc = "denippet: jump to the previous placeholder, otherwise insert <S-Tab>" })
+  end, { expr = true, desc = "vsnip: jump to the previous placeholder, otherwise insert <S-Tab>" })
 """
-lua_source = """
-  vim.fn["denippet#load"](vim.fn.stdpath("config") .. "/snippets/global.ts", "*")
-"""
-
-[[plugins]]
-repo = 'ryoppippi/denippet-autoimport-vscode'
-depends = ["denops.vim", "friendly-snippets"]
-on_event = "InsertEnter"
-
-[[plugins]]
-repo = 'rafamadriz/friendly-snippets'
-on_event = "InsertEnter"
 
 [[multiple_hooks]]
-plugins = ["goda-cmp.vim", "denippet.vim", "pum.vim"]
+plugins = ["goda-cmp.vim", "pum.vim"]
 hook_add = """
 lua << EOF
   vim.keymap.set('i', "<C-n>", function()
-    if vim.fn["denippet#choosable"]() then
-      return vim.fn["denippet#choice"](1)
-    elseif vim.fn["pum#visible"]() then
+    if vim.fn["pum#visible"]() then
       return vim.fn["pum#map#select_relative"](1)
     else
       vim.fn["goda_cmp#map#manual_complete"]()
     end
-  end, { expr = true, desc = "goda-cmp: choose next snippet choice / select next candidate / start completion" })
+  end, { expr = true, desc = "goda-cmp: select next candidate / start completion" })
 
   vim.keymap.set('i', "<C-p>", function()
-    if vim.fn["denippet#choosable"]() then
-      return vim.fn["denippet#choice"](-1)
-    elseif vim.fn["pum#visible"]() then
+    if vim.fn["pum#visible"]() then
       return vim.fn["pum#map#select_relative"](-1)
     else
       vim.fn["goda_cmp#map#manual_complete"]()
     end
-  end, { expr = true, desc = "goda-cmp: choose previous snippet choice / select previous candidate / start completion" })
-EOF
-"""
-hook_source = """
-lua << EOF
-  local Popup = {}
-
-  function Popup.new()
-    return setmetatable({
-      nsid = vim.api.nvim_create_namespace("denippet_choice_popup"),
-    }, { __index = Popup })
-  end
-
-  function Popup:open(node)
-    self.buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_text(self.buf, 0, 0, 0, 0, node.items)
-    local w, h = vim.lsp.util._make_floating_popup_size(node.items, {})
-    self.win = vim.api.nvim_open_win(self.buf, false, {
-      relative = "win",
-      width = w,
-      height = h,
-      bufpos = { node.range.start.line, node.range.start.character },
-      style = "minimal",
-      border = "single",
-    })
-    self.extmark = vim.api.nvim_buf_set_extmark(
-      self.buf,
-      self.nsid,
-      node.index,
-      0,
-      { hl_group = "incsearch", end_line = node.index + 1 }
-    )
-  end
-
-  function Popup:update()
-    vim.api.nvim_buf_del_extmark(self.buf, self.nsid, self.extmark)
-    local node = vim.b.denippet_current_node
-    self.extmark = vim.api.nvim_buf_set_extmark(
-      self.buf,
-      self.nsid,
-      node.index,
-      0,
-      { hl_group = "incsearch", end_line = node.index + 1 }
-    )
-  end
-
-  function Popup:close()
-    if self.win then
-      vim.api.nvim_win_close(self.win, true)
-      self.buf = nil
-      self.win = nil
-      self.extmark = nil
-    end
-  end
-
-  local popup = Popup.new()
-
-  local group = vim.api.nvim_create_augroup("denippet_choice_popup", {})
-  vim.api.nvim_create_autocmd("User", {
-    group = group,
-    pattern = "DenippetNodeEnter",
-    callback = function()
-      local node = vim.b.denippet_current_node
-      if node and node.type == "choice" then
-        vim.fn["goda_cmp#patch_global"]({ ui = "none" })
-        popup:open(node)
-      end
-    end,
-  })
-  vim.api.nvim_create_autocmd("User", {
-    group = group,
-    pattern = "DenippetChoiceSelected",
-    callback = function()
-      popup:update()
-    end,
-  })
-  vim.api.nvim_create_autocmd("User", {
-    group = group,
-    pattern = "DenippetNodeLeave",
-    callback = function()
-      popup:close()
-      vim.fn["goda_cmp#patch_global"]({ ui = "pum" })
-    end,
-  })
+  end, { expr = true, desc = "goda-cmp: select previous candidate / start completion" })
 EOF
 """
 

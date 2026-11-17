@@ -1,0 +1,32 @@
+{
+  "draw (cetz canvas)": {
+    "prefix": ["draw"],
+    "body": [
+      "#import \"@preview/cetz:0.5.2\"",
+      "// #import \"@preview/fletcher:0.5.9\" as fletcher: diagram, node, edge // for diagrams",
+      "// #import \"@preview/cetz-plot:0.1.4\" // for graphs",
+      "// #import \"@preview/lilaq:0.6.0\" as lq // for graphs",
+      "// #import \"@preview/zap:0.6.0\" // for electric circuits",
+      "",
+      "#cetz.canvas({",
+      "  import cetz.draw: *",
+      "  $0",
+      "})"
+    ],
+    "description": "cetz canvas for drawing; ported from template/typst/snip-draw.typ"
+  },
+  "science (physica/zero units)": {
+    "prefix": ["science"],
+    "body": [
+      "#import \"@preview/physica:0.9.8\": *",
+      "#import \"@preview/zero:0.7.0\": *",
+      "// #import \"@preview/fancy-units:0.1.1\": *",
+      "",
+      "#fancy-units-configure(",
+      "  per-mode: \"slash\",",
+      ")",
+      "$0"
+    ],
+    "description": "physica/zero/fancy-units imports for scientific notation; ported from template/typst/snip-science.typ"
+  }
+}
