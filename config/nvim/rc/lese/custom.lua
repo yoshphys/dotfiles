@@ -276,6 +276,123 @@ local function snippet_expand_action()
   })
 end
 
+-- Which maplist() .mode values count as "the current mode", for the
+-- {mode_char} <F1> was pressed in (see rc/lazy.toml's nnoremap/inoremap/
+-- xnoremap <F1> ..., one literal mode_char per map command -- not read
+-- from mode() here, since by the time :Lese runs, the mode may already
+-- have changed). ' ' is plain :map's "Normal+Visual+Select+Operator-
+-- pending", '!' is :map!'s "Insert+Cmdline"; both are mode-combining
+-- wildcards a single-mode filter must also match.
+local function keymap_mode_filters(mode_char)
+  if mode_char == "i" then
+    return { i = true, ["!"] = true }
+  elseif mode_char == "x" then
+    return { v = true, x = true, [" "] = true }
+  else
+    return { n = true, [" "] = true }
+  end
+end
+
+-- custom.source.keymap: every global or buffer-local mapping (maplist(),
+-- the same portable-across-Vim-and-Neovim function lese's own
+-- autoload/lese/internal/mapping.vim uses) active in args[1]'s mode.
+-- detail.launch_mode (the same args[1]) is what keymap_execute_action()
+-- re-enters before feeding the mapping's keys, since not every mapping is
+-- bound to a key the user would otherwise know to press.
+local function keymap_source()
+  return define.source({
+    name = "custom.source.keymap",
+    collect = function(ctx, params)
+      local fn = ctx.host.fn
+      local launch_mode = params.args[1] or "n"
+      local filters = keymap_mode_filters(launch_mode)
+      local id = 0
+      for _, m in ipairs(fn.maplist()) do
+        if filters[m.mode] then
+          id = id + 1
+          local rhs = m.rhs ~= "" and m.rhs or "<callback>"
+          ctx:emit({
+            id = id,
+            value = string.format("%s%-15s %s", m.buffer == 1 and "[buf] " or "", m.lhs, rhs),
+            detail = { keymap = m, launch_mode = launch_mode },
+          })
+        end
+      end
+    end,
+  })
+end
+
+local function keymap_previewer()
+  return define.previewer({
+    name = "custom.previewer.keymap",
+    preview = function(ctx, params)
+      local fn = ctx.host.fn
+      local m = params.item.detail.keymap
+      local function flag(name, value)
+        return string.format("%-8s %s", name .. ":", value == 1 and "yes" or "no")
+      end
+      local lines = {
+        "lhs:     " .. m.lhs,
+        "mode:    " .. m.mode,
+        flag("buffer", m.buffer),
+        flag("noremap", m.noremap),
+        flag("silent", m.silent),
+        flag("expr", m.expr),
+        flag("nowait", m.nowait),
+        "",
+        "rhs:",
+      }
+      if m.rhs ~= "" then
+        for _, line in ipairs(fn.split(m.rhs, "\n")) do
+          lines[#lines + 1] = line
+        end
+      else
+        lines[#lines + 1] = "<Lua callback, no text rhs>"
+        if m.desc and m.desc ~= "" then
+          lines[#lines + 1] = "desc: " .. m.desc
+        end
+      end
+      -- sid <= 0 means "not defined from a script" (the command line, or a
+      -- Lua callback registered without one); getscriptinfo() only exists
+      -- on recent Vim/Neovim, hence the pcall.
+      if m.sid and m.sid > 0 then
+        local ok, info = pcall(fn.getscriptinfo, { sid = m.sid })
+        if ok and info and info[1] then
+          lines[#lines + 1] = ""
+          lines[#lines + 1] = string.format("Last set from %s:%d", info[1].name, m.lnum or 0)
+        end
+      end
+      return { content = lines }
+    end,
+  })
+end
+
+-- Feeds the mapping's raw key sequence back through Vim's own mapping
+-- engine (feedkeys(), remapped and executed immediately) rather than
+-- interpreting rhs/callback ourselves, so <expr> mappings and Lua-callback
+-- mappings resolve exactly as if the user had pressed lhs. Insert/Visual
+-- mappings need their mode re-entered first (lhsraw alone, typed from
+-- Normal mode, would not resolve against an i/x-mode mapping at all); "gv"
+-- reselects whatever Visual area was active when the picker was opened.
+local function keymap_execute_action()
+  return define.action({
+    name = "custom.action.keymap_execute",
+    invoke = function(ctx, params)
+      local fn = ctx.host.fn
+      for _, item in ipairs(params.selected_items or { params.item }) do
+        local m = item.detail.keymap
+        local keys = m.lhsraw
+        if item.detail.launch_mode == "i" then
+          keys = "i" .. keys
+        elseif item.detail.launch_mode == "x" then
+          keys = "gv" .. keys
+        end
+        fn.feedkeys(keys, "mtx")
+      end
+    end,
+  })
+end
+
 ---@param x lese.Entrypoint
 return function(x)
   x.refine_setting({
@@ -419,5 +536,12 @@ return function(x)
     previewers = { snippet_previewer() },
     actions = merge(misc_actions, { expand = snippet_expand_action() }),
     default_action = "expand",
+  })
+
+  x.define_picker_from_source("keymap", keymap_source(), {
+    matchers = { builtin.matcher.fzf() },
+    previewers = { keymap_previewer() },
+    actions = merge(misc_actions, { execute = keymap_execute_action() }),
+    default_action = "execute",
   })
 end

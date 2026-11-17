@@ -73,6 +73,18 @@ hook_add = '''
   " builtin.source.line uses, rather than relying on collect() reading "%"
   " itself.
   nnoremap <expr> ;s '<Cmd>Lese snippet ' .. bufnr('%') .. '<CR>'
+
+  " <F1>: browse the current mode's keymaps (global + buffer-local),
+  " including lese's own default ones once inside a picker. One mapping
+  " per mode, each passing its own literal mode char as :Lese's arg
+  " (rc/lese/custom.lua's "keymap" picker), not mode() -- by the time
+  " :Lese runs the mode may already differ. No cnoremap <F1>: lese's own
+  " default mappings already claim <F1> inside a picker itself (toggle
+  " its help window), and a global cnoremap would silently clobber that
+  " the same way goda-cmp's did for <C-n>/<C-p>/<C-g> (see above).
+  nnoremap <F1> <Cmd>Lese keymap n<CR>
+  inoremap <F1> <Cmd>Lese keymap i<CR>
+  xnoremap <F1> <Cmd>Lese keymap x<CR>
 '''
 hook_source = '''
   " lese's own floating windows never take focus, so it actually reads its
