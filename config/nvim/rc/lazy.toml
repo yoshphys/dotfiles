@@ -178,93 +178,89 @@ on_event = ["BufReadPre", "BufNewFile"]
 repo = "monaqa/dps-dial.vim"
 depends = "denops.vim"
 on_map = "<Plug>(dps-dial"
-lua_source = '''
-  vim.g["dps_dial#augends"] = {
-    "decimal",
-    "hex",
-    "binary",
-    "date-slash",
-    "date-hyphen",
-    "case",
-    {
-      kind = "constant",
-      opts = {
-        elements = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" },
-        cycle = true,
-        word = true,
-      },
-    },
-    {
-      kind = "constant",
-      opts = {
-        elements = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" },
-        cycle = true,
-        word = true,
-      },
-    },
-    {
-      kind = "constant",
-      opts = {
-        elements = { "月", "火", "水", "木", "金", "土", "日" },
-        cycle = true,
-        word = false,
-      },
-    },
-    {
-      kind = "constant",
-      opts = {
-        elements = { "０", "１", "２", "３", "４", "５", "６", "７", "８", "９" },
-        cycle = true,
-        word = false,
-      },
-    },
-    {
-      kind = "constant",
-      opts = {
-        elements = { "〇", "一", "二", "三", "四", "五", "六", "七", "八", "九" },
-        cycle = true,
-        word = false,
-      },
-    },
-    {
-      kind = "constant",
-      opts = {
-        elements = { "true", "false" },
-        cycle = true,
-        word = true,
-      },
-    },
-    {
-      kind = "constant",
-      opts = {
-        elements = { "True", "False" },
-        cycle = true,
-        word = true,
-      },
-    },
-  }
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "markdown",
-    callback = function()
-      vim.b.dps_dial_augends = vim.fn.extendnew(vim.g["dps_dial#augends"], {
-        {
-          kind = "constant",
-          opts = {
-            elements = { "[ ]", "[x]" },
-            cycle = true,
-            word = false,
-          },
-        }
-      })
-    end,
-  }
-  )
+hook_source = '''
+  let g:dps_dial#augends = [
+        \ 'decimal',
+        \ 'hex',
+        \ 'binary',
+        \ 'date-slash',
+        \ 'date-hyphen',
+        \ 'case',
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        \     cycle: v:true,
+        \     word: v:true,
+        \   },
+        \ },
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        \     cycle: v:true,
+        \     word: v:true,
+        \   },
+        \ },
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['月', '火', '水', '木', '金', '土', '日'],
+        \     cycle: v:true,
+        \     word: v:false,
+        \   },
+        \ },
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'],
+        \     cycle: v:true,
+        \     word: v:false,
+        \   },
+        \ },
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'],
+        \     cycle: v:true,
+        \     word: v:false,
+        \   },
+        \ },
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['true', 'false'],
+        \     cycle: v:true,
+        \     word: v:true,
+        \   },
+        \ },
+        \ #{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['True', 'False'],
+        \     cycle: v:true,
+        \     word: v:true,
+        \   },
+        \ },
+        \ ]
+
+  autocmd MyAutoCmd FileType markdown
+        \ let b:dps_dial_augends = extendnew(g:dps_dial#augends, [#{
+        \   kind: 'constant',
+        \   opts: #{
+        \     elements: ['[ ]', '[x]'],
+        \     cycle: v:true,
+        \     word: v:false,
+        \   },
+        \ }])
 '''
-lua_add = """
-  vim.keymap.set({'n', 'x'}, "<C-a>", "<Plug>(dps-dial-increment)", { remap = true, desc = "dps-dial: increment the value under the cursor / in the selection" })
-  vim.keymap.set({'n', 'x'}, "<C-x>", "<Plug>(dps-dial-decrement)", { remap = true, desc = "dps-dial: decrement the value under the cursor / in the selection" })
-  vim.keymap.set('x', "g<C-a>", "g<Plug>(dps-dial-increment)", { remap = true, desc = "dps-dial: increment the selection progressively line by line" })
-  vim.keymap.set('x', "g<C-x>", "g<Plug>(dps-dial-decrement)", { remap = true, desc = "dps-dial: decrement the selection progressively line by line" })
+hook_add = """
+  nmap <C-a> <Plug>(dps-dial-increment)
+  xmap <C-a> <Plug>(dps-dial-increment)
+  nmap <C-x> <Plug>(dps-dial-decrement)
+  xmap <C-x> <Plug>(dps-dial-decrement)
+  xmap g<C-a> g<Plug>(dps-dial-increment)
+  xmap g<C-x> g<Plug>(dps-dial-decrement)
 """
 
 
@@ -346,12 +342,12 @@ on_event = "CmdlineEnter"
 repo = "yuki-yano/fuzzy-motion.vim"
 depends = ["denops.vim", "vim-kensaku"]
 on_event = "VimEnter"
-lua_source = """
-  vim.g.fuzzy_motion_matchers = {"kensaku", "fzf"}
-"""
-lua_add = """
-  vim.keymap.set('n', 'S', "<Cmd>FuzzyMotion<Cr>", { silent = true, desc = "fuzzy-motion: jump to a position using fuzzy (kensaku/fzf) search" })
-"""
+hook_source = '''
+  let g:fuzzy_motion_matchers = ['kensaku', 'fzf']
+'''
+hook_add = '''
+  nnoremap <silent> S <Cmd>FuzzyMotion<CR>
+'''
 
 
 ##################################################
@@ -372,15 +368,14 @@ on_cmd = "Gin*"
 repo = "matsui54/denops-signature_help"
 depends = "denops.vim"
 on_event = "InsertEnter"
-lua_source = """
-  vim.fn["signature_help#enable"]()
-  vim.g.signature_help_config = {
-    -- contentsStyle = "remainingLabels",
-    -- viewStyle = "virtual",
-    contentsStyle = "labels",
-    viewStyle = "floating",
-  }
-"""
+hook_source = '''
+  call signature_help#enable()
+  " Alternatives: contentsStyle: 'remainingLabels', viewStyle: 'virtual'.
+  let g:signature_help_config = #{
+        \   contentsStyle: 'labels',
+        \   viewStyle: 'floating',
+        \ }
+'''
 
 # [[plugins]]
 # repo = "kuuote/lspoints"
@@ -485,52 +480,44 @@ on_cmd = "Partedit"
 
 [[plugins]]
 repo = 'Shougo/pum.vim'
-lua_add = """
-  vim.keymap.set({'i', 'c'}, "<C-d>", function()
-    if vim.fn["pum#preview_visible"]() then
-      vim.fn["pum#map#scroll_preview"](4)
-    end
-  end, { desc = "pum: scroll the preview window down" })
-  vim.keymap.set({'i', 'c'}, "<C-u>", function()
-    if vim.fn["pum#preview_visible"]() then
-      vim.fn["pum#map#scroll_preview"](-4)
-    end
-  end, { desc = "pum: scroll the preview window up" })
-"""
-lua_source = """
-  vim.fn["pum#set_option"]({
-    auto_confirm_time = 0,
-    auto_select = true,
-    -- border = 'none',
-    border = 'single',
-    commit_characters = {'.'},
-    highlight_scrollbar = 'None',
-    insert_preview = true,
-    -- max_width = 80,
-    max_width = 0,
-    offset_cmdcol = 0,
-    offset_cmdrow = 1, -- added
-    padding = false,
-    -- preview = false,
-    preview = true,
-    preview_border = "single", -- added
-    -- preview_width = 80,
-    reversed = false,
-    scrollbar_char = '║',
-    use_setline = false,
-  })
-  -- vim.fn["pum#set_local_option"]('c', {
-  --   max_width = 0,
-  -- })
+# <C-d>/<C-u> do nothing (not even the default scroll) when the preview
+# isn't visible, matching the original Lua callback returning nothing.
+hook_add = '''
+  inoremap <expr> <C-d> pum#preview_visible() ? pum#map#scroll_preview(4) : ''
+  cnoremap <expr> <C-d> pum#preview_visible() ? pum#map#scroll_preview(4) : ''
+  inoremap <expr> <C-u> pum#preview_visible() ? pum#map#scroll_preview(-4) : ''
+  cnoremap <expr> <C-u> pum#preview_visible() ? pum#map#scroll_preview(-4) : ''
+'''
+hook_source = '''
+  " Alternatives: border: 'none', max_width: 80, preview: false,
+  " preview_width: 80.
+  call pum#set_option(#{
+        \   auto_confirm_time: 0,
+        \   auto_select: v:true,
+        \   border: 'single',
+        \   commit_characters: ['.'],
+        \   highlight_scrollbar: 'None',
+        \   insert_preview: v:true,
+        \   max_width: 0,
+        \   offset_cmdcol: 0,
+        \   offset_cmdrow: 1,
+        \   padding: v:false,
+        \   preview: v:true,
+        \   preview_border: 'single',
+        \   reversed: v:false,
+        \   scrollbar_char: '║',
+        \   use_setline: v:false,
+        \ })
+  " call pum#set_local_option('c', #{ max_width: 0 })
 
-  -- NOTE: For horizontal_menu
-  vim.fn["pum#set_option"]({
-    follow_cursor = false,
-    horizontal_menu = false,
-    max_horizontal_items = 2,
-    max_height = 3,
-  })
-"""
+  " NOTE: For horizontal_menu
+  call pum#set_option(#{
+        \   follow_cursor: v:false,
+        \   horizontal_menu: v:false,
+        \   max_horizontal_items: 2,
+        \   max_height: 3,
+        \ })
+'''
 
 [[plugins]] # friendly-snippets' package.json is what vsnip's vscode-
 # extension-style source scans for, so it must be on runtimepath by the
@@ -543,45 +530,29 @@ on_source = "vim-vsnip"
 # source is a separate, later task.
 repo = 'hrsh7th/vim-vsnip'
 on_func = 'vsnip#'
-lua_add = """
-  vim.g.vsnip_snippet_dir = vim.env.VIM_CONFIG_PATH .. "/snippets/vsnip"
+hook_add = '''
+  let g:vsnip_snippet_dir = $VIM_CONFIG_PATH .. '/snippets/vsnip'
 
-  vim.keymap.set({'i', 's'}, "<Tab>", function()
-    if vim.fn["vsnip#jumpable"](1) == 1 then
-      return "<Plug>(vsnip-jump-next)"
-    end
-    return "<Tab>"
-  end, { expr = true, desc = "vsnip: jump to the next placeholder, otherwise insert <Tab>" })
-
-  vim.keymap.set({'i', 's'}, "<S-Tab>", function()
-    if vim.fn["vsnip#jumpable"](-1) == 1 then
-      return "<Plug>(vsnip-jump-prev)"
-    end
-    return "<S-Tab>"
-  end, { expr = true, desc = "vsnip: jump to the previous placeholder, otherwise insert <S-Tab>" })
-"""
+  imap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
+  smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
+  imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
+  smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
+'''
 
 [[multiple_hooks]]
 plugins = ["goda-cmp.vim", "pum.vim"]
-hook_add = """
-lua << EOF
-  vim.keymap.set('i', "<C-n>", function()
-    if vim.fn["pum#visible"]() then
-      return vim.fn["pum#map#select_relative"](1)
-    else
-      vim.fn["goda_cmp#map#manual_complete"]()
-    end
-  end, { expr = true, desc = "goda-cmp: select next candidate / start completion" })
-
-  vim.keymap.set('i', "<C-p>", function()
-    if vim.fn["pum#visible"]() then
-      return vim.fn["pum#map#select_relative"](-1)
-    else
-      vim.fn["goda_cmp#map#manual_complete"]()
-    end
-  end, { expr = true, desc = "goda-cmp: select previous candidate / start completion" })
-EOF
-"""
+hook_add = '''
+  " Same expr-mapping pattern as rc/goda-cmp.vim's cnoremap <C-n>/<C-p>,
+  " just for insert mode here.
+  inoremap <expr> <C-n>
+        \   pum#visible()
+        \ ? pum#map#select_relative(1)
+        \ : goda_cmp#map#manual_complete()
+  inoremap <expr> <C-p>
+        \   pum#visible()
+        \ ? pum#map#select_relative(-1)
+        \ : goda_cmp#map#manual_complete()
+'''
 
 
 ##################################################
@@ -640,45 +611,41 @@ EOF
 
 [[multiple_hooks]] # start up an IDE like environment
 plugins = ["nvim-aibo", "goda-term-ui-shell.vim"]
-hook_source = """
-lua << EOF
-  -- Layout: [ goda-term-shell | current_buffer ]
-  --         [ Aibo            |                ]
-  vim.api.nvim_create_user_command("AiboIDE", function(opts)
+hook_source = '''
+  " Layout: [ goda-term-shell | current_buffer ]
+  "         [ Aibo            |                ]
+  " s:aiboide_orig_buf/args stand in for what a Lua closure would capture:
+  " vimscript functions can't close over locals, and the layout has to be
+  " built from a ++once FileType autocmd (not inline here), since
+  " goda_term#start() is async and may close windows created beforehand.
+  function s:AiboIDE(args) abort
+    let s:aiboide_orig_buf = bufnr('%')
+    let s:aiboide_args = a:args
 
-    -- Save the current buffer before goda-term-shell takes over
-    local orig_buf = vim.api.nvim_get_current_buf()
+    autocmd MyAutoCmd FileType goda-term-shell ++once call s:AiboIDE_layout()
 
-    -- Build the entire layout after goda-term-shell opens, because
-    -- goda_term#start (async) may close windows created beforehand
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = "goda-term-shell",
-      once = true,
-      callback = function()
-        local term_win = vim.api.nvim_get_current_win()
+    call goda_term#start(#{
+          \   name: printf('aibo-%d', win_getid()),
+          \   ui: 'shell',
+          \ })
+  endfunction
 
-        -- Create right column for the original buffer
-        vim.cmd("rightbelow vsplit")
-        if vim.api.nvim_buf_is_valid(orig_buf) then
-          vim.api.nvim_win_set_buf(0, orig_buf)
-        else
-          vim.cmd("enew")
-        end
+  function s:AiboIDE_layout() abort
+    let term_win = win_getid()
 
-        -- Back to goda-term-shell; split below for Aibo
-        vim.api.nvim_set_current_win(term_win)
-        vim.cmd("belowright split")
-        vim.cmd("Aibo " .. opts.args)
+    rightbelow vsplit
+    if bufexists(s:aiboide_orig_buf)
+      execute 'buffer' s:aiboide_orig_buf
+    else
+      enew
+    endif
 
-        -- Leave focus on goda-term-shell
-        vim.api.nvim_set_current_win(term_win)
-      end,
-    })
+    call win_gotoid(term_win)
+    belowright split
+    execute 'Aibo' s:aiboide_args
 
-    vim.fn["goda_term#start"]({
-      name = "aibo-" .. tostring(vim.fn.win_getid()),
-      ui = "shell",
-    })
-  end, { nargs = "+" })
-EOF
-"""
+    call win_gotoid(term_win)
+  endfunction
+
+  command! -nargs=+ AiboIDE call s:AiboIDE(<q-args>)
+'''
