@@ -143,58 +143,63 @@ vim.keymap.set('n', ";G", function()
     })
     end, { desc = "ddu: ripgrep with the word under the cursor" })
 
-vim.keymap.set('n', ";r", function()
-    vim.fn["ddu#start"]({
-      name = "register",
-      ui = {
-        name = "ff",
-        params = { autoResize = true },
-      },
-      sources = {
-        {
-          name = "register",
-          options = { defaultAction = vim.fn.col('.') == 1 and 'insert' or 'append' },
-        },
-      },
-    })
-    end, { desc = "ddu: choose a register and insert/append its content" })
+-- Superseded by lese's ";R" (register, see rc/lese/custom.lua; ";r" itself
+-- moved to lese's "rg" picker, see rc/lese.vim).
+-- vim.keymap.set('n', ";r", function()
+--     vim.fn["ddu#start"]({
+--       name = "register",
+--       ui = {
+--         name = "ff",
+--         params = { autoResize = true },
+--       },
+--       sources = {
+--         {
+--           name = "register",
+--           options = { defaultAction = vim.fn.col('.') == 1 and 'insert' or 'append' },
+--         },
+--       },
+--     })
+--     end, { desc = "ddu: choose a register and insert/append its content" })
 
-vim.keymap.set('n', ";b", function()
-    vim.fn["ddu#start"]({
-      name = "buffer",
-      ui = "ff" ,
-      sources = { "buffer" },
-    })
-    end, { desc = "ddu: list buffers" })
+-- Superseded by lese's ";b" (buffer picker, built into its own bundled
+-- custom.lua, see rc/lazy.toml).
+-- vim.keymap.set('n', ";b", function()
+--     vim.fn["ddu#start"]({
+--       name = "buffer",
+--       ui = "ff" ,
+--       sources = { "buffer" },
+--     })
+--     end, { desc = "ddu: list buffers" })
 
-vim.keymap.set('n', ";h", function()
-    vim.fn["ddu#start"]({
-      name = "command_history",
-      ui = "ff",
-      sources = { "command_history" },
-    })
-    end, { desc = "ddu: list the command-line history" })
+-- Superseded by lese's ";h" (history) and ";H" (help), see rc/lese.vim.
+-- vim.keymap.set('n', ";h", function()
+--     vim.fn["ddu#start"]({
+--       name = "command_history",
+--       ui = "ff",
+--       sources = { "command_history" },
+--     })
+--     end, { desc = "ddu: list the command-line history" })
 
-vim.keymap.set('n', ";H", function()
-    vim.fn["ddu#start"]({
-      name = "help",
-      ui = "ff",
-      sources = {
-        {
-          name = "help",
-          options = { volatile = true },
-        },
-      },
-    })
-    vim.api.nvim_create_autocmd("User", {
-        pattern = "Ddu:uiDone",
-        once = true,
-        nested = true,
-        callback = function()
-            vim.fn["ddu#ui#async_action"]("openFilterWindow")
-        end,
-    })
-    end, { desc = "ddu: live search help tags" })
+-- vim.keymap.set('n', ";H", function()
+--     vim.fn["ddu#start"]({
+--       name = "help",
+--       ui = "ff",
+--       sources = {
+--         {
+--           name = "help",
+--           options = { volatile = true },
+--         },
+--       },
+--     })
+--     vim.api.nvim_create_autocmd("User", {
+--         pattern = "Ddu:uiDone",
+--         once = true,
+--         nested = true,
+--         callback = function()
+--             vim.fn["ddu#ui#async_action"]("openFilterWindow")
+--         end,
+--     })
+--     end, { desc = "ddu: live search help tags" })
 
 vim.keymap.set('n', ";t", function()
     vim.fn["ddu#start"]({

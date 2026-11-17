@@ -1,4 +1,64 @@
 ##################################################
+# filer ##########################################
+##################################################
+
+[[plugins]] # filer
+repo = "lambdalisue/vim-fern"
+on_cmd = "Fern"
+hooks_file = "$VIM_CONFIG_PATH/rc/fern.vim"
+
+[[plugins]]
+repo = "lambdalisue/vim-nerdfont"
+on_source = "vim-fern"
+
+[[plugins]] # file type icons on fern nodes
+repo = "lambdalisue/vim-fern-renderer-nerdfont"
+depends = "vim-nerdfont"
+on_source = "vim-fern"
+hook_add = '''
+  let g:fern#renderer = "nerdfont"
+'''
+
+[[plugins]] # git status badges on fern nodes
+repo = "lambdalisue/vim-fern-git-status"
+on_source = "vim-fern"
+
+[[plugins]] # git stage/unstage mappings (<<, >>) on file:// scheme
+repo = "lambdalisue/vim-fern-mapping-git"
+on_source = "vim-fern"
+
+
+##################################################
+# fuzzy finder ###################################
+##################################################
+
+[[plugins]] # the eventual successor of Shougo/ddu-ui-ff; only ;h/;H/;r/;R
+# are ported so far, the rest of rc/ddu.lua's pickers stay on ddu until
+# migrated too. Ships its own default pickers (file, rg, help, history,
+# ...) with no custom.lua needed; rc/lese/custom.lua only adds "register"
+# (lese has no source for that; see ";R" below).
+repo = "lambdalisue/vim-lese"
+on_cmd = "Lese*"
+hook_add = '''
+  " Unset, this defaults to stdpath('config') .. '/lese/custom.lua'
+  " (outside this repo, same issue as g:goda_term#config_dir /
+  " g:goda_cmp#config_dir). lese falls back to its own bundled custom.lua
+  " until a file actually exists at this path (":LeseCustom" creates it
+  " here on first use), so setting this now is safe either way.
+  let g:lese_custom_path = $VIM_CONFIG_PATH .. "/rc/lese/custom.lua"
+
+  " ;h/;H used to be ddu's command_history/help pickers (see rc/ddu.lua,
+  " commented out there to avoid the key clash); ;r takes over from ddu's
+  " register picker's key, so the register picker itself moved to ;R.
+  nnoremap ;h <Cmd>Lese history<CR>
+  nnoremap ;H <Cmd>Lese help<CR>
+  nnoremap ;r <Cmd>Lese rg<CR>
+  nnoremap ;R <Cmd>Lese register<CR>
+  nnoremap ;b <Cmd>Lese buffer<CR>
+'''
+
+
+##################################################
 # jump ###########################################
 ##################################################
 

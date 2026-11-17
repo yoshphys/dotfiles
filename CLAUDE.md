@@ -19,7 +19,9 @@
 - `rc/goda-term/main.go` — goda-term.vim config (Go module, the successor of ddt.vim; registered in `rc/goda.toml`)
 - `rc/goda-cmp/main.go` — goda-cmp.vim config (Go module, the successor of ddc.vim; registered in `rc/goda.toml`). Sources/filters are compiled-in Go packages (goda-cmp-ext and others), not separate plugins; LSP completion uses the `nvimlsp` bridge source (the LSP clients Neovim already attached, not a separate server)
 - `rc/merge.toml`, `rc/lazy.toml`, `rc/ddu.toml`, `rc/goda.toml`, `rc/neovim.toml` — plugin definitions, by load strategy
-- `rc/*.lua` (`ddu.lua`, `ddu-ui-ff.lua`, `ddu-ui-filer.lua`, `lspconfig.lua`) / `rc/goda-term.vim` / `rc/goda-cmp.vim` — per-plugin hook configs, referenced by `hooks_file` in the TOML files above
+- `rc/*.lua` (`ddu.lua`, `ddu-ui-ff.lua`, `ddu-ui-filer.lua`, `lspconfig.lua`) / `rc/goda-term.vim` / `rc/goda-cmp.vim` / `rc/fern.vim` — per-plugin hook configs, referenced by `hooks_file` in the TOML files above
+- `rc/fern.vim` — lambdalisue/vim-fern config (file explorer, gradually replacing ddu.vim's filer use case); `[Space]f` opens it as a floating window anchored to the current window
+- `rc/lese/custom.lua` — lambdalisue/vim-lese's picker declarations (fuzzy finder, gradually replacing ddu.vim's `ddu-ui-ff` use case); a copy of lese's own bundled defaults plus a "register" picker lese ships no source for. lese's own keymaps (`;h`/`;H`/`;r`/`;R`; only these four are migrated so far, the rest still lives in `rc/ddu.lua`) are inlined directly in `rc/lazy.toml`, not a separate hooks_file
 - `rc/ts/` — TypeScript plugin configs for the denops-based ddu plugins
 - `rc/options.rc.vim` — vim/neovim-common options and mappings (InlineVimrc, plain vimscript)
 - `rc/neovim.rc.lua` — neovim-only options, keymaps and autocmds (InlineVimrc)

@@ -8,6 +8,18 @@ hooks_file = "$VIM_CONFIG_PATH/rc/ft.vim"
 repo = "Shougo/goda.vim"
 
 ##################################################
+# filer ##########################################
+##################################################
+
+[[plugins]] # take over directory buffers (`vim .`, `:e .`) as the default
+# explorer instead of netrw; must load eagerly so its own BufEnter autocmd
+# exists before the first (possibly directory) buffer opens, so it cannot
+# be on_source = "vim-fern" (fern itself only loads lazily via :Fern,
+# which this plugin is what triggers in the first place). See rc/lazy.toml
+# for vim-fern itself and its other sibling plugins.
+repo = "lambdalisue/vim-fern-hijack"
+
+##################################################
 # color scheme ###################################
 ##################################################
 

@@ -158,6 +158,9 @@ local function open_filer(ui_params, name_suffix)
     }))
 end
 
-vim.keymap.set('n', "[Space]f", function() open_filer(filer_ui_params_h, "_h") end, { desc = "ddu-filer: open the filer as a panel at the bottom of the current window" })
+-- Superseded by vim-fern's "[Space]f" (see rc/fern.vim / rc/lazy.toml); this
+-- ran on ddu.vim's own VimEnter hook, which loads after fern's and silently
+-- overwrote its "[Space]f" mapping since both are plain nnoremap.
+-- vim.keymap.set('n', "[Space]f", function() open_filer(filer_ui_params_h, "_h") end, { desc = "ddu-filer: open the filer as a panel at the bottom of the current window" })
 vim.keymap.set('n', "[Space]v", function() open_filer(filer_ui_params_v, "_v") end, { desc = "ddu-filer: open the filer as a panel at the right of the current window" })
 -- }}}
