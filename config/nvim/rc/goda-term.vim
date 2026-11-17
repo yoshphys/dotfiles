@@ -5,11 +5,15 @@
 " (ddt#... -> goda_term#..., filetypes ddt-ui-shell/ddt-ui-terminal ->
 " goda-term-shell/goda-term-terminal).
 "
-" Not ported: the <C-h> ddu-based shell-history search and the b:ddt_*
-" _directory auto-tcd on open. The former needs goda-fi.vim (ddu.vim's own
-" successor, not yet adopted); the latter's goda-term equivalent, if any,
-" isn't documented, and guessing a wrong variable name is worse than
-" dropping it.
+" Not ported: the <C-h> ddu-based shell-history search, pending a lese
+" picker over the same shell-history files goda-cmp's shellhistory source
+" already reads (see rc/goda-cmp/main.go's shellHistories).
+"
+" The old b:ddt_*_directory auto-tcd needed no porting: goda-term-ui-
+" shell.vim's own goda_term#ui#shell#_cd() already calls chdir() + fires
+" DirChanged when the embedded shell's own cwd changes, which the
+" DirChanged autocmd below (the opposite direction: Vim's cwd -> the UI)
+" already guards against looping back on.
 
 " hook_add {{{
 " Unset, this defaults to stdpath('config') .. '/goda-term' (no "rc/"),
