@@ -28,5 +28,64 @@
       "$0"
     ],
     "description": "physica/zero/fancy-units imports for scientific notation; ported from template/typst/snip-science.typ"
+  },
+  "jaslide (typstage presentation base)": {
+    "prefix": ["jaslide"],
+    "body": [
+      "#import \"@preview/typstage:0.1.1\": *",
+      "",
+      "#import \"@preview/cjk-spacer:0.2.1\": cjk-spacer",
+      "#show: cjk-spacer",
+      "",
+      "#set text(",
+      "  lang: \"ja\",",
+      "  font: (\"Hiragino Kaku Gothic ProN\", \"Hiragino Mincho ProN\"),",
+      ")",
+      "",
+      "#show: presentation.with(",
+      "  title: [Title$0],",
+      "  subtitle: [Subtitle],",
+      "  author: [Authors],",
+      "  date: datetime.today(),",
+      "  transition: \"slide\",",
+      ")",
+      "",
+      "#import \"@preview/cetz:0.5.2\"",
+      "#import \"@preview/fletcher:0.5.9\" as fletcher: edge, node"
+    ],
+    "description": "whole-file typstage presentation skeleton; ported from template/typst/base-jaslide.typ"
+  },
+  "jadoc (js article base)": {
+    "prefix": ["jadoc"],
+    "body": [
+      "#import \"@preview/js:0.1.3\": *",
+      "#import \"@preview/cjk-spacer:0.2.1\": cjk-spacer",
+      "",
+      "#show: cjk-spacer",
+      "",
+      "#show: js.with(",
+      "  lang: \"ja\",",
+      "  seriffont: \"New Computer Modern\",",
+      "  seriffont-cjk: \"Hiragino Mincho ProN\",",
+      "  sansfont: \"Helvetica\",",
+      "  sansfont-cjk: \"Hiragino Kaku Gothic ProN\",",
+      "  paper: \"a4\",",
+      "  fontsize: 10pt,",
+      "  baselineskip: auto,",
+      "  textwidth: auto,",
+      "  lines-per-page: auto,",
+      "  book: false, // or true",
+      "  cols: 1, // 1, 2, 3, ...",
+      "  non-cjk: regex(\"[\\u0000-\\u2023]\"), // or \"latin-in-cjk\" or any regex",
+      "  cjkheight: 0.88, // height of CJK in em",
+      ")",
+      "",
+      "#maketitle(",
+      "  title: \"$0\",",
+      "  authors: \"\",",
+      "  abstract: [],",
+      ")"
+    ],
+    "description": "whole-file js article skeleton; ported from template/typst/base-jadoc.typ"
   }
 }

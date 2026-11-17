@@ -1,0 +1,21 @@
+{
+  "base (article skeleton)": {
+    "prefix": ["base"],
+    "body": [
+      "\\documentclass[a4paper]{article}",
+      "\\usepackage{amsmath,amssymb}",
+      "",
+      "\\title{$TM_FILENAME_BASE}",
+      "\\author{}",
+      "\\date{\\today}",
+      "",
+      "\\begin{document}",
+      "\\maketitle",
+      "",
+      "$0",
+      "",
+      "\\end{document}"
+    ],
+    "description": "whole-file LaTeX article skeleton; ported from template/tex/base-main.tex"
+  }
+}
