@@ -7,16 +7,25 @@
 " badge / stage-unstage mappings on file:// nodes).
 
 " hook_add {{{
-" [Space]f: open fern as a floating window pinned to the right edge of the
-" window that was current when invoked (its "anchor"). Opening a file from
-" inside it closes the float and edits the file in the anchor window
+" [Space]f: toggle fern as a floating window pinned to the right edge of
+" the window that was current when invoked (its "anchor"). Opening a file
+" from inside it closes the float and edits the file in the anchor window
 " instead of replacing the float's own buffer; see s:fern_float_open_expr
 " below. Plain Vim has no equivalent floating-window API (popup_create() is
 " a wholly different mechanism), so fall back to a plain right-side
-" vertical drawer there.
+" vertical drawer there (not toggled: :Fern's own -drawer -toggle would be
+" the place to add that, were it ever worth it for a Vim fallback).
+let s:fern_float_winid = -1
+
 function FernFloat() abort
   if !has('nvim')
     execute 'Fern' fnameescape(getcwd()) '-drawer -right'
+    return
+  endif
+
+  if s:fern_float_winid != -1 && nvim_win_is_valid(s:fern_float_winid)
+    call nvim_win_close(s:fern_float_winid, v:true)
+    let s:fern_float_winid = -1
     return
   endif
 
@@ -34,6 +43,7 @@ function FernFloat() abort
         \   border: 'rounded',
         \   style: 'minimal',
         \ })
+  let s:fern_float_winid = win
   call setwinvar(win, 'fern_float_anchor', anchor)
   execute 'Fern' fnameescape(getcwd()) '-opener=edit'
 endfunction
