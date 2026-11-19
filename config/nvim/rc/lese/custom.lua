@@ -460,6 +460,99 @@ local function tab_switch_action()
   })
 end
 
+-- The same shell history files goda-cmp's shellhistory source reads (see
+-- rc/goda-cmp/main.go's shellHistories); kept in sync by hand, since a Go
+-- module and this Lua file can't share one literal.
+local shell_history_paths = { "~/.cache/ddt-shell-history", "~/.zsh_history" }
+
+-- Parses a shell history file the same way goda-cmp-ext's shellhistory
+-- source does: zsh's extended-history format (": <epoch>:<duration>;cmd")
+-- is unwrapped, and a trailing backslash continues the command onto the
+-- next line (zsh's own line continuation, also how goda-term-ui-shell
+-- writes a multi-line command). Returns commands newest first; a
+-- multi-line one is dropped, since it can't go on setCommandLine's one
+-- line either.
+local function read_shell_history(path)
+  local f = io.open(path, "r")
+  if f == nil then
+    return {}
+  end
+  local content = f:read("a")
+  f:close()
+
+  local cmds, cont = {}, nil
+  for line in (content .. "\n"):gmatch("(.-)\n") do
+    if line:sub(-1) == "\\" then
+      cont = (cont or "") .. line:sub(1, -2) .. "\n"
+    else
+      if cont then
+        line = cont .. line
+        cont = nil
+      end
+      line = line:match("^: %d+:%d+;(.*)$") or line
+      if line ~= "" and not line:find("\n") then
+        cmds[#cmds + 1] = line
+      end
+    end
+  end
+
+  local seen, uniq = {}, {}
+  for i = #cmds, 1, -1 do
+    if not seen[cmds[i]] then
+      seen[cmds[i]] = true
+      uniq[#uniq + 1] = cmds[i]
+    end
+  end
+  return uniq
+end
+
+-- custom.source.shellhistory: the commands of shell_history_paths above.
+-- rc/goda-term.vim's goda-term-shell ftplugin block maps <C-r> to this
+-- picker (buffer-local, insert and normal mode): the eventual
+-- replacement of ddt.vim's old <C-h> shell-history search (goda-fi.vim,
+-- ddu.vim's own successor, is still not adopted).
+local function shellhistory_source()
+  return define.source({
+    name = "custom.source.shellhistory",
+    collect = function(ctx)
+      local fn = ctx.host.fn
+      local seen, id = {}, 0
+      for _, path in ipairs(shell_history_paths) do
+        for _, cmd in ipairs(read_shell_history(fn.expand(path))) do
+          if not seen[cmd] then
+            seen[cmd] = true
+            id = id + 1
+            ctx:emit({ id = id, value = cmd, detail = { command = cmd } })
+          end
+        end
+      end
+    end,
+  })
+end
+
+-- Starts a fresh goda-term-shell prompt with the chosen command, ready to
+-- edit or run -- unlike goda-term-ui-shell's own "send" action, which
+-- would run it immediately.
+-- The list column truncates a long command; show it in full, with shell
+-- syntax highlighting, in the preview instead.
+local function shellhistory_previewer()
+  return define.previewer({
+    name = "custom.previewer.shellhistory",
+    preview = function(_, params)
+      return { content = { params.item.detail.command }, filetype = "sh" }
+    end,
+  })
+end
+
+local function shellhistory_setcommandline_action()
+  return define.action({
+    name = "custom.action.shellhistory_setcommandline",
+    invoke = function(ctx, params)
+      ctx.host.fn["goda_term#ui#do_action"]("setCommandLine", { str = params.item.detail.command })
+    end,
+  })
+end
+
 local diagnostic_severity_labels = { "E", "W", "I", "H" } -- vim.diagnostic.severity.{ERROR,WARN,INFO,HINT}
 
 -- custom.source.diagnostic: every LSP diagnostic across every buffer, via
@@ -670,5 +763,13 @@ return function(x)
     previewers = { builtin.previewer.buffer() },
     actions = merge(builtin.action.default_open_actions, misc_actions),
     default_action = "open",
+  })
+
+  x.define_picker_from_source("shellhistory", shellhistory_source(), {
+    matchers = { builtin.matcher.fzf() },
+    sorters = sorters(),
+    previewers = { shellhistory_previewer() },
+    actions = merge(misc_actions, { setCommandLine = shellhistory_setcommandline_action() }),
+    default_action = "setCommandLine",
   })
 end

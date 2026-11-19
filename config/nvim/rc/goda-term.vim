@@ -5,9 +5,10 @@
 " (ddt#... -> goda_term#..., filetypes ddt-ui-shell/ddt-ui-terminal ->
 " goda-term-shell/goda-term-terminal).
 "
-" Not ported: the <C-h> ddu-based shell-history search, pending a lese
-" picker over the same shell-history files goda-cmp's shellhistory source
-" already reads (see rc/goda-cmp/main.go's shellHistories).
+" The old ddt.vim <C-h> shell-history search is now <C-r> (goda-term-shell
+" only, below) over rc/lese/custom.lua's "shellhistory" picker, which
+" reads the same files as goda-cmp's shellhistory source (see
+" rc/goda-cmp/main.go's shellHistories).
 "
 " The old b:ddt_*_directory auto-tcd needed no porting: goda-term-ui-
 " shell.vim's own goda_term#ui#shell#_cd() already calls chdir() + fires
@@ -141,6 +142,8 @@ inoremap <buffer><expr> <C-p>
       \   pum#visible()
       \ ? '<Cmd>call pum#map#insert_relative(-1, "empty")<CR>'
       \ : goda_cmp#map#manual_complete(#{ sources: ['shellhistory'] })
+nnoremap <buffer> <C-r> <Cmd>Lese shellhistory<CR>
+inoremap <buffer> <C-r> <Cmd>Lese shellhistory<CR>
 
 augroup goda-term-ui-shell
   autocmd! * <buffer>
