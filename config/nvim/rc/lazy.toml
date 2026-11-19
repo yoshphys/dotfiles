@@ -33,12 +33,13 @@ on_source = "vim-fern"
 ##################################################
 
 [[plugins]] # the eventual successor of Shougo/ddu-ui-ff; only
-# ;h/;H/;r/;R/;b/;s/;T are ported so far, the rest of rc/ddu.lua's
+# ;h/;H/;r/;R/;b/;s/;T/;d are ported so far, the rest of rc/ddu.lua's
 # pickers stay on ddu until migrated too. Ships its own default pickers
 # (file, rg, help, history, buffer, ...) with no custom.lua needed;
-# rc/lese/custom.lua adds "register", "snippet", "keymap" and "tab",
-# which lese has no source for (and excludes its own floating-window
-# buffers from "buffer", see exclude_ephemeral_buffers there).
+# rc/lese/custom.lua adds "register", "snippet", "keymap", "tab" and
+# "diagnostic", which lese has no source for (and excludes its own
+# floating-window buffers from "buffer", see exclude_ephemeral_buffers
+# there).
 repo = "lambdalisue/vim-lese"
 on_cmd = "Lese*"
 # Forces goda-cmp.vim to load (if it hasn't already via its own on_event)
@@ -71,6 +72,12 @@ hook_add = '''
   " ;T: switch to another tab page, via rc/lese/custom.lua's "tab"
   " picker, which lese has no source for.
   nnoremap ;T <Cmd>Lese tab<CR>
+  " ;d: jump to an LSP diagnostic (ddu-source-lsp's old job, replaced with
+  " diagnostics rather than code actions -- more useful, and a closer fit
+  " for how this config already does LSP, see rc/lspconfig.lua), via
+  " rc/lese/custom.lua's "diagnostic" picker. Neovim only (vim.diagnostic
+  " has no portable equivalent); a no-op on plain Vim.
+  nnoremap ;d <Cmd>Lese diagnostic<CR>
   " Insert a vim-vsnip snippet for the current filetype without typing its
   " prefix; ddu's own ";t" (sonictemplate, a different, whole-file-template
   " concept) is untouched.

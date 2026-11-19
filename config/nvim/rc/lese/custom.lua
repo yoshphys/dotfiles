@@ -460,6 +460,47 @@ local function tab_switch_action()
   })
 end
 
+local diagnostic_severity_labels = { "E", "W", "I", "H" } -- vim.diagnostic.severity.{ERROR,WARN,INFO,HINT}
+
+-- custom.source.diagnostic: every LSP diagnostic across every buffer, via
+-- Neovim's own vim.diagnostic.get() -- a no-op on plain Vim, which has no
+-- portable equivalent, the same reason goda-cmp's LSP completion source
+-- is called "nvimlsp" rather than just "lsp".
+local function diagnostic_source()
+  return define.source({
+    name = "custom.source.diagnostic",
+    collect = function(ctx)
+      if vim.diagnostic == nil then
+        return
+      end
+      local fn = ctx.host.fn
+      local diags = vim.diagnostic.get(nil)
+      table.sort(diags, function(a, b)
+        if a.bufnr ~= b.bufnr then
+          return a.bufnr < b.bufnr
+        end
+        if a.lnum ~= b.lnum then
+          return a.lnum < b.lnum
+        end
+        return a.col < b.col
+      end)
+      local id = 0
+      for _, d in ipairs(diags) do
+        id = id + 1
+        local bufname = fn.bufname(d.bufnr)
+        bufname = bufname == "" and "[No Name]" or fn.fnamemodify(bufname, ":~:.")
+        local label = diagnostic_severity_labels[d.severity] or "?"
+        local message = d.message:gsub("\n", " ")
+        ctx:emit({
+          id = id,
+          value = string.format("[%s] %s:%d  %s", label, bufname, d.lnum + 1, message),
+          detail = { bufnr = d.bufnr, line = d.lnum + 1, column = d.col + 1 },
+        })
+      end
+    end,
+  })
+end
+
 ---@param x lese.Entrypoint
 return function(x)
   x.refine_setting({
@@ -621,5 +662,13 @@ return function(x)
     previewers = { builtin.previewer.buffer() },
     actions = merge(misc_actions, { switch = tab_switch_action() }),
     default_action = "switch",
+  })
+
+  x.define_picker_from_source("diagnostic", diagnostic_source(), {
+    matchers = { builtin.matcher.fzf() },
+    sorters = sorters(),
+    previewers = { builtin.previewer.buffer() },
+    actions = merge(builtin.action.default_open_actions, misc_actions),
+    default_action = "open",
   })
 end
