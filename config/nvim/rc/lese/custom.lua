@@ -138,6 +138,26 @@ end
 -- 0-9, lettered a-z, and the special "+*-:.%# registers), newest content
 -- first for the numbered ones. No ordering/MRU beyond that -- unlike
 -- ddu-source-register, lese has no notion of "recently used" registers.
+-- lese's own floating windows (the input/list/help components; see
+-- lua/lese/host/nvim.lua's window_open()) are real, loaded buffers too --
+-- unlisted, but builtin.source.buffer's "bufloaded" filter doesn't check
+-- that -- so without this, every "buffer" picker session lists its own
+-- input/list/help buffers among the candidates. bufhidden=wipe is how
+-- lese marks them (and how other plugins mark similarly-ephemeral
+-- scratch buffers, e.g. vim-fern's rename/action prompts), so exclude it
+-- generally rather than naming lese's buffers specifically.
+local function exclude_ephemeral_buffers()
+  return define.refiner({
+    name = "custom.refiner.exclude_ephemeral_buffers",
+    refine = function(ctx, item)
+      if ctx.host.fn.getbufvar(item.detail.bufnr, "&bufhidden") == "wipe" then
+        return nil
+      end
+      return item
+    end,
+  })
+end
+
 local function register_names()
   local names = {}
   for i = 0, 9 do
@@ -393,6 +413,53 @@ local function keymap_execute_action()
   })
 end
 
+-- custom.source.tab: every tab page but the current one, labeled with the
+-- set of buffers its windows show (deduplicated, same buffer in two
+-- splits of the one tab counts once). detail.bufnr is the *active*
+-- window's buffer specifically, not nested, since that is what
+-- builtin.previewer.buffer() itself expects for the preview.
+local function tab_source()
+  return define.source({
+    name = "custom.source.tab",
+    collect = function(ctx)
+      local fn = ctx.host.fn
+      local current = fn.tabpagenr()
+      local id = 0
+      for _, t in ipairs(fn.gettabinfo()) do
+        if t.tabnr ~= current then
+          id = id + 1
+          local buflist = fn.tabpagebuflist(t.tabnr)
+          local activeBufnr = buflist[fn.tabpagewinnr(t.tabnr)]
+          local seen, names = {}, {}
+          for _, bufnr in ipairs(buflist) do
+            if not seen[bufnr] then
+              seen[bufnr] = true
+              local bufname = fn.bufname(bufnr)
+              names[#names + 1] = bufname == "" and "[No Name]" or fn.fnamemodify(bufname, ":t")
+            end
+          end
+          ctx:emit({
+            id = id,
+            value = string.format("%d  %s", t.tabnr, table.concat(names, ", ")),
+            detail = { bufnr = activeBufnr, tab = { tabnr = t.tabnr } },
+          })
+        end
+      end
+    end,
+  })
+end
+
+-- Switching to several tabs at once makes no sense, so this ignores
+-- selected_items and always acts on the item under the cursor.
+local function tab_switch_action()
+  return define.action({
+    name = "custom.action.tab_switch",
+    invoke = function(ctx, params)
+      ctx.host.cmd("tabnext " .. params.item.detail.tab.tabnr)
+    end,
+  })
+end
+
 ---@param x lese.Entrypoint
 return function(x)
   x.refine_setting({
@@ -468,18 +535,22 @@ return function(x)
     coordinator = builtin.coordinator.modern({ hide_preview = true }),
   })
 
-  x.define_picker_from_source("buffer", builtin.source.buffer({ filter = "bufloaded" }), {
-    matchers = { builtin.matcher.fzf() },
-    sorters = sorters(),
-    previewers = { builtin.previewer.buffer() },
-    actions = merge(
-      quickfix_actions,
-      misc_actions,
-      builtin.action.default_open_actions,
-      builtin.action.default_buffer_actions
-    ),
-    default_action = "open",
-  })
+  x.define_picker_from_source(
+    "buffer",
+    std.refine_source(builtin.source.buffer({ filter = "bufloaded" }), exclude_ephemeral_buffers()),
+    {
+      matchers = { builtin.matcher.fzf() },
+      sorters = sorters(),
+      previewers = { builtin.previewer.buffer() },
+      actions = merge(
+        quickfix_actions,
+        misc_actions,
+        builtin.action.default_open_actions,
+        builtin.action.default_buffer_actions
+      ),
+      default_action = "open",
+    }
+  )
 
   x.define_picker_from_source("help", builtin.source.helptag(), {
     matchers = { builtin.matcher.fzf() },
@@ -543,5 +614,12 @@ return function(x)
     previewers = { keymap_previewer() },
     actions = merge(misc_actions, { execute = keymap_execute_action() }),
     default_action = "execute",
+  })
+
+  x.define_picker_from_source("tab", tab_source(), {
+    matchers = { builtin.matcher.fzf() },
+    previewers = { builtin.previewer.buffer() },
+    actions = merge(misc_actions, { switch = tab_switch_action() }),
+    default_action = "switch",
   })
 end
