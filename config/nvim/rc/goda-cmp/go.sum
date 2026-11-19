@@ -6,9 +6,11 @@ github.com/Shougo/goda-cmp-ui-pum.vim v0.1.0 h1:LjHdZYkyK+60KuZQVQTyv/6ALNVeGv4N
 github.com/Shougo/goda-cmp-ui-pum.vim v0.1.0/go.mod h1:wtp0SCCOE43P6wB1HYrSFvkvjFZF25m5DRqBMVS07Ns=
 github.com/Shougo/goda-cmp.vim v0.6.0 h1:rNqhASptuVqsF3Xnqw/K3aF59V0k5ng7PU+FsIsYvlc=
 github.com/Shougo/goda-cmp.vim v0.6.0/go.mod h1:4gpSkupNQFGSpyehYY8d7K4Og0iKxS4Q/gDWS5GV3PM=
-github.com/Shougo/goda.vim v0.8.0 h1:fcr+zeKVYRKE3mU0tOBnrbqNxGIfctpf75LPOrEhn1U=
-github.com/Shougo/goda.vim v0.8.0/go.mod h1:ohGPksso9XrqpdVRLS3TzoUtz2x3yMT8x+x+MnMpbM8=
+github.com/Shougo/goda.vim v0.9.0 h1:FVqf1RkS6XgUbU6WFE7LAvLGzA2ETTdQDybXAMRgHqo=
+github.com/Shougo/goda.vim v0.9.0/go.mod h1:ohGPksso9XrqpdVRLS3TzoUtz2x3yMT8x+x+MnMpbM8=
 github.com/delphinus/goda-cmp-ext-fuzzy.vim v0.1.0 h1:Bsj3IOFuBuKAghAr0sAmBDkSVQs2QpblmhYQDtfrTrs=
 github.com/delphinus/goda-cmp-ext-fuzzy.vim v0.1.0/go.mod h1:zLJ0F3Ut0dCdMWw35N2lT0FeFX5IRwc/WnEqVbvvh98=
 github.com/delphinus/goda-cmp-ext-luasrc.vim v0.1.0 h1:51Puk602MMiUX4BvwkkQXK8LUygTtCZLjx8fuQx/aVg=
 github.com/delphinus/goda-cmp-ext-luasrc.vim v0.1.0/go.mod h1:CDH5A3gHQO6XrzYii7ei8faLnldR7lY0q9V7HHCVRB4=
+github.com/yoshphys/goda-cmp-ext-vsnip v0.1.0 h1:OGduvb4jwfwn8456wSJJv6tnEa4mnEgXpUITMHLTDhU=
+github.com/yoshphys/goda-cmp-ext-vsnip v0.1.0/go.mod h1:uhjl/UDXfz7DygvarmZbJwtfBw4oPJtipDTe+0vZaow=

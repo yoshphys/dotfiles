@@ -51,6 +51,8 @@ import (
 	"github.com/delphinus/goda-cmp-ext-fuzzy.vim/ext/filter/sorterglobal"
 
 	"github.com/delphinus/goda-cmp-ext-luasrc.vim/ext/source/luasrc"
+
+	"github.com/yoshphys/goda-cmp-ext-vsnip/ext/source/vsnip"
 )
 
 // The shell history files, for the source and its sorter (ddc.ts's
@@ -86,6 +88,7 @@ func main() {
 	b.AddSource(shellhistory.New(shellhistory.Params{Paths: shellHistories}))
 	b.AddSource(shellnative.New(shellnative.Params{Shell: "zsh"}))
 	b.AddSource(bridge.Source("nvimlsp", luasrc.NvimLSPModule))
+	b.AddSource(vsnip.New())
 
 	b.AddFilter(converterremoveoverlap.New())
 	b.AddFilter(convertertruncateabbr.New(convertertruncateabbr.Params{MaxWidth: 20}))
@@ -109,7 +112,7 @@ func main() {
 	if hasMocword {
 		withMocword = []string{"mocword"}
 	}
-	lspAndSnippet := append([]string{"nvimlsp"}, commonSources...)
+	lspAndSnippet := append([]string{"nvimlsp", "vsnip"}, commonSources...)
 
 	b.PatchGlobal(cmp.Config{
 		UI:      "pum",
@@ -177,6 +180,7 @@ func main() {
 				Mark:                   "[sh]",
 				ForceCompletionPattern: `\S/\S*`,
 			},
+			"vsnip": {Mark: "[v]"},
 		},
 	})
 	if hasMocword {
@@ -192,12 +196,12 @@ func main() {
 	}
 
 	b.PatchFiletypes([]string{"latex", "typst"}, cmp.Config{
-		Sources: append(append([]string{"nvimlsp"}, commonSources...), "line"),
+		Sources: append(append([]string{"nvimlsp", "vsnip"}, commonSources...), "line"),
 	})
 	b.PatchFiletypes([]string{
 		"markdown", "markdown_inline", "gitcommit", "comment", "text",
 	}, cmp.Config{
-		Sources: append(append(append([]string{}, commonSources...), "line"), withMocword...),
+		Sources: append(append(append([]string{}, commonSources...), "line", "vsnip"), withMocword...),
 	})
 
 	// For Claude Code / the Julia REPL in nvim-aibo.
